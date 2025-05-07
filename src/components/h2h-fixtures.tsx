@@ -91,7 +91,7 @@ export default function H2HFixtures({ homeTeam, awayTeam }: H2HFixturesProps) {
           </div>
           <div>
             <div className="text-3xl font-bold text-red-600">{awayWins}</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">{awayTeam}</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">Here&apos;s the head-to-head record between these teams</div>
           </div>
         </div>
       </div>

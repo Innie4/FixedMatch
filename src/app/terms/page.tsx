@@ -48,7 +48,7 @@ export default function TermsPage() {
             
             <h2>4. Disclaimer</h2>
             <p>
-              The materials on PredictsPro's website are provided on an 'as is' basis. PredictsPro makes no warranties, 
+              The materials on PredictsPro's website are provided on an &apos;as is&apos; basis. PredictsPro makes no warranties, 
               expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, 
               implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement 
               of intellectual property or other violation of rights.

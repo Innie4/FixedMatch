@@ -36,7 +36,7 @@ export default function AboutPage() {
                 Our team of expert analysts and advanced statistical models provide accurate predictions for matches across all major leagues.
               </p>
               <p className="text-gray-700 dark:text-gray-300 mb-6">
-                We're passionate about football and committed to helping our users make informed betting decisions through 
+                We&apos;re passionate about football and committed to helping our users make informed betting decisions through 
                 data-driven insights and expert analysis.
               </p>
               <Button asChild className="bg-[#1a56db] hover:bg-[#1e40af]">

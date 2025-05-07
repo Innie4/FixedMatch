@@ -12,7 +12,7 @@ export default function UserPredictions() {
   const [filter, setFilter] = useState("all")
 
   // Sample predictions data
-  const predictions = [
+  const _predictions = [
     {
       id: 1,
       date: "Oct 28, 2023",
@@ -85,7 +85,7 @@ export default function UserPredictions() {
     },
   ]
 
-  const filteredPredictions = filter === "all" ? predictions : predictions.filter((p) => p.result === filter)
+  const filteredPredictions = filter === "all" ? _predictions : _predictions.filter((p) => p.result === filter)
 
   return (
     <div className="space-y-4">

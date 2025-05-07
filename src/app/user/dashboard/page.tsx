@@ -142,7 +142,7 @@ export default function UserDashboard() {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Dashboard</h1>
             <p className="text-gray-600 dark:text-gray-400">
-              Welcome back, {user.name}! Here's an overview of your predictions and performance.
+              Welcome back, {user.name}! Here&apos;s an overview of your predictions and performance.
             </p>
           </div>
 
