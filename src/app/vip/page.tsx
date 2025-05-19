@@ -1,12 +1,19 @@
+'use client'
+
 import { Check, Shield, Star, Trophy, Clock, BarChart3, Lock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 import VipPredictionCard from "@/components/vip-prediction-card"
 import SuccessRateChart from "@/components/success-rate-chart"
 import TestimonialCard from "@/components/testimonial-card"
 import PricingCard from "@/components/pricing-card"
+import { useState } from "react"
 
 export default function VipPage() {
+  // Add state for dialog
+  const [showVipDialog, setShowVipDialog] = useState(false)
+  
   // Sample VIP predictions data
   const vipPredictions = [
     {
@@ -237,6 +244,53 @@ export default function VipPage() {
           </div>
         </div>
       </section>
+
+      {/* VIP Access Dialog */}
+      <Dialog open={showVipDialog} onOpenChange={setShowVipDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold">Get VIP Access</DialogTitle>
+            <DialogDescription>
+              Unlock premium predictions and expert analysis with Fixed Match Pro VIP.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid gap-4 py-4">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Choose an option below to continue:
+            </p>
+            
+            <div className="grid grid-cols-1 gap-3">
+              <Button 
+                className="bg-[#1a56db] hover:bg-[#1e40af] w-full"
+                onClick={() => {
+                  setShowVipDialog(false)
+                  window.location.href = "/auth/signup"
+                }}
+              >
+                Sign Up for VIP Access
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={() => {
+                  setShowVipDialog(false)
+                  window.location.href = "/auth/login"
+                }}
+              >
+                Login to My VIP Account
+              </Button>
+            </div>
+          </div>
+          
+          <DialogFooter className="flex flex-col sm:flex-row sm:justify-center gap-2">
+            <p className="text-xs text-center text-gray-500">
+              By continuing, you agree to our Terms of Service and Privacy Policy.
+            </p>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Benefits Section */}
       <section className="py-16 bg-white dark:bg-gray-900">
@@ -590,7 +644,8 @@ export default function VipPage() {
           </p>
           <Button
             size="lg"
-            className="bg-[#10b981] hover:bg-[#0d9668] text-white font-bold text-lg px-8 py-6 rounded-lg shadow-lg hover:shadow-xl transition-all"
+            className="bg-[#10b981] hover:bg-[#0d9668] text-white font-bold text-lg px-8 py-6 rounded-lg shadow-lg hover:shadow-xl transition-all animate-pulse"
+            onClick={() => setShowVipDialog(true)}
           >
             Get VIP Access Now
           </Button>

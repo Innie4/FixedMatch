@@ -11,7 +11,7 @@ export default function Footer() {
               <div className="bg-[#1a56db] text-white font-bold text-xl w-10 h-10 rounded-full flex items-center justify-center">
                 FP
               </div>
-              <span className="font-bold text-xl text-gray-900 dark:text-white">FootballPredict</span>
+              <span className="font-bold text-xl text-gray-900 dark:text-white">Fixed Match Pro</span>
             </div>
             <p className="text-gray-600 dark:text-gray-400 mb-4">
               Expert football predictions and live scores for all major leagues worldwide.

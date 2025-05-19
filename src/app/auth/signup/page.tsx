@@ -4,6 +4,7 @@ import type React from "react"
 
 import { useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -68,12 +69,16 @@ export default function SignupPage() {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
           <div className="text-center mb-8">
             <Link href="/">
-              <div className="bg-[#1a56db] text-white font-bold text-xl w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
-                FM
-              </div>
+              <Image 
+                src="/FIXEDMatchD.png" 
+                alt="Fixed Match Pro Logo" 
+                width={512} 
+                height={512} 
+                className="mx-auto mb-3"
+              />
             </Link>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Create an account</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">Sign up to get started with Fixed Match</p>
+            <p className="text-gray-600 dark:text-gray-400 mt-1">Sign up to get started with Fixed Match Pro</p>
           </div>
 
           {error && (

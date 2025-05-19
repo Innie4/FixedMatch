@@ -17,7 +17,7 @@ export default function PrivacyPage() {
             
             <h2>1. Introduction</h2>
             <p>
-              At PredictsPro, we respect your privacy and are committed to protecting your personal data. This Privacy Policy 
+              At Fixed Match Pro, we respect your privacy and are committed to protecting your personal data. This Privacy Policy 
               explains how we collect, use, disclose, and safeguard your information when you use our website and mobile application.
             </p>
             <p>
@@ -103,7 +103,7 @@ export default function PrivacyPage() {
             <p>
               If you have any questions about this Privacy Policy, please contact us at:
               <br />
-              Email: privacy@predictspro.com
+              Email: privacy@fixedmatchpro.com
               <br />
               Address: 123 Prediction Street, Sports City, SC 12345
             </p>

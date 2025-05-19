@@ -3,7 +3,7 @@ import Image from "next/image"
 import { Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { MainNav, AuthButtons } from "@/components/main-nav"
+import { MainNav } from "@/components/main-nav"
 import { ModeToggle } from "@/components/mode-toggle"
 
 export function SiteHeader() {
@@ -21,8 +21,8 @@ export function SiteHeader() {
             <SheetContent side="left" className="w-[240px] sm:w-[300px]">
               <div className="flex flex-col gap-6 py-6">
                 <Link href="/" className="flex items-center gap-2">
-                  <Image src="/placeholder.svg" alt="Logo" width={32} height={32} />
-                  <span className="font-bold text-xl text-gray-900 dark:text-white">Fixed Match</span>
+                  <Image src="/FIXEDMatchD.png" alt="Logo" width={32} height={32} />
+                  <span className="font-bold text-xl text-gray-900 dark:text-white">Fixed Match Pro</span>
                 </Link>
                 <div className="flex flex-col gap-2">
                   <Link
@@ -56,35 +56,20 @@ export function SiteHeader() {
                     My Account
                   </Link>
                 </div>
-                <div className="flex flex-col gap-2">
-                  <Link
-                    href="/auth/login"
-                    className="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white py-2"
-                  >
-                    Log in
-                  </Link>
-                  <Link
-                    href="/auth/signup"
-                    className="flex items-center gap-2 text-sm font-medium text-[#1a56db] py-2"
-                  >
-                    Sign up
-                  </Link>
-                </div>
+                {/* Removed login and signup buttons from mobile menu */}
               </div>
             </SheetContent>
           </Sheet>
           <Link href="/" className="flex items-center gap-2">
             <Image src="/placeholder.svg" alt="Logo" width={32} height={32} />
-            <span className="font-bold text-xl text-gray-900 dark:text-white hidden md:inline-block">Fixed Match</span>
+            <span className="font-bold text-xl text-gray-900 dark:text-white hidden md:inline-block">Fixed Match Pro</span>
           </Link>
         </div>
         <div className="hidden md:flex">
           <MainNav />
         </div>
         <div className="flex items-center gap-2">
-          <div className="hidden md:flex">
-            <AuthButtons />
-          </div>
+          {/* Removed AuthButtons component */}
           <ModeToggle />
         </div>
       </div>

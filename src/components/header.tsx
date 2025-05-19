@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { Menu, X, Bell } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -51,7 +52,7 @@ export default function Header() {
               FP
             </div>
             <span className="font-bold text-xl text-gray-900 dark:text-white hidden sm:inline-block">
-              FootballPredict
+              Fixed Match Pro
             </span>
           </Link>
 
@@ -78,19 +79,6 @@ export default function Header() {
               <Bell className="h-4 w-4" />
             </Button>
 
-            <div className="hidden md:block">
-              <Link href="/login">
-                <Button variant="outline" size="sm" className="mr-2">
-                  Log in
-                </Button>
-              </Link>
-              <Link href="/signup">
-                <Button size="sm" className="bg-[#1a56db] hover:bg-[#1e40af]">
-                  Sign up
-                </Button>
-              </Link>
-            </div>
-
             {/* Mobile menu button */}
             <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -116,17 +104,6 @@ export default function Header() {
                 </Link>
               ))}
             </nav>
-
-            <div className="pt-4 border-t border-gray-200 dark:border-gray-700 flex flex-col gap-2">
-              <Link href="/login" className="w-full">
-                <Button variant="outline" className="w-full">
-                  Log in
-                </Button>
-              </Link>
-              <Link href="/signup" className="w-full">
-                <Button className="w-full bg-[#1a56db] hover:bg-[#1e40af]">Sign up</Button>
-              </Link>
-            </div>
           </div>
         </div>
       )}
