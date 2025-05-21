@@ -80,15 +80,6 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
@@ -664,7 +655,7 @@ export default function UserManagementPage() {
                           <TableCell onClick={() => handleUserSelect(user)}>
                             <Badge
                               variant={
-                                user.status === "active" ? "success" :
+                                user.status === "active" ? "default" :
                                 user.status === "inactive" ? "secondary" :
                                 "destructive"
                               }
@@ -836,4 +827,6 @@ export default function UserManagementPage() {
           {/* Suspended users tab content */}
         </TabsContent>
       </Tabs>
-
+      </div>
+  );
+}

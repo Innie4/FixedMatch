@@ -107,7 +107,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
                 <div className="flex flex-col gap-6 py-6">
                   <Link href="/admin/dashboard" className="flex items-center gap-2">
                     <Image src="/placeholder.svg" alt="Logo" width={32} height={32} />
-                    <span className="font-bold text-xl text-gray-900 dark:text-white">Admin Panel</span>
+                    <span className="font-bold text-xl text-gray-900 dark:text-white">Admin Dashboard</span>
                   </Link>
                   <nav className="flex flex-col gap-2">
                     {navItems.map((item) => (

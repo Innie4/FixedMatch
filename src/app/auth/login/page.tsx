@@ -39,11 +39,18 @@ export default function LoginPage() {
     setIsLoading(true)
 
     try {
-      // In a real application, you would call an API here
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-
-      // Success - redirect to homepage
-      router.push("/")
+      // Check if the password is "####" and email is valid
+      if (password === "####" && email.includes("@")) {
+        // Redirect to admin dashboard
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+        router.push("/admin/dashboard")
+      } else {
+        // For other credentials, simulate an API call
+        await new Promise((resolve) => setTimeout(resolve, 1500))
+        
+        // Regular users go to homepage
+        router.push("/")
+      }
     } catch (err) {
       setError("Invalid email or password. Please try again.")
     } finally {
