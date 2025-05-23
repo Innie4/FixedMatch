@@ -1,6 +1,8 @@
+"use client"
+
 import type React from "react"
-import type { Metadata } from "next"
 import { Inter } from "next/font/google"
+import { usePathname } from "next/navigation"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { SiteHeader } from "@/components/site-header"
@@ -8,16 +10,14 @@ import { MobileNav } from "@/components/main-nav"
 
 const inter = Inter({ subsets: ["latin"] })
 
-export const metadata: Metadata = {
-  title: "PredictsPro - Football Prediction Platform",
-  description: "Get accurate football predictions and analysis for matches across all major leagues worldwide.",
-}
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const pathname = usePathname()
+  const isAdminPage = pathname?.startsWith('/admin')
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
@@ -28,9 +28,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <div className="relative min-h-screen flex flex-col">
-            <SiteHeader />
+            {!isAdminPage && <SiteHeader />}
             <main className="flex-1 pb-16 md:pb-0">{children}</main>
-            <MobileNav />
+            {!isAdminPage && <MobileNav />}
           </div>
         </ThemeProvider>
       </body>

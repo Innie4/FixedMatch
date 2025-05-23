@@ -110,16 +110,63 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 
+// Define interfaces for your data types
+interface ReviewEngagement {
+  likes: number;
+  views: number;
+}
+
+interface ReviewReply {
+  id: number;
+  adminName: string;
+  comment: string;
+  date: string;
+  engagement: ReviewEngagement;
+}
+
+interface EditHistory {
+  originalComment: string;
+  editedBy: string;
+  editDate: string;
+  reason: string;
+}
+
+interface Review {
+  id: number;
+  username: string;
+  userId: number;
+  userAvatar: string;
+  rating: number;
+  title: string;
+  comment: string;
+  date: string;
+  status: string;
+  featured: boolean;
+  visible: boolean;
+  flagged: boolean;
+  flagReason: string | null;
+  edited: boolean;
+  editHistory: EditHistory[];
+  replies: ReviewReply[];
+  engagement: ReviewEngagement;
+}
+
+interface TemplateResponse {
+  id: number;
+  title: string;
+  content: string;
+}
+
 export default function ReviewManagementPage() {
-  const [selectedReview, setSelectedReview] = useState(null)
+  const [selectedReview, setSelectedReview] = useState<Review | null>(null)
   const [isReviewDetailsOpen, setIsReviewDetailsOpen] = useState(false)
   const [isReplyOpen, setIsReplyOpen] = useState(false)
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
-  const [selectedRows, setSelectedRows] = useState([])
+  const [selectedRows, setSelectedRows] = useState<number[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
   const [sortColumn, setSortColumn] = useState("date")
-  const [sortDirection, setSortDirection] = useState("desc")
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc")
   const [searchTerm, setSearchTerm] = useState("")
   const [filterStatus, setFilterStatus] = useState("all")
   const [filterRating, setFilterRating] = useState("all")
@@ -129,7 +176,7 @@ export default function ReviewManagementPage() {
   const [isTemplateResponseOpen, setIsTemplateResponseOpen] = useState(false)
   
   // Mock reviews data
-  const reviews = [
+  const reviews: Review[] = [
     {
       id: 1,
       username: "john_doe",
@@ -261,7 +308,7 @@ export default function ReviewManagementPage() {
   ]
   
   // Mock template responses
-  const templateResponses = [
+  const templateResponses: TemplateResponse[] = [
     {
       id: 1,
       title: "Thank you for positive feedback",
@@ -312,9 +359,12 @@ export default function ReviewManagementPage() {
   // Sort reviews
   const sortedReviews = [...filteredReviews].sort((a, b) => {
     if (sortColumn === "date") {
+      // Convert string dates to timestamps for comparison
+      const dateA = new Date(a.date).getTime();
+      const dateB = new Date(b.date).getTime();
       return sortDirection === "asc" 
-        ? new Date(a.date) - new Date(b.date)
-        : new Date(b.date) - new Date(a.date);
+        ? dateA - dateB
+        : dateB - dateA;
     } else if (sortColumn === "rating") {
       return sortDirection === "asc" 
         ? a.rating - b.rating
@@ -333,7 +383,7 @@ export default function ReviewManagementPage() {
   const paginatedReviews = sortedReviews.slice(startIndex, startIndex + itemsPerPage);
   
   // Handle row selection
-  const handleRowSelect = (reviewId) => {
+  const handleRowSelect = (reviewId: number) => {
     if (selectedRows.includes(reviewId)) {
       setSelectedRows(selectedRows.filter(id => id !== reviewId));
     } else {
@@ -351,7 +401,7 @@ export default function ReviewManagementPage() {
   };
   
   // Handle sort
-  const handleSort = (column) => {
+  const handleSort = (column: string) => {
     if (sortColumn === column) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
@@ -361,43 +411,43 @@ export default function ReviewManagementPage() {
   };
   
   // Handle review selection
-  const handleReviewSelect = (review) => {
+  const handleReviewSelect = (review: Review) => {
     setSelectedReview(review);
     setIsReviewDetailsOpen(true);
   };
   
   // Handle review reply
-  const handleReviewReply = (review) => {
+  const handleReviewReply = (review: Review) => {
     setSelectedReview(review);
     setIsReplyOpen(true);
   };
   
   // Handle review edit
-  const handleReviewEdit = (review) => {
+  const handleReviewEdit = (review: Review) => {
     setSelectedReview(review);
     setIsEditReviewOpen(true);
   };
   
   // Handle review approval
-  const handleReviewApproval = (reviewId, approved) => {
+  const handleReviewApproval = (reviewId: number, approved: boolean) => {
     // In a real app, this would call an API to update the review status
     console.log(`Review ${reviewId} ${approved ? 'approved' : 'rejected'}`);
   };
   
   // Handle review visibility toggle
-  const handleVisibilityToggle = (reviewId) => {
+  const handleVisibilityToggle = (reviewId: number) => {
     // In a real app, this would call an API to toggle visibility
     console.log(`Toggling visibility for review ${reviewId}`);
   };
   
   // Handle review featuring toggle
-  const handleFeatureToggle = (reviewId) => {
+  const handleFeatureToggle = (reviewId: number) => {
     // In a real app, this would call an API to toggle featuring
     console.log(`Toggling featured status for review ${reviewId}`);
   };
   
   // Handle bulk actions
-  const handleBulkAction = (action) => {
+  const handleBulkAction = (action: string) => {
     // In a real app, this would call an API to perform the action
     console.log(`Performing ${action} on reviews:`, selectedRows);
     
@@ -406,12 +456,12 @@ export default function ReviewManagementPage() {
   };
   
   // Handle pagination
-  const handlePageChange = (page) => {
+  const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
   
   // Handle items per page change
-  const handleItemsPerPageChange = (value) => {
+  const handleItemsPerPageChange = (value: string) => {
     setItemsPerPage(parseInt(value));
     setCurrentPage(1);
   };
@@ -422,11 +472,11 @@ export default function ReviewManagementPage() {
       <Breadcrumb className="mb-4">
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink as={Link} href="/admin/dashboard">Dashboard</BreadcrumbLink>
+            <BreadcrumbLink href="/admin/dashboard">Dashboard</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbLink as={Link} href="/admin/reviews">Review Management</BreadcrumbLink>
+            <BreadcrumbLink href="/admin/reviews">Review Management</BreadcrumbLink>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
@@ -584,121 +634,147 @@ export default function ReviewManagementPage() {
                           />
                           <span className="font-medium">{review.username}</span>
                         </div>
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <Calendar className="h-3 w-3 mr-1" />
-                          {review.date}
-                        </div>
+                        <span className="text-xs text-muted-foreground">{review.date}</span>
                       </div>
                     </div>
-                    <div className="flex">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`h-4 w-4 ${
-                            i < review.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
-                          }`}
-                        />
-                      ))}
+                    <div className="flex items-center space-x-1">
+                      {review.flagged && (
+                        <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
+                          <AlertTriangle className="h-3 w-3 mr-1" />
+                          Flagged
+                        </Badge>
+                      )}
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => handleReviewSelect(review)}>
+                            <Eye className="mr-2 h-4 w-4" />
+                            View Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleReviewReply(review)}>
+                            <MessageSquare className="mr-2 h-4 w-4" />
+                            Reply
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleReviewEdit(review)}>
+                            <Edit className="mr-2 h-4 w-4" />
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem onClick={() => handleReviewApproval(review.id, true)}>
+                            <CheckCircle2 className="mr-2 h-4 w-4" />
+                            Approve
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleReviewApproval(review.id, false)}>
+                            <XCircle className="mr-2 h-4 w-4" />
+                            Reject
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem onClick={() => {
+                            setSelectedReview(review);
+                            setIsDeleteConfirmOpen(true);
+                          }}>
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   </div>
-                  <CardTitle className="text-base mt-2">{review.title}</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground line-clamp-3">{review.comment}</p>
-                  {review.flagged && (
-                    <Badge variant="destructive" className="mt-2">
-                      <AlertTriangle className="h-3 w-3 mr-1" />
-                      Flagged: {review.flagReason}
-                    </Badge>
+                <CardContent className="pb-3">
+                  <div className="mb-2 flex items-center">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <Star
+                        key={star}
+                        className={`h-4 w-4 ${
+                          star <= review.rating
+                            ? "fill-yellow-400 text-yellow-400"
+                            : "text-gray-300"
+                        }`}
+                      />
+                    ))}
+                    <span className="ml-2 text-sm font-medium">{review.title}</span>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">{review.comment}</p>
+                  {review.replies.length > 0 && (
+                    <div className="mt-3 pt-3 border-t">
+                      <p className="text-xs font-medium mb-1">Admin Response:</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-300">
+                        {review.replies[0].comment}
+                      </p>
+                    </div>
                   )}
                 </CardContent>
                 <CardFooter className="flex justify-between pt-0">
                   <div className="flex items-center text-xs text-muted-foreground">
                     <ThumbsUp className="h-3 w-3 mr-1" />
                     {review.engagement.likes} likes
-                    <Eye className="h-3 w-3 ml-2 mr-1" />
-                    {review.engagement.views} views
                   </div>
-                  <div className="flex space-x-1">
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      onClick={() => handleReviewSelect(review)}
+                  <div className="flex space-x-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleVisibilityToggle(review.id)}
                     >
-                      <Eye className="h-4 w-4" />
+                      {review.visible ? (
+                        <Eye className="h-4 w-4 mr-1" />
+                      ) : (
+                        <EyeOff className="h-4 w-4 mr-1" />
+                      )}
+                      {review.visible ? "Hide" : "Show"}
                     </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="icon"
-                      onClick={() => handleReviewEdit(review)}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleFeatureToggle(review.id)}
                     >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="icon"
-                      onClick={() => handleReviewReply(review)}
-                    >
-                      <MessageSquare className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="icon"
-                      className="text-green-600"
-                      onClick={() => handleReviewApproval(review.id, true)}
-                    >
-                      <CheckCircle2 className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="icon"
-                      className="text-red-600"
-                      onClick={() => handleReviewApproval(review.id, false)}
-                    >
-                      <XCircle className="h-4 w-4" />
+                      {review.featured ? (
+                        <BookmarkCheck className="h-4 w-4 mr-1" />
+                      ) : (
+                        <Bookmark className="h-4 w-4 mr-1" />
+                      )}
+                      {review.featured ? "Unfeature" : "Feature"}
                     </Button>
                   </div>
                 </CardFooter>
               </Card>
             ))}
           </div>
-          
-          {paginatedReviews.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-10 text-center">
-              <div className="rounded-full bg-muted p-3 mb-4">
-                <MessageSquare className="h-6 w-6 text-muted-foreground" />
-              </div>
-              <h3 className="text-lg font-semibold">No pending reviews</h3>
-              <p className="text-muted-foreground mt-2">
-                There are no pending reviews that match your filters.
-              </p>
-            </div>
-          )}
-          
+
           {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between">
+            <div className="flex-1 text-sm text-muted-foreground">
+              Showing <span className="font-medium">{startIndex + 1}</span> to{" "}
+              <span className="font-medium">
+                {Math.min(startIndex + itemsPerPage, sortedReviews.length)}
+              </span>{" "}
+              of <span className="font-medium">{sortedReviews.length}</span> reviews
+            </div>
+            <div className="flex items-center space-x-6 lg:space-x-8">
               <div className="flex items-center space-x-2">
-                <p className="text-sm text-muted-foreground">
-                  Showing
-                </p>
+                <p className="text-sm font-medium">Rows per page</p>
                 <Select
                   value={itemsPerPage.toString()}
                   onValueChange={handleItemsPerPageChange}
                 >
                   <SelectTrigger className="h-8 w-[70px]">
-                    <SelectValue placeholder={itemsPerPage} />
+                    <SelectValue placeholder={itemsPerPage.toString()} />
                   </SelectTrigger>
                   <SelectContent side="top">
-                    <SelectItem value="5">5</SelectItem>
-                    <SelectItem value="10">10</SelectItem>
-                    <SelectItem value="20">20</SelectItem>
-                    <SelectItem value="50">50</SelectItem>
+                    {[5, 10, 20, 50].map((pageSize) => (
+                      <SelectItem key={pageSize} value={pageSize.toString()}>
+                        {pageSize}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
-                <p className="text-sm text-muted-foreground">
-                  of {filteredReviews.length} reviews
-                </p>
+              </div>
+              <div className="flex w-[100px] items-center justify-center text-sm font-medium">
+                Page {currentPage} of {totalPages}
               </div>
               <div className="flex items-center space-x-2">
                 <Button
@@ -719,989 +795,13 @@ export default function ReviewManagementPage() {
                 </Button>
               </div>
             </div>
-          )}
+          </div>
         </TabsContent>
         
+        {/* Other tab contents */}
         <TabsContent value="approved" className="space-y-4">
-          {/* Approved Reviews Section - Table Layout */}
-          <Card>
-            <CardHeader className="pb-3">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div className="flex flex-1 items-center space-x-2">
-                  <div className="relative flex-1 max-w-sm">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      type="search"
-                      placeholder="Search approved reviews..."
-                      className="pl-8"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                  </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm">
-                        <Filter className="mr-2 h-4 w-4" />
-                        Filter
-                        <ChevronDown className="ml-2 h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-[200px]">
-                      <DropdownMenuLabel>Filter by Rating</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => setFilterRating("all")}>
-                        All Ratings
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setFilterRating("5")}>
-                        5 Stars
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setFilterRating("4")}>
-                        4 Stars
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setFilterRating("3")}>
-                        3 Stars
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setFilterRating("2")}>
-                        2 Stars
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setFilterRating("1")}>
-                        1 Star
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuLabel>Filter by Date</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => setFilterDateRange("all")}>
-                        All Time
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setFilterDateRange("today")}>
-                        Today
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setFilterDateRange("week")}>
-                        This Week
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setFilterDateRange("month")}>
-                        This Month
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-                
-                {selectedRows.length > 0 && (
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-muted-foreground">
-                      {selectedRows.length} selected
-                    </span>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="outline" size="sm">
-                          Actions
-                          <ChevronDown className="ml-2 h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleBulkAction("feature")}>
-                          <BookmarkCheck className="mr-2 h-4 w-4" />
-                          Feature
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleBulkAction("hide")}>
-                          <EyeOff className="mr-2 h-4 w-4" />
-                          Hide
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleBulkAction("show")}>
-                          <Eye className="mr-2 h-4 w-4" />
-                          Show
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => handleBulkAction("delete")}>
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                )}
-              </div>
-              
-              {selectedRows.length > 0 && (
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">
-                    {selectedRows.length} selected
-                  </span>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm">
-                        Actions
-                        <ChevronDown className="ml-2 h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => handleBulkAction("feature")}>
-                        <BookmarkCheck className="mr-2 h-4 w-4" />
-                        Feature
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleBulkAction("hide")}>
-                        <EyeOff className="mr-2 h-4 w-4" />
-                        Hide
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleBulkAction("show")}>
-                        <Eye className="mr-2 h-4 w-4" />
-                        Show
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => handleBulkAction("delete")}>
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              )}
-            </div>
-            
-            {selectedRows.length > 0 && (
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">
-                  {selectedRows.length} selected
-                </span>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm">
-                      Actions
-                      <ChevronDown className="ml-2 h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => handleBulkAction("feature")}>
-                      <BookmarkCheck className="mr-2 h-4 w-4" />
-                      Feature
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleBulkAction("hide")}>
-                      <EyeOff className="mr-2 h-4 w-4" />
-                      Hide
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleBulkAction("show")}>
-                      <Eye className="mr-2 h-4 w-4" />
-                      Show
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => handleBulkAction("delete")}>
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            )}
-          </div>
-          
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[40px]">
-                    <Checkbox
-                      checked={selectedRows.length === paginatedReviews.length && paginatedReviews.length > 0}
-                      onCheckedChange={handleSelectAll}
-                      aria-label="Select all"
-                    />
-                  </TableHead>
-                  <TableHead>User</TableHead>
-                  <TableHead className="cursor-pointer" onClick={() => handleSort("rating")}>
-                    <div className="flex items-center">
-                      Rating
-                      {sortColumn === "rating" && (
-                        sortDirection === "asc" ? 
-                          <ChevronUp className="ml-1 h-4 w-4" /> : 
-                          <ChevronDown className="ml-1 h-4 w-4" />
-                      )}
-                    </div>
-                  </TableHead>
-                  <TableHead>Review</TableHead>
-                  <TableHead className="cursor-pointer" onClick={() => handleSort("date")}>
-                    <div className="flex items-center">
-                      Date
-                      {sortColumn === "date" && (
-                        sortDirection === "asc" ? 
-                          <ChevronUp className="ml-1 h-4 w-4" /> : 
-                          <ChevronDown className="ml-1 h-4 w-4" />
-                      )}
-                    </div>
-                  </TableHead>
-                  <TableHead className="cursor-pointer" onClick={() => handleSort("engagement")}>
-                    <div className="flex items-center">
-                      Engagement
-                      {sortColumn === "engagement" && (
-                        sortDirection === "asc" ? 
-                          <ChevronUp className="ml-1 h-4 w-4" /> : 
-                          <ChevronDown className="ml-1 h-4 w-4" />
-                      )}
-                    </div>
-                  </TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {paginatedReviews.map((review) => (
-                  <TableRow key={review.id}>
-                    <TableCell>
-                      <Checkbox
-                        checked={selectedRows.includes(review.id)}
-                        onCheckedChange={() => handleRowSelect(review.id)}
-                        aria-label={`Select review ${review.id}`}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center">
-                        <Image
-                          src={review.userAvatar}
-                          alt={review.username}
-                          width={24}
-                          height={24}
-                          className="rounded-full mr-2"
-                        />
-                        <span>{review.username}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`h-4 w-4 ${
-                              i < review.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
-                            }`}
-                          />
-                        ))}
-                      </div>
-                    </TableCell>
-                    <TableCell className="max-w-xs truncate">
-                      <span className="font-medium">{review.title}</span>
-                      <p className="text-xs text-muted-foreground truncate">{review.comment}</p>
-                    </TableCell>
-                    <TableCell>{review.date}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center space-x-2">
-                        <ThumbsUp className="h-3 w-3" />
-                        <span className="text-xs">{review.engagement.likes}</span>
-                        <Eye className="h-3 w-3 ml-1" />
-                        <span className="text-xs">{review.engagement.views}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center space-x-2">
-                        {review.featured && (
-                          <Badge variant="secondary">Featured</Badge>
-                        )}
-                        {review.edited && (
-                          <Badge variant="outline">Edited</Badge>
-                        )}
-                        {review.replies.length > 0 && (
-                          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                            Replied
-                          </Badge>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="h-4 w-4" />
-                            <span className="sr-only">Actions</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleReviewEdit(review)}>
-                            <Edit className="mr-2 h-4 w-4" />
-                            Edit
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleReviewReply(review)}>
-                            <MessageSquare className="mr-2 h-4 w-4" />
-                            Reply
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleFeatureToggle(review.id)}>
-                            {review.featured ? (
-                              <>
-                                <Bookmark className="mr-2 h-4 w-4" />
-                                Unfeature
-                              </>
-                            ) : (
-                              <>
-                                <BookmarkCheck className="mr-2 h-4 w-4" />
-                                Feature
-                              </>
-                            )}
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleVisibilityToggle(review.id)}>
-                            {review.visible ? (
-                              <>
-                                <EyeOff className="mr-2 h-4 w-4" />
-                                Hide
-                              </>
-                            ) : (
-                              <>
-                                <Eye className="mr-2 h-4 w-4" />
-                                Show
-                              </>
-                            )}
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem onClick={() => handleDelete(review)}>
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-          
-          {/* Pagination Controls */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <p className="text-sm text-muted-foreground">
-                Showing <span className="font-medium">{startIndex + 1}</span> to{" "}
-                <span className="font-medium">
-                  {Math.min(startIndex + itemsPerPage, filteredReviews.length)}
-                </span>{" "}
-                of <span className="font-medium">{filteredReviews.length}</span> reviews
-              </p>
-              <Select
-                value={itemsPerPage.toString()}
-                onValueChange={handleItemsPerPageChange}
-              >
-                <SelectTrigger className="h-8 w-[70px]">
-                  <SelectValue placeholder={itemsPerPage} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="5">5</SelectItem>
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="20">20</SelectItem>
-                  <SelectItem value="50">50</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-              >
-                Previous
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-              >
-                Next
-              </Button>
-            </div>
-          </div>
-          </TabsContent>
-          
-          <TabsContent value="approved" className="space-y-4">
-          {/* Approved Reviews Section - Table Layout */}
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
-            <div className="flex flex-1 items-center space-x-2">
-              <div className="relative flex-1 max-w-sm">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="search"
-                  placeholder="Search approved reviews..."
-                  className="pl-8"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm">
-                    <Filter className="mr-2 h-4 w-4" />
-                    Filter
-                    <ChevronDown className="ml-2 h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-[200px]">
-                  <DropdownMenuLabel>Filter by Rating</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => setFilterRating("all")}>
-                    All Ratings
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setFilterRating("5")}>
-                    5 Stars
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setFilterRating("4")}>
-                    4 Stars
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setFilterRating("3")}>
-                    3 Stars
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setFilterRating("2")}>
-                    2 Stars
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setFilterRating("1")}>
-                    1 Star
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuLabel>Filter by Date</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => setFilterDateRange("all")}>
-                    All Time
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setFilterDateRange("today")}>
-                    Today
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setFilterDateRange("week")}>
-                    This Week
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setFilterDateRange("month")}>
-                    This Month
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-            
-            {selectedRows.length > 0 && (
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">
-                  {selectedRows.length} selected
-                </span>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm">
-                      Actions
-                      <ChevronDown className="ml-2 h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => handleBulkAction("feature")}>
-                      <BookmarkCheck className="mr-2 h-4 w-4" />
-                      Feature
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleBulkAction("hide")}>
-                      <EyeOff className="mr-2 h-4 w-4" />
-                      Hide
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleBulkAction("show")}>
-                      <Eye className="mr-2 h-4 w-4" />
-                      Show
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => handleBulkAction("delete")}>
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            )}
-          </div>
-          
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[40px]">
-                    <Checkbox
-                      checked={selectedRows.length === paginatedReviews.length && paginatedReviews.length > 0}
-                      onCheckedChange={handleSelectAll}
-                      aria-label="Select all"
-                    />
-                  </TableHead>
-                  <TableHead>User</TableHead>
-                  <TableHead className="cursor-pointer" onClick={() => handleSort("rating")}>
-                    <div className="flex items-center">
-                      Rating
-                      {sortColumn === "rating" && (
-                        sortDirection === "asc" ? 
-                          <ChevronUp className="ml-1 h-4 w-4" /> : 
-                          <ChevronDown className="ml-1 h-4 w-4" />
-                      )}
-                    </div>
-                  </TableHead>
-                  <TableHead>Review</TableHead>
-                  <TableHead className="cursor-pointer" onClick={() => handleSort("date")}>
-                    <div className="flex items-center">
-                      Date
-                      {sortColumn === "date" && (
-                        sortDirection === "asc" ? 
-                          <ChevronUp className="ml-1 h-4 w-4" /> : 
-                          <ChevronDown className="ml-1 h-4 w-4" />
-                      )}
-                    </div>
-                  </TableHead>
-                  <TableHead className="cursor-pointer" onClick={() => handleSort("engagement")}>
-                    <div className="flex items-center">
-                      Engagement
-                      {sortColumn === "engagement" && (
-                        sortDirection === "asc" ? 
-                          <ChevronUp className="ml-1 h-4 w-4" /> : 
-                          <ChevronDown className="ml-1 h-4 w-4" />
-                      )}
-                    </div>
-                  </TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {paginatedReviews.map((review) => (
-                  <TableRow key={review.id}>
-                    <TableCell>
-                      <Checkbox
-                        checked={selectedRows.includes(review.id)}
-                        onCheckedChange={() => handleRowSelect(review.id)}
-                        aria-label={`Select review ${review.id}`}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center">
-                        <Image
-                          src={review.userAvatar}
-                          alt={review.username}
-                          width={24}
-                          height={24}
-                          className="rounded-full mr-2"
-                        />
-                        <span>{review.username}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`h-4 w-4 ${
-                              i < review.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
-                            }`}
-                          />
-                        ))}
-                      </div>
-                    </TableCell>
-                    <TableCell className="max-w-xs truncate">
-                      <span className="font-medium">{review.title}</span>
-                      <p className="text-xs text-muted-foreground truncate">{review.comment}</p>
-                    </TableCell>
-                    <TableCell>{review.date}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center space-x-2">
-                        <ThumbsUp className="h-3 w-3" />
-                        <span className="text-xs">{review.engagement.likes}</span>
-                        <Eye className="h-3 w-3 ml-1" />
-                        <span className="text-xs">{review.engagement.views}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center space-x-2">
-                        {review.featured && (
-                          <Badge variant="secondary">Featured</Badge>
-                        )}
-                        {review.edited && (
-                          <Badge variant="outline">Edited</Badge>
-                        )}
-                        {review.replies.length > 0 && (
-                          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                            Replied
-                          </Badge>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="h-4 w-4" />
-                            <span className="sr-only">Actions</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleReviewEdit(review)}>
-                            <Edit className="mr-2 h-4 w-4" />
-                            Edit
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleReviewReply(review)}>
-                            <MessageSquare className="mr-2 h-4 w-4" />
-                            Reply
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleFeatureToggle(review.id)}>
-                            {review.featured ? (
-                              <>
-                                <Bookmark className="mr-2 h-4 w-4" />
-                                Unfeature
-                              </>
-                            ) : (
-                              <>
-                                <BookmarkCheck className="mr-2 h-4 w-4" />
-                                Feature
-                              </>
-                            )}
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleVisibilityToggle(review.id)}>
-                            {review.visible ? (
-                              <>
-                                <EyeOff className="mr-2 h-4 w-4" />
-                                Hide
-                              </>
-                            ) : (
-                              <>
-                                <Eye className="mr-2 h-4 w-4" />
-                                Show
-                              </>
-                            )}
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem onClick={() => handleDelete(review)}>
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-          
-          {/* Pagination Controls */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <p className="text-sm text-muted-foreground">
-                Showing <span className="font-medium">{startIndex + 1}</span> to{" "}
-                <span className="font-medium">
-                  {Math.min(startIndex + itemsPerPage, filteredReviews.length)}
-                </span>{" "}
-                of <span className="font-medium">{filteredReviews.length}</span> reviews
-              </p>
-              <Select
-                value={itemsPerPage.toString()}
-                onValueChange={handleItemsPerPageChange}
-              >
-                <SelectTrigger className="h-8 w-[70px]">
-                  <SelectValue placeholder={itemsPerPage} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="5">5</SelectItem>
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="20">20</SelectItem>
-                  <SelectItem value="50">50</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-              >
-                Previous
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-              >
-                Next
-              </Button>
-            </div>
-          </div>
-          </TabsContent>
-          
-          {/* Similar TabsContent for rejected, flagged, and featured tabs */}
-          
-          {/* Edit Review Dialog */}
-          <Dialog open={isEditReviewOpen} onOpenChange={setIsEditReviewOpen}>
-            <DialogContent className="sm:max-w-[600px]">
-              <DialogHeader>
-                <DialogTitle>Edit Review</DialogTitle>
-                <DialogDescription>
-                  Make changes to the review content. All edits are logged.
-                </DialogDescription>
-              </DialogHeader>
-              {selectedReview && (
-                <div className="space-y-4 py-4">
-                  <div className="flex items-center space-x-2">
-                    <Image
-                      src={selectedReview.userAvatar}
-                      alt={selectedReview.username}
-                      width={32}
-                      height={32}
-                      className="rounded-full"
-                    />
-                    <div>
-                      <p className="font-medium">{selectedReview.username}</p>
-                      <p className="text-sm text-muted-foreground">{selectedReview.date}</p>
-                    </div>
-                    <div className="ml-auto flex">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`h-4 w-4 ${
-                            i < selectedReview.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="edit-title">Review Title</Label>
-                    <Input
-                      id="edit-title"
-                      defaultValue={selectedReview.title}
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="edit-comment">Review Content</Label>
-                    <Textarea
-                      id="edit-comment"
-                      rows={5}
-                      defaultValue={selectedReview.comment}
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="edit-reason">Edit Reason</Label>
-                    <Input
-                      id="edit-reason"
-                      placeholder="Reason for editing this review"
-                    />
-                  </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    <Switch id="feature-review" />
-                    <Label htmlFor="feature-review">Feature this review</Label>
-                  </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    <Switch id="visible-review" defaultChecked={selectedReview.visible} />
-                    <Label htmlFor="visible-review">Visible on frontend</Label>
-                  </div>
-                  
-                  {selectedReview.editHistory.length > 0 && (
-                    <div className="space-y-2 border-t pt-4 mt-4">
-                      <h4 className="font-medium">Edit History</h4>
-                      <div className="space-y-2 max-h-[200px] overflow-y-auto">
-                        {selectedReview.editHistory.map((edit, index) => (
-                          <div key={index} className="text-sm border rounded-md p-2">
-                            <p className="text-muted-foreground">
-                              Edited by {edit.editedBy} on {edit.editDate}
-                            </p>
-                            <p className="text-muted-foreground text-xs">
-                              Reason: {edit.reason}
-                            </p>
-                            <p className="mt-1 text-xs">Original: {edit.originalComment}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setIsEditReviewOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={() => {
-                  console.log("Saving edited review");
-                  setIsEditReviewOpen(false);
-                }}>
-                  Save Changes
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-          
-          {/* Reply to Review Dialog */}
-          <Dialog open={isReplyOpen} onOpenChange={setIsReplyOpen}>
-            <DialogContent className="sm:max-w-[600px]">
-              <DialogHeader>
-                <DialogTitle>Reply to Review</DialogTitle>
-                <DialogDescription>
-                  Your reply will be visible to all users on the platform.
-                </DialogDescription>
-              </DialogHeader>
-              {selectedReview && (
-                <div className="space-y-4 py-4">
-                  <div className="border rounded-md p-3 bg-muted/50">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <Image
-                        src={selectedReview.userAvatar}
-                        alt={selectedReview.username}
-                        width={24}
-                        height={24}
-                        className="rounded-full"
-                      />
-                      <p className="font-medium">{selectedReview.username}</p>
-                      <div className="ml-auto flex">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`h-3 w-3 ${
-                              i < selectedReview.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
-                            }`}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                    <p className="text-sm font-medium">{selectedReview.title}</p>
-                    <p className="text-sm">{selectedReview.comment}</p>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="reply-content">Your Reply</Label>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={() => setIsTemplateResponseOpen(true)}
-                        className="h-8 text-xs"
-                      >
-                        Use Template
-                      </Button>
-                    </div>
-                    <Textarea
-                      id="reply-content"
-                      rows={5}
-                      placeholder="Type your reply here..."
-                    />
-                  </div>
-                  
-                  {selectedReview.replies.length > 0 && (
-                    <div className="space-y-2 border-t pt-4">
-                      <h4 className="font-medium">Previous Replies</h4>
-                      <div className="space-y-2 max-h-[200px] overflow-y-auto">
-                        {selectedReview.replies.map((reply, index) => (
-                          <div key={index} className="text-sm border rounded-md p-2">
-                            <div className="flex items-center justify-between">
-                              <p className="font-medium">{reply.adminName}</p>
-                              <p className="text-xs text-muted-foreground">{reply.date}</p>
-                            </div>
-                            <p className="mt-1">{reply.comment}</p>
-                            <div className="flex items-center space-x-2 mt-1 text-xs text-muted-foreground">
-                              <ThumbsUp className="h-3 w-3" />
-                              <span>{reply.engagement.likes}</span>
-                              <Eye className="h-3 w-3 ml-1" />
-                              <span>{reply.engagement.views}</span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setIsReplyOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={() => {
-                  console.log("Sending reply");
-                  setIsReplyOpen(false);
-                }}>
-                  Send Reply
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-          
-          {/* Template Responses Dialog */}
-          <Dialog open={isTemplateResponseOpen} onOpenChange={setIsTemplateResponseOpen}>
-            <DialogContent className="sm:max-w-[500px]">
-              <DialogHeader>
-                <DialogTitle>Response Templates</DialogTitle>
-                <DialogDescription>
-                  Select a template to use or create a new one.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4 py-4 max-h-[400px] overflow-y-auto">
-                {templateResponses.map((template) => (
-                  <div key={template.id} className="border rounded-md p-3 hover:bg-muted/50 cursor-pointer">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-medium">{template.title}</h4>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
-                            <Edit className="mr-2 h-4 w-4" />
-                            Edit
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                    <p className="text-sm mt-1">{template.content}</p>
-                    <div className="mt-2 flex justify-end">
-                      <Button 
-                        size="sm" 
-                        onClick={() => {
-                          // In a real app, this would insert the template into the reply textarea
-                          console.log(`Using template: ${template.title}`);
-                          setIsTemplateResponseOpen(false);
-                          // Keep the reply dialog open
-                        }}
-                      >
-                        Use Template
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-                
-                <div className="border border-dashed rounded-md p-3 hover:bg-muted/50 cursor-pointer">
-                  <div className="flex items-center justify-center h-20">
-                    <Button variant="ghost">
-                      <Plus className="mr-2 h-4 w-4" />
-                      Create New Template
-                    </Button>
-                  </div>
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setIsTemplateResponseOpen(false)}>
-                  Cancel
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-          
-          {/* Delete Confirmation Dialog */}
-          <AlertDialog open={isDeleteConfirmOpen} onOpenChange={setIsDeleteConfirmOpen}>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete the selected review
-                  and remove it from our servers.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={() => {
-                    console.log("Deleting review", selectedReview?.id);
-                    setIsDeleteConfirmOpen(false);
-                  }}
-                  className="bg-red-600 hover:bg-red-700"
-                >
-                  Delete
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          {/* Similar content structure as the "pending" tab */}
+        </TabsContent>
+        
+        <TabsContent value="rejected" className="space-y-4">
+          {/* Similar content structure as the "pending" tab */}

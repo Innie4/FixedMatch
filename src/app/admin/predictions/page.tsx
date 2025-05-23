@@ -99,23 +99,42 @@ import { Textarea } from "@/components/ui/textarea"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
 
+// Add this type definition at the top of your file, after imports
+type Prediction = {
+  id: number;
+  homeTeam: string;
+  homeTeamLogo: string;
+  awayTeam: string;
+  awayTeamLogo: string;
+  competition: string;
+  date: string;
+  time: string;
+  prediction: string;
+  odds: string;
+  status: string;
+  result: string | null;
+  isVip: boolean;
+  createdBy: string;
+  createdAt: string;
+};
+
 export default function PredictionManagementPage() {
-  const [isAddPredictionOpen, setIsAddPredictionOpen] = useState(false)
-  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false)
-  const [isBatchUploadOpen, setIsBatchUploadOpen] = useState(false)
-  const [selectedPrediction, setSelectedPrediction] = useState(null)
-  const [selectedRows, setSelectedRows] = useState([])
-  const [currentPage, setCurrentPage] = useState(1)
-  const [itemsPerPage, setItemsPerPage] = useState(10)
-  const [sortColumn, setSortColumn] = useState("date")
-  const [sortDirection, setSortDirection] = useState("desc")
-  const [searchTerm, setSearchTerm] = useState("")
-  const [filterStatus, setFilterStatus] = useState("all")
-  const [viewMode, setViewMode] = useState("table")
+  const [isAddPredictionOpen, setIsAddPredictionOpen] = useState(false);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [isBatchUploadOpen, setIsBatchUploadOpen] = useState(false);
+  const [selectedPrediction, setSelectedPrediction] = useState<Prediction | null>(null);
+  const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [sortColumn, setSortColumn] = useState("date");
+  const [sortDirection, setSortDirection] = useState("desc");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [viewMode, setViewMode] = useState("table");
   
   // Mock predictions data
-  const predictions = [
+  const predictions: Prediction[] = [
     {
       id: 1,
       homeTeam: "Manchester United",
@@ -207,8 +226,8 @@ export default function PredictionManagementPage() {
   const sortedPredictions = [...filteredPredictions].sort((a, b) => {
     if (sortColumn === "date") {
       return sortDirection === "asc" 
-        ? new Date(a.date) - new Date(b.date)
-        : new Date(b.date) - new Date(a.date);
+        ? new Date(a.date).getTime() - new Date(b.date).getTime()
+        : new Date(b.date).getTime() - new Date(a.date).getTime();
     }
     // Add more sorting options as needed
     return 0;
@@ -220,7 +239,7 @@ export default function PredictionManagementPage() {
   const paginatedPredictions = sortedPredictions.slice(startIndex, startIndex + itemsPerPage);
   
   // Handle row selection
-  const handleRowSelect = (predictionId) => {
+  const handleRowSelect = (predictionId: number) => {
     if (selectedRows.includes(predictionId)) {
       setSelectedRows(selectedRows.filter(id => id !== predictionId));
     } else {
@@ -238,7 +257,7 @@ export default function PredictionManagementPage() {
   };
   
   // Handle sort
-  const handleSort = (column) => {
+  const handleSort = (column: string) => {
     if (sortColumn === column) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
@@ -248,7 +267,7 @@ export default function PredictionManagementPage() {
   };
   
   // Handle bulk actions
-  const handleBulkAction = (action) => {
+  const handleBulkAction = (action: string) => {
     // In a real app, this would call an API to perform the action
     console.log(`Performing ${action} on predictions:`, selectedRows);
     
@@ -257,19 +276,19 @@ export default function PredictionManagementPage() {
   };
   
   // Handle prediction preview
-  const handlePreview = (prediction) => {
+  const handlePreview = (prediction: Prediction) => {
     setSelectedPrediction(prediction);
     setIsPreviewOpen(true);
   };
   
   // Handle prediction edit
-  const handleEdit = (prediction) => {
+  const handleEdit = (prediction: Prediction) => {
     setSelectedPrediction(prediction);
     setIsAddPredictionOpen(true);
   };
   
   // Handle prediction delete
-  const handleDelete = (prediction) => {
+  const handleDelete = (prediction: Prediction) => {
     setSelectedPrediction(prediction);
     setIsDeleteConfirmOpen(true);
   };

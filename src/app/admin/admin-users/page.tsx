@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import Link from "next/link"
 import Image from "next/image"
 import { 
   UserCog, 
@@ -13,22 +12,14 @@ import {
   Edit,
   Eye,
   ArrowUpDown,
-  Shield,
-  Clock,
-  Calendar,
-  Lock,
-  Plus,
   CheckCircle2,
   XCircle,
-  AlertTriangle,
   RefreshCw,
   KeyRound,
-  LogOut,
-  History,
   UserPlus,
   Mail
 } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { 
@@ -81,11 +72,7 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Switch } from "@/components/ui/switch"
-import { Separator } from "@/components/ui/separator"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
 import { 
   AlertDialog,
   AlertDialogAction,
@@ -97,7 +84,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { Progress } from "@/components/ui/progress"
+
 
 // Define Admin User type
 type AdminUser = {
@@ -612,19 +599,7 @@ export default function AdminUserManagementPage() {
             <UserCog className="h-4 w-4 mr-2" />
             Admin Accounts
           </TabsTrigger>
-          <TabsTrigger value="roles">
-            <Shield className="h-4 w-4 mr-2" />
-            Roles & Permissions
-          </TabsTrigger>
-          <TabsTrigger value="access-logs">
-            <History className="h-4 w-4 mr-2" />
-            Access Logs
-          </TabsTrigger>
-          <TabsTrigger value="security">
-            <Lock className="h-4 w-4 mr-2" />
-            Security Settings
-          </TabsTrigger>
-        </TabsList>
+          </TabsList>
         
         {/* Admin Accounts Tab */}
         <TabsContent value="admin-accounts" className="space-y-4">
