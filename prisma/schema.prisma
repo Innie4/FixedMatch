@@ -1,3 +1,12 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
 // Add these models to your schema
 
 model VIPSubscription {
@@ -21,4 +30,40 @@ model VIPAccessLog {
   action          String    // status_changed_to_active, status_changed_to_expired, etc.
   timestamp       DateTime
   subscription    VIPSubscription @relation(fields: [subscriptionId], references: [id])
+}
+
+
+// VIP Prediction Category
+model VIPPredictionCategory {
+  id          Int           @id @default(autoincrement())
+  name        String
+  slug        String        @unique
+  description String?
+  successRate Float         @default(0)
+  totalPicks  Int           @default(0)
+  predictions VIPPrediction[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+// VIP Prediction
+model VIPPrediction {
+  id          Int                   @id @default(autoincrement())
+  categoryId  Int
+  category    VIPPredictionCategory @relation(fields: [categoryId], references: [id])
+  homeTeam    String
+  awayTeam    String
+  league      String
+  matchTime   DateTime
+  prediction  String
+  odds        Float
+  analysis    String
+  confidence  Int
+  status      String                @default("pending") // pending, won, lost
+  result      String?
+  isArchived  Boolean               @default(false)
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+  createdBy   Int                   // Admin user ID
+  publishAt   DateTime              @default(now())
 }
