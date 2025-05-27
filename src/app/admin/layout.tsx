@@ -20,6 +20,8 @@ import {
   UserCog,
   User
 } from "lucide-react"
+import { Package } from "lucide-react"
+import { CreditCard } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
@@ -62,6 +64,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       icon: <Users className="h-5 w-5" />,
     },
     {
+      title: "Package Management",
+      href: "/admin/packages",
+      icon: <Package className="h-5 w-5" />,
+    },
+    {
       title: "Prediction Management",
       href: "/admin/predictions",
       icon: <FileText className="h-5 w-5" />,
@@ -90,6 +97,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       title: "Admin User Management",
       href: "/admin/admin-users",
       icon: <UserCog className="h-5 w-5" />,
+    },
+    {
+      title: "Payment Methods",
+      href: "/admin/payment-methods",
+      icon: <CreditCard className="h-5 w-5" />,
     },
   ]
 

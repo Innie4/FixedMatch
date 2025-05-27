@@ -13,6 +13,8 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Loader2, AlertCircle, EyeOff, Eye } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Separator } from "@/components/ui/separator"
+import { CountrySelector } from "@/components/ui/country-selector"
+import { useEffect } from "react"
 
 export default function SignupPage() {
   const router = useRouter()
@@ -23,6 +25,7 @@ export default function SignupPage() {
   const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [country, setCountry] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -31,7 +34,7 @@ export default function SignupPage() {
     setError(null)
 
     // Basic validation
-    if (!fullName || !email || !password) {
+    if (!fullName || !email || !password || !country) {
       setError("Please fill in all fields")
       return
     }
@@ -62,6 +65,25 @@ export default function SignupPage() {
       setIsLoading(false)
     }
   }
+
+  useEffect(() => {
+    // Get user's country from IP geolocation
+    const getUserCountry = async () => {
+      try {
+        const response = await fetch('https://ipapi.co/json/')
+        const data = await response.json()
+        if (data.country_code) {
+          setCountry(data.country_code)
+        }
+      } catch (error) {
+        console.log('Could not detect country:', error)
+        // Fallback to a default country like "US"
+        setCountry("US")
+      }
+    }
+    
+    getUserCountry()
+  }, [])
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50 dark:bg-gray-900">
@@ -136,6 +158,17 @@ export default function SignupPage() {
                 </button>
               </div>
               <p className="text-xs text-gray-500 dark:text-gray-400">Password must be at least 8 characters long</p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="country">Country</Label>
+              <CountrySelector
+                value={country}
+                onValueChange={setCountry}
+                placeholder="Select your country..."
+                disabled={isLoading}
+                className="w-full"
+              />
             </div>
 
             <div className="flex items-start space-x-2">

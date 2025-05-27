@@ -1,0 +1,24 @@
+// Add these models to your schema
+
+model VIPSubscription {
+  id                  Int       @id @default(autoincrement())
+  userId              Int
+  packageId           Int
+  startDate           DateTime
+  endDate             DateTime
+  status              String    @default("active") // active, grace_period, expired
+  lastNotificationDate DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  user                User      @relation(fields: [userId], references: [id])
+  package             Package   @relation(fields: [packageId], references: [id])
+  accessLogs          VIPAccessLog[]
+}
+
+model VIPAccessLog {
+  id              Int       @id @default(autoincrement())
+  subscriptionId  Int
+  action          String    // status_changed_to_active, status_changed_to_expired, etc.
+  timestamp       DateTime
+  subscription    VIPSubscription @relation(fields: [subscriptionId], references: [id])
+}

@@ -8,10 +8,12 @@ import VipPredictionCard from "@/components/vip-prediction-card"
 import SuccessRateChart from "@/components/success-rate-chart"
 import TestimonialCard from "@/components/testimonial-card"
 import PricingCard from "@/components/pricing-card"
+import { SubscriptionStatus } from "@/components/vip/SubscriptionStatus"
 import { useState } from "react"
+import { useSession } from "next-auth/react"
 
 export default function VipPage() {
-  // Add state for dialog
+  const { data: session } = useSession()
   const [showVipDialog, setShowVipDialog] = useState(false)
   
   // Sample VIP predictions data
@@ -213,6 +215,16 @@ export default function VipPage() {
 
   return (
     <main className="min-h-screen">
+      {/* Add SubscriptionStatus at the top of the page */}
+      {session?.user?.subscriptionStatus && session?.user?.subscriptionExpiry && (
+        <div className="container mx-auto px-4 py-4">
+          <SubscriptionStatus 
+            status={session.user.subscriptionStatus as 'active' | 'grace_period' | 'expired'}
+            expiryDate={new Date(session.user.subscriptionExpiry)}
+          />
+        </div>
+      )}
+      
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-[#1a56db] to-[#1e293b] text-white py-16 md:py-24">
         <div className="container mx-auto px-4">
