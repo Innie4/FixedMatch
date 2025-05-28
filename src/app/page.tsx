@@ -7,6 +7,7 @@ import TestimonialCarousel from "@/components/testimonial-carousel"
 import UpcomingMatches from "@/components/upcoming-matches"
 import NewsletterSignup from "@/components/newsletter-signup"
 import NotificationPopup from "@/components/notification-popup"
+import RecentWins from '@/components/recent-wins'
 
 export default function Home() {
   // Sample prediction data
@@ -183,6 +184,13 @@ export default function Home() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Recent Wins Section */}
+      <section className="py-12 bg-white dark:bg-gray-800">
+        <div className="container mx-auto px-4">
+          <RecentWins />
         </div>
       </section>
 
