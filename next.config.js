@@ -1,40 +1,26 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Debug line to check environment
-  ...(console.log('NODE_ENV:', process.env.NODE_ENV) || {}),
-  
-  // Only use basePath in production, not during development
+  // Production-only basePath configuration
   ...(process.env.NODE_ENV === 'production' ? { basePath: '/predicts' } : {}),
   
-  // Other common configurations
+  // Core configurations
   reactStrictMode: true,
   
-  // Add this configuration to ignore specific hydration errors
-  onDemandEntries: {
-    // Keep the pages in memory for longer to avoid rebuilding them too often
-    maxInactiveAge: 25 * 1000,
-    // Number of pages to keep in memory
-    pagesBufferLength: 2,
-  },
-  
-  // Configure React to be more tolerant of hydration mismatches
-  experimental: {
-    // This helps with hydration issues caused by browser extensions
-    optimizeCss: true,
-    // Increase tolerance for hydration mismatches
-    strictNextHead: false,
-  },
-  
-  // If you need to handle images from external domains
+  // Image optimization settings
   images: {
     domains: ['placeholder.com'],
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**',
-      },
-    ],
+    remotePatterns: [{
+      protocol: 'https',
+      hostname: '**'
+    }],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384]
   },
+  
+  // Performance optimizations
+  experimental: {
+    optimizeCss: true
+  }
 };
 
 module.exports = nextConfig;
