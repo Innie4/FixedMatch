@@ -1,11 +1,13 @@
+'use client'
+
 import Link from "next/link"
-import Image from "next/image"
 import { BarChart3, Clock, FileText, MessageSquare, Settings, Star, Trophy, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import UserStats from "@/components/user-stats"
 import UserPredictions from "@/components/user-predictions"
 import UserSubscription from "@/components/user-subscription"
+import { ProfileAvatar } from "@/components/avatar/ProfileAvatar"
 
 export default function UserDashboard() {
   // Sample user data - in a real app, this would come from a database or API
@@ -26,6 +28,12 @@ export default function UserDashboard() {
     },
   }
 
+  const handleAvatarChange = async (newAvatar: string) => {
+    // Here you would typically update the user's avatar in your database
+    console.log('Updating avatar:', newAvatar)
+    // For now, we'll just log it
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row gap-6">
@@ -34,11 +42,11 @@ export default function UserDashboard() {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden sticky top-20">
             <div className="p-6 text-center border-b border-gray-200 dark:border-gray-700">
               <div className="relative w-24 h-24 mx-auto mb-4">
-                <Image
-                  src={user.avatar || "/placeholder.svg"}
-                  alt={user.name}
-                  fill
-                  className="rounded-full object-cover"
+                <ProfileAvatar
+                  currentAvatar={user.avatar}
+                  onAvatarChange={handleAvatarChange}
+                  size="lg"
+                  className="mx-auto"
                 />
                 <div className="absolute -bottom-1 -right-1 bg-[#10b981] rounded-full p-1">
                   <Trophy className="h-4 w-4 text-white" />
