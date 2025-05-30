@@ -1,13 +1,15 @@
 import Link from "next/link"
 import Image from "next/image"
-import { ArrowRight, Calendar, ChevronRight, Star, Trophy } from "lucide-react"
+import { ArrowRight, Calendar, ChevronRight, Star, Trophy, Check } from "lucide-react"
 import PredictionCard from "@/components/prediction-card"
 import LeagueHighlight from "@/components/league-highlight"
 import TestimonialCarousel from "@/components/testimonial-carousel"
 import UpcomingMatches from "@/components/upcoming-matches"
 import NewsletterSignup from "@/components/newsletter-signup"
 import NotificationPopup from "@/components/notification-popup"
-import RecentWins from '@/components/recent-wins'
+import RecentWins from "@/components/recent-wins"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function Home() {
   // Sample prediction data
@@ -100,6 +102,37 @@ export default function Home() {
     { id: 4, name: "Serie A", logo: "/placeholder.svg?height=48&width=48", country: "Italy" },
     { id: 5, name: "Ligue 1", logo: "/placeholder.svg?height=48&width=48", country: "France" },
     { id: 6, name: "Champions League", logo: "/placeholder.svg?height=48&width=48", country: "Europe" },
+  ]
+
+  // Sample packages data
+  const packages = [
+    {
+      id: 1,
+      name: "Basic",
+      price: 19.99,
+      duration: "Monthly",
+      features: ["Daily Premium Predictions", "Match Analysis", "Win Rate Tracking", "Email Notifications"],
+      popular: false,
+      color: "bg-white dark:bg-gray-800",
+    },
+    {
+      id: 2,
+      name: "Pro",
+      price: 49.99,
+      duration: "Monthly",
+      features: ["All Basic Features", "VIP Predictions", "Early Access", "Live Chat Support", "Performance Analytics"],
+      popular: true,
+      color: "bg-gradient-to-br from-[#1a56db] to-[#1e40af]",
+    },
+    {
+      id: 3,
+      name: "Elite",
+      price: 99.99,
+      duration: "Monthly",
+      features: ["All Pro Features", "1-on-1 Consultation", "Custom Alerts", "Priority Support", "Advanced Statistics"],
+      popular: false,
+      color: "bg-gradient-to-br from-[#1e40af] to-[#312e81]",
+    },
   ]
 
   return (
@@ -260,8 +293,66 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Pricing Packages Section */}
+      <section className="py-16 bg-white dark:bg-gray-800">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">Choose Your Plan</h2>
+            <p className="text-lg text-gray-600 dark:text-gray-300">
+              Select the perfect package for your betting needs
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {packages.map((pkg) => (
+              <Card
+                key={pkg.id}
+                className={`relative transform hover:scale-105 transition-all ${pkg.popular ? pkg.color + " text-white" : ""}`}
+              >
+                {pkg.popular && (
+                  <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#10b981] text-white">
+                    Most Popular
+                  </Badge>
+                )}
+                <CardHeader>
+                  <CardTitle className="text-2xl font-bold text-center">{pkg.name}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center mb-6">
+                    <span className="text-4xl font-bold">${pkg.price}</span>
+                    <span className="text-sm opacity-80">/{pkg.duration.toLowerCase()}</span>
+                  </div>
+                  <ul className="space-y-3">
+                    {pkg.features.map((feature, index) => (
+                      <li key={index} className="flex items-center gap-2">
+                        <Check className="h-5 w-5 text-[#10b981]" />
+                        <span className={pkg.popular ? "text-white" : "text-gray-600 dark:text-gray-300"}>
+                          {feature}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+                <CardFooter>
+                  <Link
+                    href={`/subscribe/${pkg.id}`}
+                    className={`w-full py-3 px-6 rounded-lg text-center font-semibold transition-all flex items-center justify-center gap-2 ${
+                      pkg.popular
+                        ? "bg-[#10b981] hover:bg-[#0d9668] text-white"
+                        : "bg-[#1a56db] hover:bg-[#1e40af] text-white"
+                    }`}
+                  >
+                    Get Started
+                    <ArrowRight className="h-5 w-5" />
+                  </Link>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* League Highlights */}
-      <section className="py-12 bg-white dark:bg-gray-800">
+      <section className="py-12 bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-8">Popular Leagues</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
@@ -273,7 +364,7 @@ export default function Home() {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-900">
+      <section className="py-16 bg-white dark:bg-gray-800">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white text-center mb-12">
             What Our Members Say
@@ -283,7 +374,7 @@ export default function Home() {
       </section>
 
       {/* Upcoming Matches */}
-      <section className="py-12 bg-white dark:bg-gray-800">
+      <section className="py-12 bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-8">Upcoming Matches</h2>
           <UpcomingMatches />
@@ -291,7 +382,7 @@ export default function Home() {
       </section>
 
       {/* Newsletter Signup */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-900">
+      <section className="py-16 bg-white dark:bg-gray-800">
         <div className="container mx-auto px-4">
           <NewsletterSignup />
         </div>

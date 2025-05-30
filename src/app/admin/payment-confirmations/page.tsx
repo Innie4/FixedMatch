@@ -201,26 +201,41 @@ export default function PaymentConfirmationsPage() {
   }
   
   // Confirm approval
-  const handleApproveConfirm = () => {
+  // Fix the grantVIPAccess function call on line 208
+  const handleApproveConfirm = async () => {
     if (selectedConfirmation) {
-      setConfirmations(confirmations.map(confirmation => 
-        confirmation.id === selectedConfirmation.id 
-          ? { 
-              ...confirmation, 
-              status: "approved", 
-              reviewedAt: new Date().toISOString(),
-              reviewedBy: "admin",
-              adminComment: adminComment || undefined
-            } 
-          : confirmation
-      ))
-      setIsApproveOpen(false)
-      setAdminComment("")
-      
-      // In a real app, you would also:
-      // 1. Call API to update payment status
-      // 2. Grant VIP access to the user
-      // 3. Send email notification
+      try {
+        // Grant VIP access
+        await grantVIPAccess(
+          selectedConfirmation.userId,
+          selectedConfirmation.packageDuration
+        )
+  
+        // Update confirmation status
+        setConfirmations(confirmations.map(confirmation => 
+          confirmation.id === selectedConfirmation.id 
+            ? { 
+                ...confirmation, 
+                status: "approved", 
+                reviewedAt: new Date().toISOString(),
+                reviewedBy: "admin",
+                adminComment: adminComment || undefined
+              } 
+            : confirmation
+        ))
+  
+        // Send notification to user
+        await sendNotification(
+          selectedConfirmation.userId,
+          'Your payment has been approved. VIP access granted!'
+        )
+  
+        setIsApproveOpen(false)
+        setAdminComment("")
+      } catch (error) {
+        console.error('Error approving payment:', error)
+        // Show error message
+      }
     }
   }
   
@@ -510,4 +525,40 @@ export default function PaymentConfirmationsPage() {
       )}
     </div>
   )
+}
+
+const grantVIPAccess = async (userId: number, packageDuration: string) => {
+  try {
+    const response = await fetch('/api/subscriptions/grant-vip', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId, packageDuration }),
+    })
+    
+    if (!response.ok) throw new Error('Failed to grant VIP access')
+    return await response.json()
+  } catch (error) {
+    console.error('Error granting VIP access:', error)
+    throw error
+  }
+}
+
+const sendNotification = async (userId: number, message: string) => {
+  try {
+    const response = await fetch('/api/notifications/send', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId, message }),
+    })
+    
+    if (!response.ok) throw new Error('Failed to send notification')
+    return await response.json()
+  } catch (error) {
+    console.error('Error sending notification:', error)
+    throw error
+  }
 }
