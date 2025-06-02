@@ -24,7 +24,7 @@ export default function AboutPage() {
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-5xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-8 text-gray-900 dark:text-white">About Fixed Match Pro</h1>
+        <h1 className="text-4xl font-bold text-center mb-8 text-gray-900 dark:text-white">About Legit Soccer Tips</h1>
         
         {/* Hero Section */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8 mb-10">
@@ -32,7 +32,7 @@ export default function AboutPage() {
             <div>
               <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Your Trusted Football Prediction Platform</h2>
               <p className="text-gray-700 dark:text-gray-300 mb-4">
-                Founded in 2016, Fixed Match Pro has grown to become one of the most reliable football prediction platforms worldwide. 
+                Founded in 2016, Legit Soccer Tips has grown to become one of the most reliable football prediction platforms worldwide. 
                 Our team of expert analysts and advanced statistical models provide accurate predictions for matches across all major leagues.
               </p>
               <p className="text-gray-700 dark:text-gray-300 mb-6">

@@ -66,7 +66,7 @@ export default function LoginPage() {
             <Link href="/">
             <Image 
                 src="/FIXEDMatchD.png" 
-                alt="Fixed Match Pro Logo" 
+                alt="Legit Soccer Tips Logo" 
                 width={512} 
                 height={512} 
                 className="mx-auto mb-3" />

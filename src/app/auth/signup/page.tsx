@@ -93,14 +93,14 @@ export default function SignupPage() {
             <Link href="/">
               <Image 
                 src="/FIXEDMatchD.png" 
-                alt="Fixed Match Pro Logo" 
+                alt="Legit Soccer Tips Logo" 
                 width={512} 
                 height={512} 
                 className="mx-auto mb-3"
               />
             </Link>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Create an account</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">Sign up to get started with Fixed Match Pro</p>
+            <p className="text-gray-600 dark:text-gray-400 mt-1">Sign up to get started with Legit Soccer Tips</p>
           </div>
 
           {error && (

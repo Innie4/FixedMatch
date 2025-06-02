@@ -14,10 +14,14 @@ import {
   LogIn 
 } from "lucide-react"
 
-export function MainNav() {
+interface MainNavProps {
+  isLoggedIn: boolean;
+}
+
+export function MainNav({ isLoggedIn }: MainNavProps) {
   const pathname = usePathname()
   
-  const routes = [
+  const baseRoutes = [
     {
       href: "/",
       label: "Home",
@@ -42,13 +46,33 @@ export function MainNav() {
       icon: <Mail className="h-4 w-4 mr-2" />,
       active: pathname === "/contact"
     },
-    {
-      href: "/account",
-      label: "My Account",
-      icon: <User className="h-4 w-4 mr-2" />,
-      active: pathname === "/account"
-    }
   ]
+
+  const authRoutes = isLoggedIn
+    ? [
+        {
+          href: "/account",
+          label: "My Account",
+          icon: <User className="h-4 w-4 mr-2" />,
+          active: pathname === "/account"
+        },
+      ]
+    : [
+        {
+          href: "/auth/login",
+          label: "Login",
+          icon: <LogIn className="h-4 w-4 mr-2" />,
+          active: pathname === "/auth/login"
+        },
+        {
+          href: "/auth/signup",
+          label: "Sign Up",
+          icon: <User className="h-4 w-4 mr-2" />,
+          active: pathname === "/auth/signup"
+        },
+      ]
+
+  const routes = [...baseRoutes, ...authRoutes]
 
   return (
     <nav className="flex items-center space-x-1">

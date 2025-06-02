@@ -1,0 +1,126 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && 
+        exists(/databases/$(database)/documents/adminUsers/$(request.auth.uid));
+    }
+    
+    function isSuperAdmin() {
+      return isAuthenticated() && 
+        get(/databases/$(database)/documents/adminUsers/$(request.auth.uid)).data.role == 'Super Admin';
+    }
+    
+    function isContentManager() {
+      return isAuthenticated() && 
+        get(/databases/$(database)/documents/adminUsers/$(request.auth.uid)).data.role == 'Content Manager';
+    }
+    
+    function isUserManager() {
+      return isAuthenticated() && 
+        get(/databases/$(database)/documents/adminUsers/$(request.auth.uid)).data.role == 'User Manager';
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function hasValidFields(requiredFields) {
+      return request.resource.data.keys().hasAll(requiredFields);
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      allow update: if isOwner(userId) || isAdmin();
+      allow delete: if isSuperAdmin();
+    }
+    
+    // Admin users collection
+    match /adminUsers/{userId} {
+      allow read: if isAdmin();
+      allow create, update, delete: if isSuperAdmin();
+    }
+    
+    // Roles collection
+    match /roles/{roleId} {
+      allow read: if isAdmin();
+      allow create, update, delete: if isSuperAdmin();
+    }
+    
+    // VIP subscriptions collection
+    match /vipSubscriptions/{subscriptionId} {
+      allow read: if isAdmin() || 
+        (isAuthenticated() && request.auth.uid == resource.data.userId);
+      allow create, update: if isAdmin() || isUserManager();
+      allow delete: if isSuperAdmin();
+    }
+    
+    // VIP access logs collection
+    match /vipAccessLogs/{logId} {
+      allow read: if isAdmin();
+      allow create: if isAuthenticated();
+      allow update, delete: if false; // Immutable logs
+    }
+    
+    // VIP prediction categories collection
+    match /vipPredictionCategories/{categoryId} {
+      allow read: if true; // Public read access
+      allow create, update, delete: if isAdmin() || isContentManager();
+    }
+    
+    // VIP predictions collection
+    match /vipPredictions/{predictionId} {
+      allow read: if true; // Public read access
+      allow create, update, delete: if isAdmin() || isContentManager();
+    }
+    
+    // Packages collection
+    match /packages/{packageId} {
+      allow read: if true; // Public read access
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Reviews collection
+    match /reviews/{reviewId} {
+      allow read: if true; // Public read access
+      allow create: if isAuthenticated();
+      allow update: if isAdmin() || 
+        (isAuthenticated() && request.auth.uid == resource.data.userId);
+      allow delete: if isAdmin();
+    }
+    
+    // Analytics collection
+    match /analytics/{analyticsId} {
+      allow read: if isAdmin();
+      allow create, update: if isAdmin();
+      allow delete: if isSuperAdmin();
+    }
+    
+    // Settings collection
+    match /settings/{settingId} {
+      allow read: if true; // Public read access for settings
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Activity logs collection
+    match /activityLogs/{logId} {
+      allow read: if isAdmin();
+      allow create: if isAdmin();
+      allow update, delete: if false; // Immutable logs
+    }
+    
+    // Notifications collection
+    match /notifications/{notificationId} {
+      allow read: if isAdmin() || 
+        (isAuthenticated() && resource.data.targetUsers.hasAny([request.auth.uid, 'all']));
+      allow create, update, delete: if isAdmin();
+    }
+  }
+}

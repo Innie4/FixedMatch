@@ -49,10 +49,10 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
             <div className="bg-[#1a56db] text-white font-bold text-xl w-10 h-10 rounded-full flex items-center justify-center">
-              FP
+              LS
             </div>
             <span className="font-bold text-xl text-gray-900 dark:text-white hidden sm:inline-block">
-              Fixed Match Pro
+              Legit Soccer Tips
             </span>
           </Link>
 

@@ -2,7 +2,6 @@ import Link from "next/link"
 import Image from "next/image"
 import { ArrowRight, Calendar, ChevronRight, Star, Trophy, Check } from "lucide-react"
 import PredictionCard from "@/components/prediction-card"
-import LeagueHighlight from "@/components/league-highlight"
 import TestimonialCarousel from "@/components/testimonial-carousel"
 import UpcomingMatches from "@/components/upcoming-matches"
 import NewsletterSignup from "@/components/newsletter-signup"
@@ -92,16 +91,6 @@ export default function Home() {
       confidence: 70,
       status: "upcoming",
     },
-  ]
-
-  // Sample leagues data
-  const leagues = [
-    { id: 1, name: "Premier League", logo: "/placeholder.svg?height=48&width=48", country: "England" },
-    { id: 2, name: "La Liga", logo: "/placeholder.svg?height=48&width=48", country: "Spain" },
-    { id: 3, name: "Bundesliga", logo: "/placeholder.svg?height=48&width=48", country: "Germany" },
-    { id: 4, name: "Serie A", logo: "/placeholder.svg?height=48&width=48", country: "Italy" },
-    { id: 5, name: "Ligue 1", logo: "/placeholder.svg?height=48&width=48", country: "France" },
-    { id: 6, name: "Champions League", logo: "/placeholder.svg?height=48&width=48", country: "Europe" },
   ]
 
   // Sample packages data
@@ -346,18 +335,6 @@ export default function Home() {
                   </Link>
                 </CardFooter>
               </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* League Highlights */}
-      <section className="py-12 bg-gray-50 dark:bg-gray-900">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-8">Popular Leagues</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {leagues.map((league) => (
-              <LeagueHighlight key={league.id} league={league} />
             ))}
           </div>
         </div>

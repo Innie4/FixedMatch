@@ -5,13 +5,13 @@ export default function Footer() {
   return (
     <footer className="bg-gray-100 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <div className="flex items-center gap-2 mb-4">
               <div className="bg-[#1a56db] text-white font-bold text-xl w-10 h-10 rounded-full flex items-center justify-center">
                 FP
               </div>
-              <span className="font-bold text-xl text-gray-900 dark:text-white">Fixed Match Pro</span>
+              <span className="font-bold text-xl text-gray-900 dark:text-white">Legit Soccer Tips</span>
             </div>
             <p className="text-gray-600 dark:text-gray-400 mb-4">
               Expert football predictions and live scores for all major leagues worldwide.
@@ -70,52 +70,6 @@ export default function Footer() {
                   className="text-gray-600 dark:text-gray-400 hover:text-[#1a56db] dark:hover:text-white"
                 >
                   VIP Access
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Popular Leagues</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  href="/leagues/premier-league"
-                  className="text-gray-600 dark:text-gray-400 hover:text-[#1a56db] dark:hover:text-white"
-                >
-                  Premier League
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/leagues/la-liga"
-                  className="text-gray-600 dark:text-gray-400 hover:text-[#1a56db] dark:hover:text-white"
-                >
-                  La Liga
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/leagues/bundesliga"
-                  className="text-gray-600 dark:text-gray-400 hover:text-[#1a56db] dark:hover:text-white"
-                >
-                  Bundesliga
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/leagues/serie-a"
-                  className="text-gray-600 dark:text-gray-400 hover:text-[#1a56db] dark:hover:text-white"
-                >
-                  Serie A
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/leagues/ligue-1"
-                  className="text-gray-600 dark:text-gray-400 hover:text-[#1a56db] dark:hover:text-white"
-                >
-                  Ligue 1
                 </Link>
               </li>
             </ul>

@@ -12,315 +12,291 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
-import { X } from "lucide-react"
-import { CountrySelector } from "@/components/ui/country-selector"
-import { countries } from "@/lib/countries"
+import { createDocument, updateDocument } from "@/lib/firestore-operations"
+import { logActivity } from "@/lib/firestore-operations"
+import { useAuth } from "@/components/auth/AuthContext"
 
-interface SubscriptionPackage {
-  id: number
-  name: string
-  description: string
-  durations: {
-    twoWeeks: { price: number; enabled: boolean }
-    oneMonth: { price: number; enabled: boolean }
-    threeMonths: { price: number; enabled: boolean }
-    sixMonths: { price: number; enabled: boolean }
-  }
-  countries: string[]
-  status: "active" | "inactive"
-  subscribers: number
-  revenue: number
-  createdAt: string
-  updatedAt: string
+// Define a Package interface for better type safety
+interface Package {
+  id?: string;
+  name: string;
+  description: string;
+  price: number;
+  duration: number;
+  features: string[];
+  isActive: boolean;
 }
 
 interface PackageFormDialogProps {
-  isOpen: boolean
-  onClose: () => void
-  onSave: (packageData: Omit<SubscriptionPackage, "id" | "subscribers" | "revenue" | "createdAt" | "updatedAt">) => void
-  package: SubscriptionPackage | null
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (data: Package) => void;
+  initialData?: Partial<Package>;
+  title?: string;
 }
 
-export function PackageFormDialog({ isOpen, onClose, onSave, package: pkg }: PackageFormDialogProps) {
-  const [formData, setFormData] = useState({
+export function PackageFormDialog({ 
+  isOpen, 
+  onClose, 
+  onSave, 
+  initialData = {}, 
+  title = "Add Package"
+}: PackageFormDialogProps) {
+  const { currentUser } = useAuth();
+  const [formData, setFormData] = useState<Package>({
     name: "",
     description: "",
-    durations: {
-      twoWeeks: { price: 0, enabled: false },
-      oneMonth: { price: 0, enabled: false },
-      threeMonths: { price: 0, enabled: false },
-      sixMonths: { price: 0, enabled: false }
-    },
-    countries: [] as string[],
-    status: "active" as "active" | "inactive"
-  })
-
-  const [errors, setErrors] = useState<Record<string, string>>({})
-  const [selectedCountry, setSelectedCountry] = useState("")
-
+    price: 0,
+    duration: 30,
+    features: [],
+    isActive: true,
+    ...initialData
+  });
+  
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [featureInput, setFeatureInput] = useState("");
+  
+  // Reset form when dialog opens/closes or initialData changes
   useEffect(() => {
-    if (pkg) {
-      setFormData({
-        name: pkg.name,
-        description: pkg.description,
-        durations: pkg.durations,
-        countries: pkg.countries,
-        status: pkg.status
-      })
-    } else {
+    if (isOpen) {
       setFormData({
         name: "",
         description: "",
-        durations: {
-          twoWeeks: { price: 0, enabled: false },
-          oneMonth: { price: 0, enabled: false },
-          threeMonths: { price: 0, enabled: false },
-          sixMonths: { price: 0, enabled: false }
-        },
-        countries: [],
-        status: "active"
-      })
+        price: 0,
+        duration: 30,
+        features: [],
+        isActive: true,
+        ...initialData
+      });
+      setErrors({});
     }
-    setErrors({})
-    setSelectedCountry("")
-  }, [pkg, isOpen])
-
+  }, [isOpen, initialData]);
+  
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev: Package) => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    // Clear error when field is edited
+    if (errors[name]) {
+      setErrors((prev: Record<string, string>) => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+  };
+  
+  const handleSwitchChange = (checked: boolean) => {
+    setFormData((prev: Package) => ({
+      ...prev,
+      isActive: checked
+    }));
+  };
+  
+  const handleAddFeature = () => {
+    if (featureInput.trim()) {
+      setFormData((prev: Package) => ({
+        ...prev,
+        features: [...prev.features, featureInput.trim()]
+      }));
+      setFeatureInput("");
+    }
+  };
+  
+  const handleRemoveFeature = (index: number) => {
+    setFormData((prev: Package) => ({
+      ...prev,
+      features: prev.features.filter((_: string, i: number) => i !== index)
+    }));
+  };
+  
   const validateForm = () => {
-    const newErrors: Record<string, string> = {}
+    const newErrors: Record<string, string> = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = "Package name is required"
+      newErrors.name = "Name is required";
     }
-
-    if (!formData.description.trim()) {
-      newErrors.description = "Description is required"
+    
+    if (formData.price < 0) {
+      newErrors.price = "Price cannot be negative";
     }
-
-    const hasEnabledDuration = Object.values(formData.durations).some(d => d.enabled)
-    if (!hasEnabledDuration) {
-      newErrors.durations = "At least one duration must be enabled"
+    
+    if (formData.duration < 1) {
+      newErrors.duration = "Duration must be at least 1 day";
     }
-
-    Object.entries(formData.durations).forEach(([key, duration]) => {
-      if (duration.enabled && duration.price <= 0) {
-        newErrors[`duration_${key}`] = "Price must be greater than 0"
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+  
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+    
+    setIsSubmitting(true);
+    
+    try {
+      // Convert price to number
+      const dataToSave = {
+        ...formData,
+        price: Number(formData.price),
+        duration: Number(formData.duration)
+      };
+      
+      let result;
+      
+      // If we have an ID, update the document, otherwise create a new one
+      if (formData.id) {
+        result = await updateDocument('packages', formData.id, dataToSave);
+        await logActivity(
+          'package_updated',
+          currentUser?.displayName || 'Admin',
+          `Updated package: ${formData.name}`
+        );
+      } else {
+        result = await createDocument('packages', dataToSave);
+        await logActivity(
+          'package_created',
+          currentUser?.displayName || 'Admin',
+          `Created new package: ${formData.name}`
+        );
       }
-    })
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (validateForm()) {
-      onSave(formData)
-      onClose()
-    }
-  }
-
-  const handleDurationChange = (duration: keyof typeof formData.durations, field: "price" | "enabled", value: number | boolean) => {
-    setFormData(prev => ({
-      ...prev,
-      durations: {
-        ...prev.durations,
-        [duration]: {
-          ...prev.durations[duration],
-          [field]: value
-        }
-      }
-    }))
-    // Clear duration-specific errors when user makes changes
-    if (errors[`duration_${duration}`] || errors.durations) {
-      setErrors(prev => {
-        const newErrors = { ...prev }
-        delete newErrors[`duration_${duration}`]
-        delete newErrors.durations
-        return newErrors
-      })
-    }
-  }
-
-  const addCountry = (countryCode: string) => {
-    if (!formData.countries.includes(countryCode)) {
-      setFormData(prev => ({
+      
+      onSave(result);
+      onClose();
+    } catch (error: unknown) {
+      console.error('Error saving package:', error);
+      setErrors(prev => ({
         ...prev,
-        countries: [...prev.countries, countryCode]
-      }))
+        form: `Error saving package: ${error instanceof Error ? error.message : 'Unknown error'}`
+      }));
+    } finally {
+      setIsSubmitting(false);
     }
-    setSelectedCountry("")
-  }
-
-  const removeCountry = (countryCode: string) => {
-    setFormData(prev => ({
-      ...prev,
-      countries: prev.countries.filter(c => c !== countryCode)
-    }))
-  }
-
-  const getCountryName = (code: string) => {
-    const country = countries.find(c => c.code === code)
-    return country ? country.name : code
-  }
-
-  const getDurationLabel = (key: string) => {
-    switch (key) {
-      case 'twoWeeks': return '2 Weeks'
-      case 'oneMonth': return '1 Month'
-      case 'threeMonths': return '3 Months'
-      case 'sixMonths': return '6 Months'
-      default: return key
-    }
-  }
-
+  };
+  
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>{pkg ? "Edit Package" : "Create New Package"}</DialogTitle>
+          <DialogTitle>{title}</DialogTitle>
           <DialogDescription>
-            {pkg ? "Update the package details below." : "Fill in the details to create a new subscription package."}
+            Fill in the details for the subscription package.
           </DialogDescription>
         </DialogHeader>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Package Name */}
-          <div className="space-y-2">
-            <Label htmlFor="name">Package Name *</Label>
-            <Input
-              id="name"
-              value={formData.name}
-              onChange={(e) => {
-                setFormData(prev => ({ ...prev, name: e.target.value }))
-                if (errors.name) {
-                  setErrors(prev => ({ ...prev, name: "" }))
-                }
-              }}
-              placeholder="Enter package name"
-              className={errors.name ? "border-red-500" : ""}
-            />
-            {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
-          </div>
-
-          {/* Description */}
-          <div className="space-y-2">
-            <Label htmlFor="description">Description *</Label>
-            <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => {
-                setFormData(prev => ({ ...prev, description: e.target.value }))
-                if (errors.description) {
-                  setErrors(prev => ({ ...prev, description: "" }))
-                }
-              }}
-              placeholder="Enter package description"
-              rows={3}
-              className={errors.description ? "border-red-500" : ""}
-            />
-            {errors.description && <p className="text-sm text-red-500">{errors.description}</p>}
-          </div>
-
-          {/* Duration Pricing */}
-          <div className="space-y-4">
-            <div>
-              <Label>Duration & Pricing *</Label>
-              {errors.durations && <p className="text-sm text-red-500 mt-1">{errors.durations}</p>}
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {Object.entries(formData.durations).map(([key, duration]) => (
-                <div key={key} className="border rounded-lg p-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <Label className="font-medium">{getDurationLabel(key)}</Label>
-                    <Switch
-                      checked={duration.enabled}
-                      onCheckedChange={(checked) => handleDurationChange(key as keyof typeof formData.durations, "enabled", checked)}
-                    />
-                  </div>
-                  {duration.enabled && (
-                    <div className="space-y-2">
-                      <Label htmlFor={`price-${key}`}>Price ($)</Label>
-                      <Input
-                        id={`price-${key}`}
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={duration.price}
-                        onChange={(e) => handleDurationChange(key as keyof typeof formData.durations, "price", parseFloat(e.target.value) || 0)}
-                        placeholder="0.00"
-                        className={errors[`duration_${key}`] ? "border-red-500" : ""}
-                      />
-                      {errors[`duration_${key}`] && <p className="text-sm text-red-500">{errors[`duration_${key}`]}</p>}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Country Assignment */}
-          <div className="space-y-4">
-            <Label>Country Assignment</Label>
-            <div className="space-y-3">
-              <CountrySelector
-                value={selectedCountry}
-                onValueChange={addCountry}
-                placeholder="Select countries (leave empty for global)"
+        
+        <form onSubmit={handleSubmit} className="space-y-4 py-4">
+          {errors.form && (
+            <div className="text-red-500 text-sm mb-4">{errors.form}</div>
+          )}
+          
+          <div className="grid gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="name">Package Name</Label>
+              <Input
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Premium Monthly"
               />
-              {formData.countries.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {formData.countries.map((countryCode) => (
-                    <Badge key={countryCode} variant="secondary" className="flex items-center gap-1">
-                      {getCountryName(countryCode)}
-                      <X
-                        className="h-3 w-3 cursor-pointer hover:text-red-500"
-                        onClick={() => removeCountry(countryCode)}
-                      />
-                    </Badge>
-                  ))}
-                </div>
-              )}
-              <p className="text-sm text-muted-foreground">
-                {formData.countries.length === 0 ? "Global package (available to all countries)" : `Available in ${formData.countries.length} selected countries`}
-              </p>
+              {errors.name && <div className="text-red-500 text-sm">{errors.name}</div>}
+            </div>
+            
+            <div className="grid gap-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="Access to all premium predictions for 30 days"
+                rows={3}
+              />
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="price">Price ($)</Label>
+                <Input
+                  id="price"
+                  name="price"
+                  type="number"
+                  value={formData.price}
+                  onChange={handleChange}
+                  min={0}
+                  step={0.01}
+                />
+                {errors.price && <div className="text-red-500 text-sm">{errors.price}</div>}
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="duration">Duration (days)</Label>
+                <Input
+                  id="duration"
+                  name="duration"
+                  type="number"
+                  value={formData.duration}
+                  onChange={handleChange}
+                  min={1}
+                />
+                {errors.duration && <div className="text-red-500 text-sm">{errors.duration}</div>}
+              </div>
+            </div>
+            
+            <div className="grid gap-2">
+              <Label>Features</Label>
+              <div className="flex gap-2">
+                <Input
+                  value={featureInput}
+                  onChange={(e) => setFeatureInput(e.target.value)}
+                  placeholder="Add a feature"
+                  className="flex-1"
+                />
+                <Button type="button" onClick={handleAddFeature}>Add</Button>
+              </div>
+              
+              <ul className="mt-2 space-y-2">
+                {formData.features.map((feature: string, index: number) => (
+                  <li key={index} className="flex items-center justify-between bg-gray-100 dark:bg-gray-800 p-2 rounded">
+                    <span>{feature}</span>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleRemoveFeature(index)}
+                    >
+                      Remove
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <Label htmlFor="isActive">Active</Label>
+              <Switch
+                id="isActive"
+                checked={formData.isActive}
+                onCheckedChange={handleSwitchChange}
+              />
             </div>
           </div>
-
-          {/* Status */}
-          <div className="space-y-2">
-            <Label>Status</Label>
-            <Select
-              value={formData.status}
-              onValueChange={(value: "active" | "inactive") => setFormData(prev => ({ ...prev, status: value }))}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
+          
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
               Cancel
             </Button>
-            <Button type="submit">
-              {pkg ? "Update Package" : "Create Package"}
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Saving...' : 'Save Package'}
             </Button>
           </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
