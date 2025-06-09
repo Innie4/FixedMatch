@@ -1,10 +1,10 @@
-"use client"
+'use client'
 
 import { useEffect, useState } from 'react'
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Button } from "@/components/ui/button"
-import { Crown, AlertTriangle, CheckCircle } from "lucide-react"
-import Link from "next/link"
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
+import { Crown, AlertTriangle, CheckCircle } from 'lucide-react'
+import Link from 'next/link'
 
 interface SubscriptionStatusProps {
   status: 'active' | 'grace_period' | 'expired'
@@ -39,7 +39,8 @@ export function SubscriptionStatus({ status, expiryDate }: SubscriptionStatusPro
         <AlertTriangle className="h-4 w-4 text-yellow-600" />
         <AlertTitle className="text-yellow-800">Subscription Expiring Soon</AlertTitle>
         <AlertDescription className="text-yellow-700">
-          Your VIP access expires in {daysRemaining} days. Renew now to maintain uninterrupted access.
+          Your VIP access expires in {daysRemaining} days. Renew now to maintain uninterrupted
+          access.
           <Button asChild className="mt-2" variant="outline">
             <Link href="/vip/renew">Renew Subscription</Link>
           </Button>
@@ -54,7 +55,8 @@ export function SubscriptionStatus({ status, expiryDate }: SubscriptionStatusPro
         <AlertTriangle className="h-4 w-4 text-red-600" />
         <AlertTitle className="text-red-800">Grace Period</AlertTitle>
         <AlertDescription className="text-red-700">
-          Your VIP subscription has expired. You have {daysRemaining} days of grace period remaining.
+          Your VIP subscription has expired. You have {daysRemaining} days of grace period
+          remaining.
           <Button asChild className="mt-2" variant="destructive">
             <Link href="/vip/renew">Renew Now</Link>
           </Button>

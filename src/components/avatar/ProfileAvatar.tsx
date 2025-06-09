@@ -16,14 +16,14 @@ interface ProfileAvatarProps {
 const SIZES: Record<AvatarSize, string> = {
   sm: 'h-10 w-10',
   md: 'h-16 w-16',
-  lg: 'h-24 w-24'
+  lg: 'h-24 w-24',
 }
 
-export function ProfileAvatar({ 
-  currentAvatar, 
-  onAvatarChange, 
+export function ProfileAvatar({
+  currentAvatar,
+  onAvatarChange,
   size = 'md',
-  className = ''
+  className = '',
 }: ProfileAvatarProps) {
   const [isSelectingAvatar, setIsSelectingAvatar] = useState(false)
   const [avatar, setAvatar] = useState(currentAvatar)
@@ -37,7 +37,7 @@ export function ProfileAvatar({
     } catch (err) {
       setError({
         message: 'Failed to update avatar. Please try again.',
-        code: 'UPDATE_ERROR'
+        code: 'UPDATE_ERROR',
       })
     }
   }
@@ -49,7 +49,7 @@ export function ProfileAvatar({
           <AlertDescription>{error.message}</AlertDescription>
         </Alert>
       )}
-      
+
       <button
         onClick={() => setIsSelectingAvatar(true)}
         className={`relative ${SIZES[size]} rounded-full overflow-hidden border-2 border-muted hover:border-primary transition-colors ${className}`}
@@ -66,7 +66,7 @@ export function ProfileAvatar({
           onError={() => {
             setError({
               message: 'Failed to load avatar image',
-              code: 'LOAD_ERROR'
+              code: 'LOAD_ERROR',
             })
             // Fallback to default avatar
             const img = document.createElement('img')

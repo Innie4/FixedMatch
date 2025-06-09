@@ -1,7 +1,7 @@
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { Star } from "lucide-react"
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
+import { Star } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -9,47 +9,42 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
+} from '@/components/ui/dialog'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from '@/components/ui/select'
 
 interface ReplyDialogProps {
-  review: any;
-  isOpen: boolean;
-  onClose: () => void;
-  templateResponses: any[];
+  review: any
+  isOpen: boolean
+  onClose: () => void
+  templateResponses: any[]
 }
 
-export function ReplyDialog({
-  review,
-  isOpen,
-  onClose,
-  templateResponses
-}: ReplyDialogProps) {
-  const [replyText, setReplyText] = useState("");
-  const [selectedTemplate, setSelectedTemplate] = useState("");
-  
+export function ReplyDialog({ review, isOpen, onClose, templateResponses }: ReplyDialogProps) {
+  const [replyText, setReplyText] = useState('')
+  const [selectedTemplate, setSelectedTemplate] = useState('')
+
   const handleTemplateChange = (value: string) => {
-    setSelectedTemplate(value);
-    const template = templateResponses.find(t => t.id.toString() === value);
+    setSelectedTemplate(value)
+    const template = templateResponses.find((t) => t.id.toString() === value)
     if (template) {
-      setReplyText(template.content);
+      setReplyText(template.content)
     }
-  };
-  
+  }
+
   const handleSubmit = () => {
     // In a real app, this would call an API to save the reply
-    console.log(`Replying to review ${review?.id} with: ${replyText}`);
-    onClose();
-  };
-  
-  if (!review) return null;
-  
+    console.log(`Replying to review ${review?.id} with: ${replyText}`)
+    onClose()
+  }
+
+  if (!review) return null
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
@@ -59,7 +54,7 @@ export function ReplyDialog({
             Respond to {review.username}&apos;s review about your service.
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="space-y-4 py-4">
           <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md">
             <div className="flex items-center gap-2 mb-2">
@@ -69,7 +64,7 @@ export function ReplyDialog({
                   <Star
                     key={i}
                     className={`h-3 w-3 ${
-                      i < review.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+                      i < review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'
                     }`}
                   />
                 ))}
@@ -77,7 +72,7 @@ export function ReplyDialog({
             </div>
             <p className="text-sm text-gray-600 dark:text-gray-400">{review.comment}</p>
           </div>
-          
+
           <div className="space-y-2">
             <label className="text-sm font-medium">Use Template Response</label>
             <Select value={selectedTemplate} onValueChange={handleTemplateChange}>
@@ -94,7 +89,7 @@ export function ReplyDialog({
               </SelectContent>
             </Select>
           </div>
-          
+
           <div className="space-y-2">
             <label className="text-sm font-medium">Your Reply</label>
             <Textarea
@@ -105,9 +100,11 @@ export function ReplyDialog({
             />
           </div>
         </div>
-        
+
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Cancel</Button>
+          <Button variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
           <Button onClick={handleSubmit} disabled={!replyText.trim()}>
             Send Reply
           </Button>

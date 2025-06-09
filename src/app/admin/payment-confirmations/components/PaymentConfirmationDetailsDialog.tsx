@@ -1,7 +1,7 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import Image from "next/image"
-import { PaymentConfirmation } from "../page"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import Image from 'next/image'
+import { PaymentConfirmation } from '../page'
 
 interface PaymentConfirmationDetailsDialogProps {
   isOpen: boolean
@@ -16,7 +16,7 @@ export function PaymentConfirmationDetailsDialog({
   onClose,
   confirmation,
   onApprove,
-  onDecline
+  onDecline,
 }: PaymentConfirmationDetailsDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -24,7 +24,7 @@ export function PaymentConfirmationDetailsDialog({
         <DialogHeader>
           <DialogTitle>Payment Confirmation Details</DialogTitle>
         </DialogHeader>
-        
+
         <div className="grid gap-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -39,7 +39,7 @@ export function PaymentConfirmationDetailsDialog({
               <p>Amount: ${confirmation.amount}</p>
             </div>
           </div>
-          
+
           <div>
             <h4 className="font-semibold">Payment Information</h4>
             <p>Method: {confirmation.paymentMethod}</p>
@@ -49,7 +49,7 @@ export function PaymentConfirmationDetailsDialog({
               <p>Reviewed: {new Date(confirmation.reviewedAt).toLocaleString()}</p>
             )}
           </div>
-          
+
           <div>
             <h4 className="font-semibold">Payment Screenshot</h4>
             <div className="relative aspect-video w-full overflow-hidden rounded-lg">
@@ -61,7 +61,7 @@ export function PaymentConfirmationDetailsDialog({
               />
             </div>
           </div>
-          
+
           {confirmation.adminComment && (
             <div>
               <h4 className="font-semibold">Admin Comment</h4>
@@ -69,7 +69,7 @@ export function PaymentConfirmationDetailsDialog({
             </div>
           )}
         </div>
-        
+
         <div className="flex justify-end gap-2 mt-4">
           <Button
             variant="outline"

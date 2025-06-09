@@ -5,8 +5,21 @@ import * as z from 'zod'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2 } from 'lucide-react'
@@ -18,8 +31,8 @@ const formSchema = z.object({
   name: z.string().min(2),
   country: z.string().min(2),
   termsAccepted: z.boolean().refine((val) => val === true, {
-    message: 'You must accept the terms and conditions'
-  })
+    message: 'You must accept the terms and conditions',
+  }),
 })
 
 interface PaymentProps {
@@ -41,8 +54,8 @@ export default function Payment({ amount, currency, onPaymentComplete, onError }
       cvv: '',
       name: '',
       country: 'US',
-      termsAccepted: false
-    }
+      termsAccepted: false,
+    },
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -52,7 +65,7 @@ export default function Payment({ amount, currency, onPaymentComplete, onError }
     try {
       // Here you would integrate with your payment gateway
       // For now, we'll simulate a payment process
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      await new Promise((resolve) => setTimeout(resolve, 2000))
       onPaymentComplete()
     } catch (error) {
       setPaymentError('Payment processing failed. Please try again.')
@@ -73,10 +86,7 @@ export default function Payment({ amount, currency, onPaymentComplete, onError }
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Country</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select your country" />
@@ -115,7 +125,7 @@ export default function Payment({ amount, currency, onPaymentComplete, onError }
                 <FormItem>
                   <FormLabel>Card Number</FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       placeholder="1234 5678 9012 3456"
                       {...field}
                       onChange={(e) => {
@@ -138,7 +148,7 @@ export default function Payment({ amount, currency, onPaymentComplete, onError }
                   <FormItem>
                     <FormLabel>Expiry Date</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         placeholder="MM/YY"
                         {...field}
                         onChange={(e) => {
@@ -163,7 +173,7 @@ export default function Payment({ amount, currency, onPaymentComplete, onError }
                   <FormItem>
                     <FormLabel>CVV</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         type="password"
                         placeholder="123"
                         {...field}
@@ -186,15 +196,10 @@ export default function Payment({ amount, currency, onPaymentComplete, onError }
               render={({ field }) => (
                 <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                   <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
+                    <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                   </FormControl>
                   <div className="space-y-1 leading-none">
-                    <FormLabel>
-                      I accept the terms and conditions
-                    </FormLabel>
+                    <FormLabel>I accept the terms and conditions</FormLabel>
                   </div>
                   <FormMessage />
                 </FormItem>
@@ -216,11 +221,7 @@ export default function Payment({ amount, currency, onPaymentComplete, onError }
               </span>
             </div>
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isProcessing}
-            >
+            <Button type="submit" className="w-full" disabled={isProcessing}>
               {isProcessing ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

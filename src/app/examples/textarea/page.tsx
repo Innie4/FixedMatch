@@ -1,35 +1,44 @@
-"use client"
+'use client'
 
-import type React from "react"
+import type React from 'react'
 
-import { useState } from "react"
-import { Textarea } from "@/components/ui/textarea"
-import { FormField } from "@/components/ui/form-field"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label" // Add this import
+import { useState } from 'react'
+import { Textarea } from '@/components/ui/textarea'
+import { FormField } from '@/components/ui/form-field'
+import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Label } from '@/components/ui/label' // Add this import
 
 export default function TextareaExamplePage() {
-  const [message, setMessage] = useState("")
-  const [feedback, setFeedback] = useState("")
+  const [message, setMessage] = useState('')
+  const [feedback, setFeedback] = useState('')
   const [error, setError] = useState<string | null>(null)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
     if (message.trim().length < 10) {
-      setError("Message must be at least 10 characters long")
+      setError('Message must be at least 10 characters long')
       return
     }
 
     setError(null)
-    setFeedback("Message submitted successfully!")
+    setFeedback('Message submitted successfully!')
     // In a real app, you would send the message to your API here
   }
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">Textarea Component Examples</h1>
+      <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">
+        Textarea Component Examples
+      </h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <Card>
@@ -46,7 +55,11 @@ export default function TextareaExamplePage() {
               <Textarea id="disabled-textarea" placeholder="This textarea is disabled" disabled />
             </FormField>
 
-            <FormField label="Textarea with Error" htmlFor="error-textarea" error="This field is required">
+            <FormField
+              label="Textarea with Error"
+              htmlFor="error-textarea"
+              error="This field is required"
+            >
               <Textarea id="error-textarea" placeholder="Type your message here" error={true} />
             </FormField>
 
@@ -87,7 +100,7 @@ export default function TextareaExamplePage() {
             </form>
           </CardContent>
           <CardFooter className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setMessage("")}>
+            <Button variant="outline" onClick={() => setMessage('')}>
               Clear
             </Button>
             <Button onClick={handleSubmit}>Submit</Button>
@@ -112,7 +125,9 @@ export default function TextareaExamplePage() {
                 onChange={(e) => setMessage(e.target.value)}
                 className="resize-none"
               />
-              <div className="text-sm text-gray-500 dark:text-gray-400 text-right">{message.length}/200 characters</div>
+              <div className="text-sm text-gray-500 dark:text-gray-400 text-right">
+                {message.length}/200 characters
+              </div>
             </div>
           </CardContent>
         </Card>

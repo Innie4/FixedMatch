@@ -11,7 +11,7 @@ export async function GET(request: Request) {
   try {
     // Check expiring subscriptions and send notifications
     await VIPSubscriptionService.checkExpiringSubscriptions()
-    
+
     // Check and handle expired subscriptions
     await VIPSubscriptionService.checkExpiredSubscriptions()
 

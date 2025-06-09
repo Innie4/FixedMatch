@@ -1,11 +1,11 @@
-import { useState } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { 
-  Star, 
-  Search, 
-  Filter, 
-  ChevronDown, 
+import { useState } from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
+import {
+  Star,
+  Search,
+  Filter,
+  ChevronDown,
   ChevronUp,
   MoreHorizontal,
   Trash2,
@@ -20,20 +20,20 @@ import {
   Clock,
   Calendar,
   ArrowUpDown,
-  ImagePlus
-} from "lucide-react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
+  ImagePlus,
+} from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { Badge } from '@/components/ui/badge'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,27 +41,27 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Checkbox } from "@/components/ui/checkbox"
-import { WinningTicket } from "../types"
+} from '@/components/ui/dropdown-menu'
+import { Checkbox } from '@/components/ui/checkbox'
+import { WinningTicket } from '../types'
 
 interface WinningTicketsTabProps {
-  tickets: WinningTicket[];
-  searchTerm: string;
-  setSearchTerm: (value: string) => void;
-  filterStatus: string;
-  setFilterStatus: (value: string) => void;
-  filterDateRange: string;
-  setFilterDateRange: (value: string) => void;
-  sortColumn: string;
-  setSortColumn: (value: string) => void;
-  sortDirection: string;
-  setSortDirection: (value: string) => void;
-  selectedRows: number[];
-  setSelectedRows: (value: number[]) => void;
-  onDeleteConfirm: (type: string, id: number) => void;
-  onEdit: (item: any) => void;
-  onFeatureToggle: (id: number, type: string) => void;
+  tickets: WinningTicket[]
+  searchTerm: string
+  setSearchTerm: (value: string) => void
+  filterStatus: string
+  setFilterStatus: (value: string) => void
+  filterDateRange: string
+  setFilterDateRange: (value: string) => void
+  sortColumn: string
+  setSortColumn: (value: string) => void
+  sortDirection: string
+  setSortDirection: (value: string) => void
+  selectedRows: number[]
+  setSelectedRows: (value: number[]) => void
+  onDeleteConfirm: (type: string, id: number) => void
+  onEdit: (item: any) => void
+  onFeatureToggle: (id: number, type: string) => void
 }
 
 export function WinningTicketsTab({
@@ -80,73 +80,70 @@ export function WinningTicketsTab({
   setSelectedRows,
   onDeleteConfirm,
   onEdit,
-  onFeatureToggle
+  onFeatureToggle,
 }: WinningTicketsTabProps) {
   const [isUploadTicketOpen, setIsUploadTicketOpen] = useState(false)
-  
+
   // Filter tickets
-  const filteredTickets = tickets.filter(ticket => {
-    const matchesSearch = 
-      ticket.title.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = 
-      filterStatus === "all" || 
-      ticket.status === filterStatus;
-    
-    return matchesSearch && matchesStatus;
-  });
-  
+  const filteredTickets = tickets.filter((ticket) => {
+    const matchesSearch = ticket.title.toLowerCase().includes(searchTerm.toLowerCase())
+
+    const matchesStatus = filterStatus === 'all' || ticket.status === filterStatus
+
+    return matchesSearch && matchesStatus
+  })
+
   // Sort tickets
   const sortedTickets = [...filteredTickets].sort((a, b) => {
-    if (sortColumn === "date") {
-      return sortDirection === "asc" 
+    if (sortColumn === 'date') {
+      return sortDirection === 'asc'
         ? new Date(a.date).getTime() - new Date(b.date).getTime()
-        : new Date(b.date).getTime() - new Date(a.date).getTime();
-    } else if (sortColumn === "odds") {
-      return sortDirection === "asc" 
+        : new Date(b.date).getTime() - new Date(a.date).getTime()
+    } else if (sortColumn === 'odds') {
+      return sortDirection === 'asc'
         ? parseFloat(a.odds) - parseFloat(b.odds)
-        : parseFloat(b.odds) - parseFloat(a.odds);
-    } else if (sortColumn === "winnings") {
-      return sortDirection === "asc" 
+        : parseFloat(b.odds) - parseFloat(a.odds)
+    } else if (sortColumn === 'winnings') {
+      return sortDirection === 'asc'
         ? parseFloat(a.winnings.replace('$', '')) - parseFloat(b.winnings.replace('$', ''))
-        : parseFloat(b.winnings.replace('$', '')) - parseFloat(a.winnings.replace('$', ''));
+        : parseFloat(b.winnings.replace('$', '')) - parseFloat(a.winnings.replace('$', ''))
     }
-    return 0;
-  });
-  
+    return 0
+  })
+
   // Handle sort
   const handleSort = (column: string) => {
     if (sortColumn === column) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
     } else {
-      setSortColumn(column);
-      setSortDirection("asc");
+      setSortColumn(column)
+      setSortDirection('asc')
     }
-  };
-  
+  }
+
   // Handle row selection
   const handleRowSelect = (id: number) => {
     if (selectedRows.includes(id)) {
-      setSelectedRows(selectedRows.filter(rowId => rowId !== id));
+      setSelectedRows(selectedRows.filter((rowId) => rowId !== id))
     } else {
-      setSelectedRows([...selectedRows, id]);
+      setSelectedRows([...selectedRows, id])
     }
-  };
-  
+  }
+
   // Handle select all
   const handleSelectAll = () => {
     if (selectedRows.length === filteredTickets.length) {
-      setSelectedRows([]);
+      setSelectedRows([])
     } else {
-      setSelectedRows(filteredTickets.map(item => item.id));
+      setSelectedRows(filteredTickets.map((item) => item.id))
     }
-  };
-  
+  }
+
   // Handle bulk actions
   const handleBulkAction = (action: string) => {
-    console.log(`Performing ${action} on tickets:`, selectedRows);
-    setSelectedRows([]);
-  };
+    console.log(`Performing ${action} on tickets:`, selectedRows)
+    setSelectedRows([])
+  }
 
   return (
     <div className="space-y-4">
@@ -173,25 +170,23 @@ export function WinningTicketsTab({
             <DropdownMenuContent align="end" className="w-[200px]">
               <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setFilterStatus("all")}>
+              <DropdownMenuItem onClick={() => setFilterStatus('all')}>
                 All Tickets
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilterStatus("active")}>
-                Active
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilterStatus("archived")}>
+              <DropdownMenuItem onClick={() => setFilterStatus('active')}>Active</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setFilterStatus('archived')}>
                 Archived
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuLabel>Filter by Date</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setFilterDateRange("all")}>
+              <DropdownMenuItem onClick={() => setFilterDateRange('all')}>
                 All Time
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilterDateRange("week")}>
+              <DropdownMenuItem onClick={() => setFilterDateRange('week')}>
                 This Week
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilterDateRange("month")}>
+              <DropdownMenuItem onClick={() => setFilterDateRange('month')}>
                 This Month
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -211,16 +206,16 @@ export function WinningTicketsTab({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => handleBulkAction("feature")}>
+                <DropdownMenuItem onClick={() => handleBulkAction('feature')}>
                   <Star className="mr-2 h-4 w-4" />
                   Feature
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleBulkAction("archive")}>
+                <DropdownMenuItem onClick={() => handleBulkAction('archive')}>
                   <Clock className="mr-2 h-4 w-4" />
                   Archive
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => handleBulkAction("delete")}>
+                <DropdownMenuItem onClick={() => handleBulkAction('delete')}>
                   <Trash2 className="mr-2 h-4 w-4" />
                   Delete
                 </DropdownMenuItem>
@@ -229,34 +224,34 @@ export function WinningTicketsTab({
           )}
         </div>
       </div>
-      
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead className="w-[50px]">
                 <Checkbox
-                  checked={selectedRows.length === filteredTickets.length && filteredTickets.length > 0}
+                  checked={
+                    selectedRows.length === filteredTickets.length && filteredTickets.length > 0
+                  }
                   onCheckedChange={handleSelectAll}
                 />
               </TableHead>
               <TableHead>Ticket</TableHead>
-              <TableHead 
-                className="cursor-pointer"
-                onClick={() => handleSort("odds")}
-              >
+              <TableHead className="cursor-pointer" onClick={() => handleSort('odds')}>
                 <div className="flex items-center">
                   Odds
-                  <ArrowUpDown className={`ml-2 h-4 w-4 ${sortColumn === "odds" ? 'opacity-100' : 'opacity-50'}`} />
+                  <ArrowUpDown
+                    className={`ml-2 h-4 w-4 ${sortColumn === 'odds' ? 'opacity-100' : 'opacity-50'}`}
+                  />
                 </div>
               </TableHead>
-              <TableHead 
-                className="cursor-pointer"
-                onClick={() => handleSort("winnings")}
-              >
+              <TableHead className="cursor-pointer" onClick={() => handleSort('winnings')}>
                 <div className="flex items-center">
                   Winnings
-                  <ArrowUpDown className={`ml-2 h-4 w-4 ${sortColumn === "winnings" ? 'opacity-100' : 'opacity-50'}`} />
+                  <ArrowUpDown
+                    className={`ml-2 h-4 w-4 ${sortColumn === 'winnings' ? 'opacity-100' : 'opacity-50'}`}
+                  />
                 </div>
               </TableHead>
               <TableHead>Status</TableHead>
@@ -298,13 +293,16 @@ export function WinningTicketsTab({
                   <TableCell>{ticket.odds}</TableCell>
                   <TableCell>{ticket.winnings}</TableCell>
                   <TableCell>
-                    <Badge variant={ticket.status === "active" ? "default" : "secondary"}>
-                      {ticket.status === "active" ? "Active" : "Archived"}
+                    <Badge variant={ticket.status === 'active' ? 'default' : 'secondary'}>
+                      {ticket.status === 'active' ? 'Active' : 'Archived'}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <Badge variant={ticket.featured ? "default" : "outline"} className={ticket.featured ? "bg-amber-500" : ""}>
-                      {ticket.featured ? "Featured" : "Not Featured"}
+                    <Badge
+                      variant={ticket.featured ? 'default' : 'outline'}
+                      className={ticket.featured ? 'bg-amber-500' : ''}
+                    >
+                      {ticket.featured ? 'Featured' : 'Not Featured'}
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -315,16 +313,17 @@ export function WinningTicketsTab({
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => console.log("View details", ticket)}>
+                        <DropdownMenuItem onClick={() => console.log('View details', ticket)}>
                           View details
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => onEdit(ticket)}>
-                          Edit
+                        <DropdownMenuItem onClick={() => onEdit(ticket)}>Edit</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => onFeatureToggle(ticket.id, 'ticket')}>
+                          {ticket.featured ? 'Unfeature' : 'Feature'}
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => onFeatureToggle(ticket.id, "ticket")}>
-                          {ticket.featured ? "Unfeature" : "Feature"}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => onDeleteConfirm("ticket", ticket.id)} className="text-red-600">
+                        <DropdownMenuItem
+                          onClick={() => onDeleteConfirm('ticket', ticket.id)}
+                          className="text-red-600"
+                        >
                           Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>

@@ -1,34 +1,34 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import { 
-  Package, 
-  Search, 
-  Filter, 
-  ChevronDown, 
-  MoreHorizontal, 
-  Trash2, 
-  Edit, 
-  Eye, 
-  ArrowUpDown, 
+import { useState } from 'react'
+import {
+  Package,
+  Search,
+  Filter,
+  ChevronDown,
+  MoreHorizontal,
+  Trash2,
+  Edit,
+  Eye,
+  ArrowUpDown,
   Plus,
   DollarSign,
   Users,
   Globe,
-  Calendar
-} from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
+  Calendar,
+} from 'lucide-react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { Badge } from '@/components/ui/badge'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,19 +36,25 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from '@/components/ui/dropdown-menu'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
-import { PackageFormDialog } from "./components/PackageFormDialog"
-import { DeleteConfirmDialog } from "./components/DeleteConfirmDialog"
-import { PackageDetailsDialog } from "./components/PackageDetailsDialog"
+} from '@/components/ui/select'
+import { Checkbox } from '@/components/ui/checkbox'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
+import { PackageFormDialog } from './components/PackageFormDialog'
+import { DeleteConfirmDialog } from './components/DeleteConfirmDialog'
+import { PackageDetailsDialog } from './components/PackageDetailsDialog'
 
 interface SubscriptionPackage {
   id: number
@@ -61,7 +67,7 @@ interface SubscriptionPackage {
     sixMonths: { price: number; enabled: boolean }
   }
   countries: string[] // Country codes, empty array means global
-  status: "active" | "inactive"
+  status: 'active' | 'inactive'
   subscribers: number
   revenue: number
   createdAt: string
@@ -72,62 +78,62 @@ export default function PackageManagementPage() {
   const [packages, setPackages] = useState<SubscriptionPackage[]>([
     {
       id: 1,
-      name: "Daily 2 Odds",
-      description: "Daily predictions with 2+ odds",
+      name: 'Daily 2 Odds',
+      description: 'Daily predictions with 2+ odds',
       durations: {
         twoWeeks: { price: 15, enabled: true },
         oneMonth: { price: 25, enabled: true },
         threeMonths: { price: 65, enabled: true },
-        sixMonths: { price: 120, enabled: true }
+        sixMonths: { price: 120, enabled: true },
       },
       countries: [], // Global
-      status: "active",
+      status: 'active',
       subscribers: 245,
       revenue: 6125,
-      createdAt: "2023-01-15",
-      updatedAt: "2023-06-10"
+      createdAt: '2023-01-15',
+      updatedAt: '2023-06-10',
     },
     {
       id: 2,
-      name: "Daily 10 Odds",
-      description: "High odds daily predictions",
+      name: 'Daily 10 Odds',
+      description: 'High odds daily predictions',
       durations: {
         twoWeeks: { price: 35, enabled: true },
         oneMonth: { price: 60, enabled: true },
         threeMonths: { price: 150, enabled: true },
-        sixMonths: { price: 280, enabled: true }
+        sixMonths: { price: 280, enabled: true },
       },
-      countries: ["US", "UK", "CA"],
-      status: "active",
+      countries: ['US', 'UK', 'CA'],
+      status: 'active',
       subscribers: 128,
       revenue: 7680,
-      createdAt: "2023-02-20",
-      updatedAt: "2023-06-08"
+      createdAt: '2023-02-20',
+      updatedAt: '2023-06-08',
     },
     {
       id: 3,
-      name: "Draw Odds",
-      description: "Specialized draw predictions",
+      name: 'Draw Odds',
+      description: 'Specialized draw predictions',
       durations: {
         twoWeeks: { price: 20, enabled: true },
         oneMonth: { price: 35, enabled: true },
         threeMonths: { price: 90, enabled: false },
-        sixMonths: { price: 160, enabled: false }
+        sixMonths: { price: 160, enabled: false },
       },
-      countries: ["NG", "GH", "KE"],
-      status: "inactive",
+      countries: ['NG', 'GH', 'KE'],
+      status: 'inactive',
       subscribers: 89,
       revenue: 3115,
-      createdAt: "2023-03-10",
-      updatedAt: "2023-05-15"
-    }
+      createdAt: '2023-03-10',
+      updatedAt: '2023-05-15',
+    },
   ])
 
-  const [searchTerm, setSearchTerm] = useState("")
-  const [filterStatus, setFilterStatus] = useState("all")
-  const [filterCountry, setFilterCountry] = useState("all")
-  const [sortColumn, setSortColumn] = useState("name")
-  const [sortDirection, setSortDirection] = useState("asc")
+  const [searchTerm, setSearchTerm] = useState('')
+  const [filterStatus, setFilterStatus] = useState('all')
+  const [filterCountry, setFilterCountry] = useState('all')
+  const [sortColumn, setSortColumn] = useState('name')
+  const [sortDirection, setSortDirection] = useState('asc')
   const [selectedRows, setSelectedRows] = useState<number[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
@@ -140,25 +146,27 @@ export default function PackageManagementPage() {
   const [selectedPackage, setSelectedPackage] = useState<SubscriptionPackage | null>(null)
 
   // Filter and sort packages
-  const filteredPackages = packages.filter(pkg => {
-    const matchesSearch = pkg.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         pkg.description.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesStatus = filterStatus === "all" || pkg.status === filterStatus
-    const matchesCountry = filterCountry === "all" || 
-                          (filterCountry === "global" && pkg.countries.length === 0) ||
-                          pkg.countries.includes(filterCountry)
+  const filteredPackages = packages.filter((pkg) => {
+    const matchesSearch =
+      pkg.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      pkg.description.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesStatus = filterStatus === 'all' || pkg.status === filterStatus
+    const matchesCountry =
+      filterCountry === 'all' ||
+      (filterCountry === 'global' && pkg.countries.length === 0) ||
+      pkg.countries.includes(filterCountry)
     return matchesSearch && matchesStatus && matchesCountry
   })
 
   const sortedPackages = [...filteredPackages].sort((a, b) => {
     const aValue = a[sortColumn as keyof SubscriptionPackage]
     const bValue = b[sortColumn as keyof SubscriptionPackage]
-    const direction = sortDirection === "asc" ? 1 : -1
-    
-    if (typeof aValue === "string" && typeof bValue === "string") {
+    const direction = sortDirection === 'asc' ? 1 : -1
+
+    if (typeof aValue === 'string' && typeof bValue === 'string') {
       return aValue.localeCompare(bValue) * direction
     }
-    if (typeof aValue === "number" && typeof bValue === "number") {
+    if (typeof aValue === 'number' && typeof bValue === 'number') {
       return (aValue - bValue) * direction
     }
     return 0
@@ -173,16 +181,16 @@ export default function PackageManagementPage() {
 
   const handleSort = (column: string) => {
     if (sortColumn === column) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc")
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
     } else {
       setSortColumn(column)
-      setSortDirection("asc")
+      setSortDirection('asc')
     }
   }
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedRows(paginatedPackages.map(pkg => pkg.id))
+      setSelectedRows(paginatedPackages.map((pkg) => pkg.id))
     } else {
       setSelectedRows([])
     }
@@ -192,7 +200,7 @@ export default function PackageManagementPage() {
     if (checked) {
       setSelectedRows([...selectedRows, id])
     } else {
-      setSelectedRows(selectedRows.filter(rowId => rowId !== id))
+      setSelectedRows(selectedRows.filter((rowId) => rowId !== id))
     }
   }
 
@@ -213,29 +221,36 @@ export default function PackageManagementPage() {
 
   const confirmDelete = () => {
     if (selectedPackage) {
-      setPackages(packages.filter(pkg => pkg.id !== selectedPackage.id))
+      setPackages(packages.filter((pkg) => pkg.id !== selectedPackage.id))
       setIsDeleteConfirmOpen(false)
       setSelectedPackage(null)
     }
   }
 
-  const handleSavePackage = (packageData: Omit<SubscriptionPackage, "id" | "subscribers" | "revenue" | "createdAt" | "updatedAt">) => {
+  const handleSavePackage = (
+    packageData: Omit<
+      SubscriptionPackage,
+      'id' | 'subscribers' | 'revenue' | 'createdAt' | 'updatedAt'
+    >
+  ) => {
     if (selectedPackage) {
       // Edit existing package
-      setPackages(packages.map(pkg => 
-        pkg.id === selectedPackage.id 
-          ? { ...pkg, ...packageData, updatedAt: new Date().toISOString().split('T')[0] }
-          : pkg
-      ))
+      setPackages(
+        packages.map((pkg) =>
+          pkg.id === selectedPackage.id
+            ? { ...pkg, ...packageData, updatedAt: new Date().toISOString().split('T')[0] }
+            : pkg
+        )
+      )
     } else {
       // Add new package
       const newPackage: SubscriptionPackage = {
         ...packageData,
-        id: Math.max(...packages.map(p => p.id)) + 1,
+        id: Math.max(...packages.map((p) => p.id)) + 1,
         subscribers: 0,
         revenue: 0,
         createdAt: new Date().toISOString().split('T')[0],
-        updatedAt: new Date().toISOString().split('T')[0]
+        updatedAt: new Date().toISOString().split('T')[0],
       }
       setPackages([...packages, newPackage])
     }
@@ -245,15 +260,15 @@ export default function PackageManagementPage() {
   }
 
   const getCountryDisplay = (countries: string[]) => {
-    if (countries.length === 0) return "Global"
-    if (countries.length <= 3) return countries.join(", ")
-    return `${countries.slice(0, 3).join(", ")} +${countries.length - 3}`
+    if (countries.length === 0) return 'Global'
+    if (countries.length <= 3) return countries.join(', ')
+    return `${countries.slice(0, 3).join(', ')} +${countries.length - 3}`
   }
 
   const getLowestPrice = (durations: SubscriptionPackage['durations']) => {
     const enabledPrices = Object.values(durations)
-      .filter(d => d.enabled)
-      .map(d => d.price)
+      .filter((d) => d.enabled)
+      .map((d) => d.price)
     return enabledPrices.length > 0 ? Math.min(...enabledPrices) : 0
   }
 
@@ -292,7 +307,7 @@ export default function PackageManagementPage() {
           <CardContent>
             <div className="text-2xl font-bold">{packages.length}</div>
             <p className="text-xs text-muted-foreground">
-              {packages.filter(p => p.status === "active").length} active
+              {packages.filter((p) => p.status === 'active').length} active
             </p>
           </CardContent>
         </Card>
@@ -327,7 +342,7 @@ export default function PackageManagementPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {packages.filter(p => p.countries.length === 0).length}
+              {packages.filter((p) => p.countries.length === 0).length}
             </div>
             <p className="text-xs text-muted-foreground">Available worldwide</p>
           </CardContent>
@@ -393,32 +408,35 @@ export default function PackageManagementPage() {
                 <TableRow>
                   <TableHead className="w-12">
                     <Checkbox
-                      checked={selectedRows.length === paginatedPackages.length && paginatedPackages.length > 0}
+                      checked={
+                        selectedRows.length === paginatedPackages.length &&
+                        paginatedPackages.length > 0
+                      }
                       onCheckedChange={handleSelectAll}
                     />
                   </TableHead>
-                  <TableHead className="cursor-pointer" onClick={() => handleSort("name")}>
+                  <TableHead className="cursor-pointer" onClick={() => handleSort('name')}>
                     <div className="flex items-center">
                       Package Name
                       <ArrowUpDown className="ml-2 h-4 w-4" />
                     </div>
                   </TableHead>
                   <TableHead>Countries</TableHead>
-                  <TableHead className="cursor-pointer" onClick={() => handleSort("subscribers")}>
+                  <TableHead className="cursor-pointer" onClick={() => handleSort('subscribers')}>
                     <div className="flex items-center">
                       Subscribers
                       <ArrowUpDown className="ml-2 h-4 w-4" />
                     </div>
                   </TableHead>
                   <TableHead>Starting Price</TableHead>
-                  <TableHead className="cursor-pointer" onClick={() => handleSort("revenue")}>
+                  <TableHead className="cursor-pointer" onClick={() => handleSort('revenue')}>
                     <div className="flex items-center">
                       Revenue
                       <ArrowUpDown className="ml-2 h-4 w-4" />
                     </div>
                   </TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead className="cursor-pointer" onClick={() => handleSort("updatedAt")}>
+                  <TableHead className="cursor-pointer" onClick={() => handleSort('updatedAt')}>
                     <div className="flex items-center">
                       Last Updated
                       <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -470,7 +488,7 @@ export default function PackageManagementPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={pkg.status === "active" ? "default" : "secondary"}>
+                      <Badge variant={pkg.status === 'active' ? 'default' : 'secondary'}>
                         {pkg.status}
                       </Badge>
                     </TableCell>
@@ -498,7 +516,7 @@ export default function PackageManagementPage() {
                             Edit Package
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem 
+                          <DropdownMenuItem
                             onClick={() => handleDelete(pkg)}
                             className="text-destructive"
                           >
@@ -517,7 +535,9 @@ export default function PackageManagementPage() {
           {/* Pagination */}
           <div className="flex items-center justify-between space-x-2 py-4">
             <div className="text-sm text-muted-foreground">
-              Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, sortedPackages.length)} of {sortedPackages.length} packages
+              Showing {(currentPage - 1) * itemsPerPage + 1} to{' '}
+              {Math.min(currentPage * itemsPerPage, sortedPackages.length)} of{' '}
+              {sortedPackages.length} packages
             </div>
             <div className="flex items-center space-x-2">
               <Button
@@ -532,7 +552,7 @@ export default function PackageManagementPage() {
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                   <Button
                     key={page}
-                    variant={currentPage === page ? "default" : "outline"}
+                    variant={currentPage === page ? 'default' : 'outline'}
                     size="sm"
                     onClick={() => setCurrentPage(page)}
                     className="w-8 h-8 p-0"
@@ -582,7 +602,7 @@ export default function PackageManagementPage() {
           setSelectedPackage(null)
         }}
         onConfirm={confirmDelete}
-        packageName={selectedPackage?.name || ""}
+        packageName={selectedPackage?.name || ''}
       />
 
       <PackageDetailsDialog

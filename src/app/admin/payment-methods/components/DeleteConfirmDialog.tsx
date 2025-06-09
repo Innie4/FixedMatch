@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import {
   Dialog,
@@ -7,9 +7,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { AlertTriangle } from "lucide-react"
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { AlertTriangle } from 'lucide-react'
 
 interface DeleteConfirmDialogProps {
   isOpen: boolean
@@ -22,7 +22,7 @@ export function DeleteConfirmDialog({
   isOpen,
   onClose,
   onConfirm,
-  paymentMethodName
+  paymentMethodName,
 }: DeleteConfirmDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -34,9 +34,10 @@ export function DeleteConfirmDialog({
           </DialogTitle>
           <DialogDescription className="text-left">
             Are you sure you want to delete <strong>{paymentMethodName}</strong>?
-            <br /><br />
-            This action cannot be undone. All country assignments and configurations
-            for this payment method will be permanently removed.
+            <br />
+            <br />
+            This action cannot be undone. All country assignments and configurations for this
+            payment method will be permanently removed.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

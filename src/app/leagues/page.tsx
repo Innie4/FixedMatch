@@ -1,39 +1,39 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Input } from "@/components/ui/input"
-import { Search } from "lucide-react"
-import Image from "next/image"
-import Link from "next/link"
-import LeagueTable from "@/components/league-table"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Input } from '@/components/ui/input'
+import { Search } from 'lucide-react'
+import Image from 'next/image'
+import Link from 'next/link'
+import LeagueTable from '@/components/league-table'
 
 export default function LeaguesPage() {
   // Sample continents data
   const continents = [
-    { id: "europe", name: "Europe" },
-    { id: "south-america", name: "South America" },
-    { id: "north-america", name: "North America" },
-    { id: "africa", name: "Africa" },
-    { id: "asia", name: "Asia" },
-    { id: "oceania", name: "Oceania" },
+    { id: 'europe', name: 'Europe' },
+    { id: 'south-america', name: 'South America' },
+    { id: 'north-america', name: 'North America' },
+    { id: 'africa', name: 'Africa' },
+    { id: 'asia', name: 'Asia' },
+    { id: 'oceania', name: 'Oceania' },
   ]
 
   // Sample countries data for Europe
   const europeanCountries = [
-    { id: "england", name: "England", flag: "/placeholder.svg?height=24&width=24" },
-    { id: "spain", name: "Spain", flag: "/placeholder.svg?height=24&width=24" },
-    { id: "germany", name: "Germany", flag: "/placeholder.svg?height=24&width=24" },
-    { id: "italy", name: "Italy", flag: "/placeholder.svg?height=24&width=24" },
-    { id: "france", name: "France", flag: "/placeholder.svg?height=24&width=24" },
-    { id: "netherlands", name: "Netherlands", flag: "/placeholder.svg?height=24&width=24" },
-    { id: "portugal", name: "Portugal", flag: "/placeholder.svg?height=24&width=24" },
-    { id: "belgium", name: "Belgium", flag: "/placeholder.svg?height=24&width=24" },
+    { id: 'england', name: 'England', flag: '/placeholder.svg?height=24&width=24' },
+    { id: 'spain', name: 'Spain', flag: '/placeholder.svg?height=24&width=24' },
+    { id: 'germany', name: 'Germany', flag: '/placeholder.svg?height=24&width=24' },
+    { id: 'italy', name: 'Italy', flag: '/placeholder.svg?height=24&width=24' },
+    { id: 'france', name: 'France', flag: '/placeholder.svg?height=24&width=24' },
+    { id: 'netherlands', name: 'Netherlands', flag: '/placeholder.svg?height=24&width=24' },
+    { id: 'portugal', name: 'Portugal', flag: '/placeholder.svg?height=24&width=24' },
+    { id: 'belgium', name: 'Belgium', flag: '/placeholder.svg?height=24&width=24' },
   ]
 
   // Sample leagues data for England
   const englishLeagues = [
-    { id: "premier-league", name: "Premier League", logo: "/placeholder.svg?height=32&width=32" },
-    { id: "championship", name: "Championship", logo: "/placeholder.svg?height=32&width=32" },
-    { id: "league-one", name: "League One", logo: "/placeholder.svg?height=32&width=32" },
-    { id: "league-two", name: "League Two", logo: "/placeholder.svg?height=32&width=32" },
+    { id: 'premier-league', name: 'Premier League', logo: '/placeholder.svg?height=32&width=32' },
+    { id: 'championship', name: 'Championship', logo: '/placeholder.svg?height=32&width=32' },
+    { id: 'league-one', name: 'League One', logo: '/placeholder.svg?height=32&width=32' },
+    { id: 'league-two', name: 'League Two', logo: '/placeholder.svg?height=32&width=32' },
   ]
 
   return (
@@ -64,7 +64,7 @@ export default function LeaguesPage() {
                   className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 flex flex-col items-center text-center hover:shadow-md transition-all"
                 >
                   <Image
-                    src={country.flag || "/placeholder.svg"}
+                    src={country.flag || '/placeholder.svg'}
                     alt={country.name}
                     width={48}
                     height={48}
@@ -92,9 +92,9 @@ export default function LeaguesPage() {
                         key={league.id}
                         href={`/leagues/england/${league.id}`}
                         className={`text-xs px-2 py-1 rounded-full ${
-                          league.id === "premier-league"
-                            ? "bg-[#1a56db] text-white"
-                            : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                          league.id === 'premier-league'
+                            ? 'bg-[#1a56db] text-white'
+                            : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
                         }`}
                       >
                         {league.name}
@@ -121,10 +121,18 @@ export default function LeaguesPage() {
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="bg-gray-50 dark:bg-gray-700/50 text-left">
-                          <th className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">#</th>
-                          <th className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">Player</th>
-                          <th className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">Team</th>
-                          <th className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400 text-center">Goals</th>
+                          <th className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">
+                            #
+                          </th>
+                          <th className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">
+                            Player
+                          </th>
+                          <th className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">
+                            Team
+                          </th>
+                          <th className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400 text-center">
+                            Goals
+                          </th>
                           <th className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400 text-center">
                             Assists
                           </th>
@@ -136,7 +144,9 @@ export default function LeaguesPage() {
                       <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                         {[...Array(10)].map((_, index) => (
                           <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-800/60">
-                            <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">{index + 1}</td>
+                            <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">
+                              {index + 1}
+                            </td>
                             <td className="px-4 py-3">
                               <div className="flex items-center gap-2">
                                 <Image
@@ -146,17 +156,23 @@ export default function LeaguesPage() {
                                   height={32}
                                   className="rounded-full"
                                 />
-                                <span className="font-medium text-gray-900 dark:text-white">Player Name</span>
+                                <span className="font-medium text-gray-900 dark:text-white">
+                                  Player Name
+                                </span>
                               </div>
                             </td>
-                            <td className="px-4 py-3 text-gray-700 dark:text-gray-300">Team Name</td>
+                            <td className="px-4 py-3 text-gray-700 dark:text-gray-300">
+                              Team Name
+                            </td>
                             <td className="px-4 py-3 text-center font-medium text-gray-900 dark:text-white">
                               {20 - index}
                             </td>
                             <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300">
                               {10 - Math.floor(index / 2)}
                             </td>
-                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300">38</td>
+                            <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300">
+                              38
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -180,7 +196,7 @@ export default function LeaguesPage() {
           </TabsContent>
 
           {continents
-            .filter((c) => c.id !== "europe")
+            .filter((c) => c.id !== 'europe')
             .map((continent) => (
               <TabsContent key={continent.id} value={continent.id}>
                 <div className="text-center py-12 text-gray-500 dark:text-gray-400">

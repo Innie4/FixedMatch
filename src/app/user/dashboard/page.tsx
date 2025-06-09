@@ -1,22 +1,31 @@
 'use client'
 
-import Link from "next/link"
-import { BarChart3, Clock, FileText, MessageSquare, Settings, Star, Trophy, Users } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import UserStats from "@/components/user-stats"
-import UserPredictions from "@/components/user-predictions"
-import UserSubscription from "@/components/user-subscription"
-import { ProfileAvatar } from "@/components/avatar/ProfileAvatar"
+import Link from 'next/link'
+import {
+  BarChart3,
+  Clock,
+  FileText,
+  MessageSquare,
+  Settings,
+  Star,
+  Trophy,
+  Users,
+} from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import UserStats from '@/components/user-stats'
+import UserPredictions from '@/components/user-predictions'
+import UserSubscription from '@/components/user-subscription'
+import { ProfileAvatar } from '@/components/avatar/ProfileAvatar'
 
 export default function UserDashboard() {
   // Sample user data - in a real app, this would come from a database or API
   const user = {
-    name: "John Smith",
-    email: "john.smith@example.com",
-    avatar: "/placeholder.svg?height=100&width=100",
-    joinDate: "May 2023",
-    subscription: "VIP Monthly",
+    name: 'John Smith',
+    email: 'john.smith@example.com',
+    avatar: '/placeholder.svg?height=100&width=100',
+    joinDate: 'May 2023',
+    subscription: 'VIP Monthly',
     predictionStats: {
       total: 248,
       won: 187,
@@ -53,7 +62,9 @@ export default function UserDashboard() {
                 </div>
               </div>
               <h2 className="text-xl font-bold text-gray-900 dark:text-white">{user.name}</h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Member since {user.joinDate}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                Member since {user.joinDate}
+              </p>
               <div className="mt-2">
                 <span className="bg-[#1a56db]/10 text-[#1a56db] dark:bg-[#1a56db]/20 text-xs font-medium px-2.5 py-0.5 rounded-full">
                   {user.subscription}
@@ -150,7 +161,8 @@ export default function UserDashboard() {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Dashboard</h1>
             <p className="text-gray-600 dark:text-gray-400">
-              Welcome back, {user.name}! Here&apos;s an overview of your predictions and performance.
+              Welcome back, {user.name}! Here&apos;s an overview of your predictions and
+              performance.
             </p>
           </div>
 
@@ -161,7 +173,9 @@ export default function UserDashboard() {
                   <BarChart3 className="h-6 w-6 text-[#1a56db]" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Success Rate</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                    Success Rate
+                  </p>
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
                     {user.predictionStats.successRate}%
                   </h3>
@@ -175,8 +189,12 @@ export default function UserDashboard() {
                   <Trophy className="h-6 w-6 text-[#10b981]" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Predictions</p>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{user.predictionStats.total}</h3>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                    Total Predictions
+                  </p>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {user.predictionStats.total}
+                  </h3>
                 </div>
               </div>
             </div>
@@ -202,7 +220,9 @@ export default function UserDashboard() {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-600 dark:text-gray-400">ROI</p>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{user.predictionStats.roi}%</h3>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {user.predictionStats.roi}%
+                  </h3>
                 </div>
               </div>
             </div>

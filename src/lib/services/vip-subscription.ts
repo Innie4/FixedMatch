@@ -17,22 +17,22 @@ export class VIPSubscriptionService {
 
   static async checkExpiringSubscriptions() {
     const today = new Date()
-    
+
     // Find subscriptions expiring in the next 7 days
     const expiringSubscriptions = await prisma.vipSubscription.findMany({
       where: {
         status: 'active',
         endDate: {
-          lte: new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000)
+          lte: new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000),
         },
         lastNotificationDate: {
-          lt: new Date(today.setHours(0, 0, 0, 0))
-        }
+          lt: new Date(today.setHours(0, 0, 0, 0)),
+        },
       },
       include: {
         user: true,
-        package: true
-      }
+        package: true,
+      },
     })
 
     // Send notifications for expiring subscriptions
@@ -45,7 +45,7 @@ export class VIPSubscriptionService {
         await this.sendExpirationNotification(subscription, daysUntilExpiry)
         await prisma.vipSubscription.update({
           where: { id: subscription.id },
-          data: { lastNotificationDate: today }
+          data: { lastNotificationDate: today },
         })
       }
     }
@@ -53,19 +53,17 @@ export class VIPSubscriptionService {
 
   static async checkExpiredSubscriptions() {
     const today = new Date()
-    const gracePeriodDate = new Date(
-      today.getTime() - this.GRACE_PERIOD_DAYS * 24 * 60 * 60 * 1000
-    )
+    const gracePeriodDate = new Date(today.getTime() - this.GRACE_PERIOD_DAYS * 24 * 60 * 60 * 1000)
 
     // Find expired subscriptions
     const expiredSubscriptions = await prisma.vipSubscription.findMany({
       where: {
         status: { in: ['active', 'grace_period'] },
-        endDate: { lte: today }
+        endDate: { lte: today },
       },
       include: {
-        user: true
-      }
+        user: true,
+      },
     })
 
     // Handle expired subscriptions
@@ -86,7 +84,7 @@ export class VIPSubscriptionService {
   ) {
     await prisma.vipSubscription.update({
       where: { id: subscriptionId },
-      data: { status }
+      data: { status },
     })
 
     // Log the status change
@@ -94,8 +92,8 @@ export class VIPSubscriptionService {
       data: {
         subscriptionId,
         action: `status_changed_to_${status}`,
-        timestamp: new Date()
-      }
+        timestamp: new Date(),
+      },
     })
   }
 
@@ -108,9 +106,9 @@ export class VIPSubscriptionService {
       where: { id: subscription.userId },
       data: {
         roles: {
-          disconnect: { name: 'vip' }
-        }
-      }
+          disconnect: { name: 'vip' },
+        },
+      },
     })
 
     // Send expiration notification
@@ -134,13 +132,12 @@ export class VIPSubscriptionService {
     await sendEmail({ to: subscription.user.email, subject, html })
   }
 
-  private static async sendAccessRevokedNotification(subscription: VIPSubscription & { user: any }) {
+  private static async sendAccessRevokedNotification(
+    subscription: VIPSubscription & { user: any }
+  ) {
     const renewalUrl = `${process.env.NEXT_PUBLIC_APP_URL}/vip/renew`
 
-    const { subject, html } = emailTemplates.subscriptionExpired(
-      subscription.user.name,
-      renewalUrl
-    )
+    const { subject, html } = emailTemplates.subscriptionExpired(subscription.user.name, renewalUrl)
 
     await sendEmail({ to: subscription.user.email, subject, html })
   }

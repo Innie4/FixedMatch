@@ -1,43 +1,30 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import {
-  CheckCircle2,
-  BarChart3,
-  TrendingUp,
-  FileText,
-  LineChart,
-  PieChart,
-} from "lucide-react";
+} from '@/components/ui/select'
+import { CheckCircle2, BarChart3, TrendingUp, FileText, LineChart, PieChart } from 'lucide-react'
 
 interface PerformanceTabProps {
-  predictionTimeRange: string;
-  setPredictionTimeRange: (value: string) => void;
+  predictionTimeRange: string
+  setPredictionTimeRange: (value: string) => void
   vipPredictionPerformance: {
     overall: {
-      total: number;
-      won: number;
-      lost: number;
-      successRate: number;
-      averageOdds: number;
-      roi: number;
-    };
+      total: number
+      won: number
+      lost: number
+      successRate: number
+      averageOdds: number
+      roi: number
+    }
     comparison: {
-      vip: { successRate: number; roi: number };
-      free: { successRate: number; roi: number };
-    };
-  };
+      vip: { successRate: number; roi: number }
+      free: { successRate: number; roi: number }
+    }
+  }
 }
 
 export function PerformanceTab({
@@ -63,7 +50,7 @@ export function PerformanceTab({
           </Select>
         </div>
       </div>
-      
+
       {/* Performance Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
@@ -72,10 +59,10 @@ export function PerformanceTab({
             <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{vipPredictionPerformance.overall.successRate}%</div>
-            <p className="text-xs text-muted-foreground">
-              +2.5% from last month
-            </p>
+            <div className="text-2xl font-bold">
+              {vipPredictionPerformance.overall.successRate}%
+            </div>
+            <p className="text-xs text-muted-foreground">+2.5% from last month</p>
           </CardContent>
         </Card>
         <Card>
@@ -85,9 +72,7 @@ export function PerformanceTab({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{vipPredictionPerformance.overall.averageOdds}</div>
-            <p className="text-xs text-muted-foreground">
-              +0.15 from last month
-            </p>
+            <p className="text-xs text-muted-foreground">+0.15 from last month</p>
           </CardContent>
         </Card>
         <Card>
@@ -97,9 +82,7 @@ export function PerformanceTab({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{vipPredictionPerformance.overall.roi}%</div>
-            <p className="text-xs text-muted-foreground">
-              +4.1% from last month
-            </p>
+            <p className="text-xs text-muted-foreground">+4.1% from last month</p>
           </CardContent>
         </Card>
         <Card>
@@ -109,13 +92,11 @@ export function PerformanceTab({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{vipPredictionPerformance.overall.total}</div>
-            <p className="text-xs text-muted-foreground">
-              +12 from last month
-            </p>
+            <p className="text-xs text-muted-foreground">+12 from last month</p>
           </CardContent>
         </Card>
       </div>
-      
+
       {/* Performance Charts */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <Card className="col-span-4">
@@ -145,7 +126,7 @@ export function PerformanceTab({
           </CardContent>
         </Card>
       </div>
-      
+
       {/* VIP vs Free Comparison */}
       <Card>
         <CardHeader>
@@ -160,17 +141,20 @@ export function PerformanceTab({
               <div className="flex items-center justify-between mb-2">
                 <div className="text-sm font-medium">Success Rate</div>
                 <div className="text-sm text-muted-foreground">
-                  VIP: {vipPredictionPerformance.comparison.vip.successRate}% | 
-                  Free: {vipPredictionPerformance.comparison.free.successRate}%
+                  VIP: {vipPredictionPerformance.comparison.vip.successRate}% | Free:{' '}
+                  {vipPredictionPerformance.comparison.free.successRate}%
                 </div>
               </div>
               <div className="h-2 bg-muted rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-primary" 
-                  style={{ 
-                    width: `${(vipPredictionPerformance.comparison.vip.successRate / 
-                      (vipPredictionPerformance.comparison.vip.successRate + 
-                      vipPredictionPerformance.comparison.free.successRate)) * 100}%` 
+                <div
+                  className="h-full bg-primary"
+                  style={{
+                    width: `${
+                      (vipPredictionPerformance.comparison.vip.successRate /
+                        (vipPredictionPerformance.comparison.vip.successRate +
+                          vipPredictionPerformance.comparison.free.successRate)) *
+                      100
+                    }%`,
                   }}
                 />
               </div>
@@ -179,17 +163,20 @@ export function PerformanceTab({
               <div className="flex items-center justify-between mb-2">
                 <div className="text-sm font-medium">ROI</div>
                 <div className="text-sm text-muted-foreground">
-                  VIP: {vipPredictionPerformance.comparison.vip.roi}% | 
-                  Free: {vipPredictionPerformance.comparison.free.roi}%
+                  VIP: {vipPredictionPerformance.comparison.vip.roi}% | Free:{' '}
+                  {vipPredictionPerformance.comparison.free.roi}%
                 </div>
               </div>
               <div className="h-2 bg-muted rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-primary" 
-                  style={{ 
-                    width: `${(vipPredictionPerformance.comparison.vip.roi / 
-                      (vipPredictionPerformance.comparison.vip.roi + 
-                      vipPredictionPerformance.comparison.free.roi)) * 100}%` 
+                <div
+                  className="h-full bg-primary"
+                  style={{
+                    width: `${
+                      (vipPredictionPerformance.comparison.vip.roi /
+                        (vipPredictionPerformance.comparison.vip.roi +
+                          vipPredictionPerformance.comparison.free.roi)) *
+                      100
+                    }%`,
                   }}
                 />
               </div>
@@ -198,5 +185,5 @@ export function PerformanceTab({
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

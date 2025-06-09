@@ -31,7 +31,7 @@ export function AvatarSelector({ currentAvatar, onSelect, onClose, isOpen }: Ava
     if (!gridRef.current) return
 
     const buttons = Array.from(gridRef.current.querySelectorAll('button'))
-    const currentIndex = buttons.findIndex(button => button === document.activeElement)
+    const currentIndex = buttons.findIndex((button) => button === document.activeElement)
 
     switch (e.key) {
       case 'ArrowRight':
@@ -60,14 +60,14 @@ export function AvatarSelector({ currentAvatar, onSelect, onClose, isOpen }: Ava
   const handleSave = async () => {
     setLoading(true)
     setError(null)
-    
+
     try {
       await onSelect(selectedAvatar)
       onClose()
     } catch (err) {
       setError({
         message: 'Failed to update avatar. Please try again.',
-        code: 'UPDATE_ERROR'
+        code: 'UPDATE_ERROR',
       })
     } finally {
       setLoading(false)
@@ -76,7 +76,7 @@ export function AvatarSelector({ currentAvatar, onSelect, onClose, isOpen }: Ava
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent 
+      <DialogContent
         className="sm:max-w-[600px]"
         role="dialog"
         aria-labelledby="avatar-dialog-title"
@@ -84,7 +84,7 @@ export function AvatarSelector({ currentAvatar, onSelect, onClose, isOpen }: Ava
         <DialogHeader>
           <DialogTitle id="avatar-dialog-title">Choose Your Avatar</DialogTitle>
         </DialogHeader>
-        
+
         {error && (
           <Alert variant="destructive">
             <AlertDescription>{error.message}</AlertDescription>
@@ -117,7 +117,7 @@ export function AvatarSelector({ currentAvatar, onSelect, onClose, isOpen }: Ava
             </select>
           </div>
 
-          <div 
+          <div
             ref={gridRef}
             className="grid grid-cols-4 gap-4 max-h-[400px] overflow-y-auto p-2"
             role="grid"
@@ -149,7 +149,7 @@ export function AvatarSelector({ currentAvatar, onSelect, onClose, isOpen }: Ava
 
           <div className="flex items-center justify-between pt-4">
             <div className="flex items-center gap-4">
-              <div 
+              <div
                 className="relative h-16 w-16 rounded-full overflow-hidden border-2 border-muted"
                 role="img"
                 aria-label="Selected avatar preview"
@@ -163,7 +163,7 @@ export function AvatarSelector({ currentAvatar, onSelect, onClose, isOpen }: Ava
                   onError={() => {
                     setError({
                       message: 'Failed to load avatar image',
-                      code: 'LOAD_ERROR'
+                      code: 'LOAD_ERROR',
                     })
                   }}
                 />
@@ -171,18 +171,10 @@ export function AvatarSelector({ currentAvatar, onSelect, onClose, isOpen }: Ava
               <span className="text-sm text-muted-foreground">Preview</span>
             </div>
             <div className="flex gap-2">
-              <Button 
-                variant="outline" 
-                onClick={onClose}
-                disabled={loading}
-              >
+              <Button variant="outline" onClick={onClose} disabled={loading}>
                 Cancel
               </Button>
-              <Button 
-                onClick={handleSave} 
-                disabled={loading}
-                aria-busy={loading}
-              >
+              <Button onClick={handleSave} disabled={loading} aria-busy={loading}>
                 {loading ? 'Saving...' : 'Save'}
               </Button>
             </div>

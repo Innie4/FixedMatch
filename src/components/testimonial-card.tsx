@@ -1,5 +1,5 @@
-import Image from "next/image"
-import { Star, CheckCircle } from "lucide-react"
+import Image from 'next/image'
+import { Star, CheckCircle } from 'lucide-react'
 
 interface TestimonialCardProps {
   testimonial: {
@@ -19,7 +19,7 @@ export default function TestimonialCard({ testimonial }: TestimonialCardProps) {
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
       <div className="flex items-center mb-4">
         <Image
-          src={testimonial.avatar || "/placeholder.svg"}
+          src={testimonial.avatar || '/placeholder.svg'}
           alt={testimonial.name}
           width={48}
           height={48}
@@ -40,7 +40,9 @@ export default function TestimonialCard({ testimonial }: TestimonialCardProps) {
               <Star
                 key={i}
                 className={`h-4 w-4 ${
-                  i < testimonial.rating ? "text-[#fbbf24] fill-[#fbbf24]" : "text-gray-300 dark:text-gray-600"
+                  i < testimonial.rating
+                    ? 'text-[#fbbf24] fill-[#fbbf24]'
+                    : 'text-gray-300 dark:text-gray-600'
                 }`}
               />
             ))}

@@ -1,141 +1,134 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import Link from "next/link"
-import { 
-  BarChart3, 
-  Users, 
-  TrendingUp, 
-  UserPlus,
-  CreditCard
-} from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Progress } from "@/components/ui/progress"
-import { StatCard } from "@/components/admin/ui/stat-card"
-import { PageHeader, DateRangeSelector } from "@/components/admin/page-header"
-import { ActivityList } from "@/components/admin/activity-list"
-import { NotificationList } from "@/components/admin/notification-list"
+import { useState } from 'react'
+import { BarChart3, Users, TrendingUp, UserPlus, CreditCard } from 'lucide-react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Progress } from '@/components/ui/progress'
+import { StatCard } from '@/components/admin/ui/stat-card'
+import { PageHeader, DateRangeSelector } from '@/components/admin/page-header'
+import { ActivityList } from '@/components/admin/activity-list'
+import { NotificationList } from '@/components/admin/notification-list'
 
 export default function AdminDashboardPage() {
-  const [timeRange, setTimeRange] = useState("7d")
-  
+  const [timeRange, setTimeRange] = useState('7d')
+
   // Mock data for the dashboard
   const stats = [
     {
-      title: "Active Users",
-      value: "12,543",
-      change: "+14.2%",
-      trend: "up" as const,
+      title: 'Active Users',
+      value: '12,543',
+      change: '+14.2%',
+      trend: 'up' as const,
       icon: <Users className="h-5 w-5" />,
-      color: "blue" as const
+      color: 'blue' as const,
     },
     {
-      title: "Subscription Revenue",
-      value: "$24,853",
-      change: "+5.4%",
-      trend: "up" as const,
+      title: 'Subscription Revenue',
+      value: '$24,853',
+      change: '+5.4%',
+      trend: 'up' as const,
       icon: <CreditCard className="h-5 w-5" />,
-      color: "green" as const
+      color: 'green' as const,
     },
     {
-      title: "Conversion Rate",
-      value: "3.6%",
-      change: "-0.8%",
-      trend: "down" as const,
+      title: 'Conversion Rate',
+      value: '3.6%',
+      change: '-0.8%',
+      trend: 'down' as const,
       icon: <TrendingUp className="h-5 w-5" />,
-      color: "red" as const
+      color: 'red' as const,
     },
     {
-      title: "New Signups",
-      value: "842",
-      change: "+28.4%",
-      trend: "up" as const,
+      title: 'New Signups',
+      value: '842',
+      change: '+28.4%',
+      trend: 'up' as const,
       icon: <UserPlus className="h-5 w-5" />,
-      color: "purple" as const
-    }
+      color: 'purple' as const,
+    },
   ]
-  
+
   // Mock notifications data
   const notifications = [
     {
       id: 1,
-      title: "New prediction review needed",
-      description: "Premier League: Arsenal vs Chelsea prediction awaiting approval",
-      time: "10 minutes ago",
-      type: "review",
-      priority: "high" as const
+      title: 'New prediction review needed',
+      description: 'Premier League: Arsenal vs Chelsea prediction awaiting approval',
+      time: '10 minutes ago',
+      type: 'review',
+      priority: 'high' as const,
     },
     {
       id: 2,
-      title: "VIP subscription expiring",
-      description: "15 VIP subscriptions will expire in the next 7 days",
-      time: "2 hours ago",
-      type: "subscription",
-      priority: "medium" as const
+      title: 'VIP subscription expiring',
+      description: '15 VIP subscriptions will expire in the next 7 days',
+      time: '2 hours ago',
+      type: 'subscription',
+      priority: 'medium' as const,
     },
     {
       id: 3,
-      title: "System update required",
-      description: "New security patch available for the admin dashboard",
-      time: "1 day ago",
-      type: "system",
-      priority: "high" as const
+      title: 'System update required',
+      description: 'New security patch available for the admin dashboard',
+      time: '1 day ago',
+      type: 'system',
+      priority: 'high' as const,
     },
     {
       id: 4,
-      title: "New user feedback",
-      description: "3 new user reviews need moderation",
-      time: "2 days ago",
-      type: "feedback",
-      priority: "medium" as const
-    }
+      title: 'New user feedback',
+      description: '3 new user reviews need moderation',
+      time: '2 days ago',
+      type: 'feedback',
+      priority: 'medium' as const,
+    },
   ]
-  
+
   // Mock recent activity data
   const recentActivity = [
     {
       id: 1,
-      action: "Added new prediction",
-      admin: "John Doe",
-      timestamp: "Today, 10:30 AM",
-      details: "Added Bayern Munich vs Dortmund prediction"
+      action: 'Added new prediction',
+      admin: 'John Doe',
+      timestamp: 'Today, 10:30 AM',
+      details: 'Added Bayern Munich vs Dortmund prediction',
     },
     {
       id: 2,
-      action: "Updated user status",
-      admin: "Sarah Johnson",
-      timestamp: "Today, 09:15 AM",
-      details: "Changed user #4582 to VIP status"
+      action: 'Updated user status',
+      admin: 'Sarah Johnson',
+      timestamp: 'Today, 09:15 AM',
+      details: 'Changed user #4582 to VIP status',
     },
     {
       id: 3,
-      action: "Approved review",
-      admin: "Mike Wilson",
-      timestamp: "Yesterday, 4:45 PM",
-      details: "Approved review #1258 for publication"
+      action: 'Approved review',
+      admin: 'Mike Wilson',
+      timestamp: 'Yesterday, 4:45 PM',
+      details: 'Approved review #1258 for publication',
     },
     {
       id: 4,
-      action: "New user registration",
-      admin: "System",
-      timestamp: "Yesterday, 2:30 PM",
-      details: "User #4892 registered via Google OAuth"
+      action: 'New user registration',
+      admin: 'System',
+      timestamp: 'Yesterday, 2:30 PM',
+      details: 'User #4892 registered via Google OAuth',
     },
     {
       id: 5,
-      action: "Updated system settings",
-      admin: "Admin",
-      timestamp: "Yesterday, 11:20 AM",
-      details: "Changed email notification settings"
-    }
+      action: 'Updated system settings',
+      admin: 'Admin',
+      timestamp: 'Yesterday, 11:20 AM',
+      details: 'Changed email notification settings',
+    },
   ]
 
   return (
     <div className="space-y-6">
-      <PageHeader 
-        title="Admin Dashboard" 
+      <PageHeader
+        title="Admin Dashboard"
         description="Overview of your platform's performance and activity."
       >
         <DateRangeSelector timeRange={timeRange} onChange={setTimeRange} />
@@ -168,6 +161,9 @@ export default function AdminDashboardPage() {
                 <TabsTrigger value="revenue">Revenue</TabsTrigger>
                 <TabsTrigger value="predictions">Predictions</TabsTrigger>
               </TabsList>
+              <TabsContent value="users">{/* User chart content */}</TabsContent>
+              <TabsContent value="revenue">{/* Revenue chart content */}</TabsContent>
+              <TabsContent value="predictions">{/* Predictions chart content */}</TabsContent>
             </Tabs>
           </CardHeader>
           <CardContent>
@@ -220,7 +216,7 @@ export default function AdminDashboardPage() {
                 </div>
                 <Progress value={65} className="h-2" />
               </div>
-              
+
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
                   <div className="flex items-center">
@@ -231,7 +227,7 @@ export default function AdminDashboardPage() {
                 </div>
                 <Progress value={25} className="h-2" />
               </div>
-              
+
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
                   <div className="flex items-center">
@@ -243,7 +239,7 @@ export default function AdminDashboardPage() {
                 <Progress value={10} className="h-2" />
               </div>
             </div>
-            
+
             <div className="mt-6 pt-6 border-t">
               <h4 className="text-sm font-medium mb-4">Subscription Growth</h4>
               <div className="space-y-2">

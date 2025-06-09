@@ -1,21 +1,21 @@
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from './AuthContext';
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuth } from './AuthContext'
 
 export default function ProtectedRoute({ children }) {
-  const { currentUser } = useAuth();
-  const router = useRouter();
+  const { currentUser } = useAuth()
+  const router = useRouter()
 
   useEffect(() => {
     if (currentUser === null) {
-      router.push('/login');
+      router.push('/login')
     }
-  }, [currentUser, router]);
+  }, [currentUser, router])
 
   // Show loading or nothing while checking auth status
   if (currentUser === null) {
-    return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
+    return <div className="flex justify-center items-center min-h-screen">Loading...</div>
   }
 
-  return children;
+  return children
 }

@@ -1,7 +1,14 @@
-import { Check, Clock, CreditCard, Shield, Star, Zap } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
+import { Check, Clock, CreditCard, Shield, Star, Zap } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
 
 interface UserSubscriptionProps {
   subscription: string
@@ -18,7 +25,9 @@ export default function UserSubscription({ subscription }: UserSubscriptionProps
             </div>
             <div>
               <h3 className="font-medium text-gray-900 dark:text-white">{subscription}</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Your subscription renews on Nov 5, 2023</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Your subscription renews on Nov 5, 2023
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -76,7 +85,7 @@ export default function UserSubscription({ subscription }: UserSubscriptionProps
             </ul>
           </CardContent>
           <CardFooter>
-            {subscription === "Weekly Pass" ? (
+            {subscription === 'Weekly Pass' ? (
               <Button className="w-full" disabled>
                 Current Plan
               </Button>
@@ -125,13 +134,13 @@ export default function UserSubscription({ subscription }: UserSubscriptionProps
             </ul>
           </CardContent>
           <CardFooter>
-            {subscription === "VIP Monthly" ? (
+            {subscription === 'VIP Monthly' ? (
               <Button className="w-full" disabled>
                 Current Plan
               </Button>
             ) : (
               <Button className="w-full bg-[#1a56db]">
-                {subscription === "Weekly Pass" ? "Upgrade" : "Downgrade"}
+                {subscription === 'Weekly Pass' ? 'Upgrade' : 'Downgrade'}
               </Button>
             )}
           </CardFooter>
@@ -178,7 +187,7 @@ export default function UserSubscription({ subscription }: UserSubscriptionProps
             </ul>
           </CardContent>
           <CardFooter>
-            {subscription === "Quarterly Pro" ? (
+            {subscription === 'Quarterly Pro' ? (
               <Button className="w-full" disabled>
                 Current Plan
               </Button>
@@ -190,7 +199,9 @@ export default function UserSubscription({ subscription }: UserSubscriptionProps
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Payment Information</h3>
+        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
+          Payment Information
+        </h3>
 
         <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg mb-4">
           <div className="flex items-center gap-3">
@@ -222,14 +233,17 @@ export default function UserSubscription({ subscription }: UserSubscriptionProps
             <Clock className="h-5 w-5 text-gray-600 dark:text-gray-400" />
             <div>
               <p className="font-medium text-gray-900 dark:text-white">Billing History</p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">View and download previous invoices.</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                View and download previous invoices.
+              </p>
             </div>
           </div>
         </div>
 
         <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-            Your subscription will automatically renew. You can cancel anytime from your account settings.
+            Your subscription will automatically renew. You can cancel anytime from your account
+            settings.
           </p>
           <div className="flex gap-3">
             <Button variant="outline">Cancel Subscription</Button>

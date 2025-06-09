@@ -30,13 +30,13 @@ export default function VIPPredictionsAdmin() {
     status: '',
     startDate: '',
     endDate: '',
-    archived: false
+    archived: false,
   })
 
   const fetchPredictions = async () => {
     const params = new URLSearchParams({
       ...filters,
-      archived: filters.archived.toString()
+      archived: filters.archived.toString(),
     })
     const response = await fetch(`/api/admin/vip-predictions?${params}`)
     const data = await response.json()
@@ -51,7 +51,7 @@ export default function VIPPredictionsAdmin() {
     await fetch('/api/admin/vip-predictions', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, status, result })
+      body: JSON.stringify({ id, status, result }),
     })
     fetchPredictions()
   }
@@ -60,7 +60,7 @@ export default function VIPPredictionsAdmin() {
     await fetch('/api/admin/vip-predictions', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, isArchived: true })
+      body: JSON.stringify({ id, isArchived: true }),
     })
     fetchPredictions()
   }
@@ -73,12 +73,12 @@ export default function VIPPredictionsAdmin() {
     { accessorKey: 'prediction', header: 'Prediction' },
     { accessorKey: 'odds', header: 'Odds' },
     { accessorKey: 'status', header: 'Status' },
-    { 
+    {
       id: 'actions',
       cell: ({ row }: { row: { original: VIPPrediction } }) => (
         <div className="flex items-center gap-2">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             size="sm"
             onClick={() => {
               setSelectedPrediction(row.original)
@@ -107,26 +107,24 @@ export default function VIPPredictionsAdmin() {
               </Button>
             </div>
           )}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handleArchive(row.original.id)}
-          >
+          <Button variant="outline" size="sm" onClick={() => handleArchive(row.original.id)}>
             <Archive className="h-4 w-4" />
           </Button>
         </div>
-      )
-    }
+      ),
+    },
   ]
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">VIP Predictions</h1>
-        <Button onClick={() => {
-          setSelectedPrediction(null)
-          setShowAddDialog(true)
-        }}>
+        <Button
+          onClick={() => {
+            setSelectedPrediction(null)
+            setShowAddDialog(true)
+          }}
+        >
           <Plus className="mr-2 h-4 w-4" />
           Add Prediction
         </Button>
@@ -157,13 +155,10 @@ export default function VIPPredictionsAdmin() {
         </Button>
       </div>
 
-      <DataTable 
-        columns={columns} 
-        data={predictions}
-      />
-      
-      <VIPPredictionDialog 
-        open={showAddDialog} 
+      <DataTable columns={columns} data={predictions} />
+
+      <VIPPredictionDialog
+        open={showAddDialog}
         onClose={() => {
           setShowAddDialog(false)
           setSelectedPrediction(null)

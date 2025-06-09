@@ -1,13 +1,13 @@
-"use client"
+'use client'
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { usePathname } from "next/navigation"
-import { Menu, X, Bell } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { ModeToggle } from "@/components/mode-toggle"
-import { useMobile } from "@/hooks/use-mobile"
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
+import { usePathname } from 'next/navigation'
+import { Menu, X, Bell } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { ModeToggle } from '@/components/mode-toggle'
+import { useMobile } from '@/hooks/use-mobile'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -21,8 +21,8 @@ export default function Header() {
       setIsScrolled(window.scrollY > 10)
     }
 
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
   // Close mobile menu when route changes
@@ -31,17 +31,19 @@ export default function Header() {
   }, [pathname])
 
   const navLinks = [
-    { name: "Home", href: "/" },
-    { name: "Predictions", href: "/predictions" },
-    { name: "Live Scores", href: "/live-scores" },
-    { name: "Leagues", href: "/leagues" },
-    { name: "VIP", href: "/vip" },
+    { name: 'Home', href: '/' },
+    { name: 'Predictions', href: '/predictions' },
+    { name: 'Live Scores', href: '/live-scores' },
+    { name: 'Leagues', href: '/leagues' },
+    { name: 'VIP', href: '/vip' },
   ]
 
   return (
     <header
       className={`sticky top-0 z-50 w-full transition-all duration-300 ${
-        isScrolled ? "bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-sm" : "bg-white dark:bg-gray-900"
+        isScrolled
+          ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-sm'
+          : 'bg-white dark:bg-gray-900'
       }`}
     >
       <div className="container mx-auto px-4">
@@ -63,7 +65,7 @@ export default function Header() {
                 key={link.name}
                 href={link.href}
                 className={`text-sm font-medium transition-colors hover:text-[#1a56db] ${
-                  pathname === link.href ? "text-[#1a56db]" : "text-gray-700 dark:text-gray-200"
+                  pathname === link.href ? 'text-[#1a56db]' : 'text-gray-700 dark:text-gray-200'
                 }`}
               >
                 {link.name}
@@ -80,7 +82,12 @@ export default function Header() {
             </Button>
 
             {/* Mobile menu button */}
-            <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
           </div>
@@ -97,7 +104,7 @@ export default function Header() {
                   key={link.name}
                   href={link.href}
                   className={`text-sm font-medium py-2 transition-colors ${
-                    pathname === link.href ? "text-[#1a56db]" : "text-gray-700 dark:text-gray-200"
+                    pathname === link.href ? 'text-[#1a56db]' : 'text-gray-700 dark:text-gray-200'
                   }`}
                 >
                   {link.name}

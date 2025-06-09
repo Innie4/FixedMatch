@@ -1,17 +1,17 @@
-"use client"
+'use client'
 
-import { useState } from "react"
+import { useState } from 'react'
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
-} from "@/components/ui/table"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Button } from "@/components/ui/button"
-import { ChevronLeft, ChevronRight, ArrowUpDown } from "lucide-react"
+  TableRow,
+} from '@/components/ui/table'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Button } from '@/components/ui/button'
+import { ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react'
 
 interface Column {
   key: string
@@ -47,7 +47,7 @@ export function DataTable({
   currentPage,
   itemsPerPage,
   onPageChange,
-  onItemsPerPageChange
+  onItemsPerPageChange,
 }: DataTableProps) {
   const totalPages = Math.ceil(data.length / itemsPerPage)
   const startIndex = (currentPage - 1) * itemsPerPage
@@ -66,15 +66,17 @@ export function DataTable({
               />
             </TableHead>
             {columns.map((column) => (
-              <TableHead 
+              <TableHead
                 key={column.key}
-                className={column.sortable ? "cursor-pointer" : ""}
+                className={column.sortable ? 'cursor-pointer' : ''}
                 onClick={() => column.sortable && onSort(column.key)}
               >
                 <div className="flex items-center">
                   {column.title}
                   {column.sortable && (
-                    <ArrowUpDown className={`ml-2 h-4 w-4 ${sortColumn === column.key ? 'opacity-100' : 'opacity-50'}`} />
+                    <ArrowUpDown
+                      className={`ml-2 h-4 w-4 ${sortColumn === column.key ? 'opacity-100' : 'opacity-50'}`}
+                    />
                   )}
                 </div>
               </TableHead>
@@ -99,7 +101,7 @@ export function DataTable({
           ))}
         </TableBody>
       </Table>
-      
+
       {data.length > 0 && (
         <div className="flex items-center justify-between p-4 border-t">
           <div className="text-sm text-gray-500 dark:text-gray-400">

@@ -1,6 +1,6 @@
-"use client"
+'use client'
 
-import { useState, useEffect } from "react"
+import { useState, useEffect } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -8,30 +8,30 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Switch } from "@/components/ui/switch"
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { Switch } from '@/components/ui/switch'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
-import { X, Eye, EyeOff, TestTube } from "lucide-react"
-import { CountrySelector } from "@/components/ui/country-selector"
-import { countries } from "@/lib/countries"
+} from '@/components/ui/select'
+import { Badge } from '@/components/ui/badge'
+import { X, Eye, EyeOff, TestTube } from 'lucide-react'
+import { CountrySelector } from '@/components/ui/country-selector'
+import { countries } from '@/lib/countries'
 
 interface PaymentMethod {
   id: number
   name: string
-  provider: "flutterwave" | "paystack" | "stripe" | "razorpay" | "paypal" | "square"
-  type: "card" | "bank_transfer" | "mobile_money" | "crypto" | "wallet"
-  status: "active" | "inactive" | "testing"
+  provider: 'flutterwave' | 'paystack' | 'stripe' | 'razorpay' | 'paypal' | 'square'
+  type: 'card' | 'bank_transfer' | 'mobile_money' | 'crypto' | 'wallet'
+  status: 'active' | 'inactive' | 'testing'
   countries: string[]
   configuration: {
     publicKey?: string
@@ -45,7 +45,7 @@ interface PaymentMethod {
   createdAt: string
   updatedAt: string
   lastTested?: string
-  testStatus?: "success" | "failed" | "pending"
+  testStatus?: 'success' | 'failed' | 'pending'
 }
 
 interface PaymentMethodFormDialogProps {
@@ -53,28 +53,39 @@ interface PaymentMethodFormDialogProps {
   onClose: () => void
   onSave: (method: Partial<PaymentMethod>) => void
   method?: PaymentMethod | null
-  mode: "add" | "edit"
+  mode: 'add' | 'edit'
 }
 
 const PROVIDERS = [
-  { value: "flutterwave", label: "Flutterwave" },
-  { value: "paystack", label: "Paystack" },
-  { value: "stripe", label: "Stripe" },
-  { value: "razorpay", label: "Razorpay" },
-  { value: "paypal", label: "PayPal" },
-  { value: "square", label: "Square" },
+  { value: 'flutterwave', label: 'Flutterwave' },
+  { value: 'paystack', label: 'Paystack' },
+  { value: 'stripe', label: 'Stripe' },
+  { value: 'razorpay', label: 'Razorpay' },
+  { value: 'paypal', label: 'PayPal' },
+  { value: 'square', label: 'Square' },
 ]
 
 const PAYMENT_TYPES = [
-  { value: "card", label: "Credit/Debit Card" },
-  { value: "bank_transfer", label: "Bank Transfer" },
-  { value: "mobile_money", label: "Mobile Money" },
-  { value: "crypto", label: "Cryptocurrency" },
-  { value: "wallet", label: "Digital Wallet" },
+  { value: 'card', label: 'Credit/Debit Card' },
+  { value: 'bank_transfer', label: 'Bank Transfer' },
+  { value: 'mobile_money', label: 'Mobile Money' },
+  { value: 'crypto', label: 'Cryptocurrency' },
+  { value: 'wallet', label: 'Digital Wallet' },
 ]
 
 const CURRENCIES = [
-  "USD", "EUR", "GBP", "NGN", "GHS", "KES", "ZAR", "CAD", "AUD", "JPY", "CNY", "INR"
+  'USD',
+  'EUR',
+  'GBP',
+  'NGN',
+  'GHS',
+  'KES',
+  'ZAR',
+  'CAD',
+  'AUD',
+  'JPY',
+  'CNY',
+  'INR',
 ]
 
 export function PaymentMethodFormDialog({
@@ -82,20 +93,20 @@ export function PaymentMethodFormDialog({
   onClose,
   onSave,
   method,
-  mode
+  mode,
 }: PaymentMethodFormDialogProps) {
   const [formData, setFormData] = useState({
-    name: "",
-    provider: "" as PaymentMethod["provider"],
-    type: "" as PaymentMethod["type"],
-    status: "inactive" as PaymentMethod["status"],
+    name: '',
+    provider: '' as PaymentMethod['provider'],
+    type: '' as PaymentMethod['type'],
+    status: 'inactive' as PaymentMethod['status'],
     countries: [] as string[],
     configuration: {
-      publicKey: "",
-      secretKey: "",
-      merchantId: "",
-      webhookUrl: "",
-      testMode: true
+      publicKey: '',
+      secretKey: '',
+      merchantId: '',
+      webhookUrl: '',
+      testMode: true,
     } as {
       publicKey?: string
       secretKey?: string
@@ -104,7 +115,7 @@ export function PaymentMethodFormDialog({
       testMode: boolean
     },
     supportedCurrencies: [] as string[],
-    transactionFee: 0
+    transactionFee: 0,
   })
 
   const [showSecretKey, setShowSecretKey] = useState(false)
@@ -112,7 +123,7 @@ export function PaymentMethodFormDialog({
   const [isTestingConnection, setIsTestingConnection] = useState(false)
 
   useEffect(() => {
-    if (method && mode === "edit") {
+    if (method && mode === 'edit') {
       setFormData({
         name: method.name,
         provider: method.provider,
@@ -121,25 +132,25 @@ export function PaymentMethodFormDialog({
         countries: method.countries,
         configuration: method.configuration,
         supportedCurrencies: method.supportedCurrencies,
-        transactionFee: method.transactionFee
+        transactionFee: method.transactionFee,
       })
     } else {
       // Reset form for add mode
       setFormData({
-        name: "",
-        provider: "" as PaymentMethod["provider"],
-        type: "" as PaymentMethod["type"],
-        status: "inactive",
+        name: '',
+        provider: '' as PaymentMethod['provider'],
+        type: '' as PaymentMethod['type'],
+        status: 'inactive',
         countries: [],
         configuration: {
-          publicKey: "",
-          secretKey: "",
-          merchantId: "",
-          webhookUrl: "",
-          testMode: true
+          publicKey: '',
+          secretKey: '',
+          merchantId: '',
+          webhookUrl: '',
+          testMode: true,
         },
         supportedCurrencies: [],
-        transactionFee: 0
+        transactionFee: 0,
       })
     }
     setErrors({})
@@ -149,45 +160,45 @@ export function PaymentMethodFormDialog({
     const newErrors: Record<string, string> = {}
 
     if (!formData.name.trim()) {
-      newErrors.name = "Payment method name is required"
+      newErrors.name = 'Payment method name is required'
     }
 
     if (!formData.provider) {
-      newErrors.provider = "Provider is required"
+      newErrors.provider = 'Provider is required'
     }
 
     if (!formData.type) {
-      newErrors.type = "Payment type is required"
+      newErrors.type = 'Payment type is required'
     }
 
     if (formData.countries.length === 0) {
-      newErrors.countries = "At least one country must be selected"
+      newErrors.countries = 'At least one country must be selected'
     }
 
     if (formData.supportedCurrencies.length === 0) {
-      newErrors.supportedCurrencies = "At least one currency must be supported"
+      newErrors.supportedCurrencies = 'At least one currency must be supported'
     }
 
     if (formData.transactionFee < 0) {
-      newErrors.transactionFee = "Transaction fee cannot be negative"
+      newErrors.transactionFee = 'Transaction fee cannot be negative'
     }
 
     // Provider-specific validation
-    if (formData.provider === "stripe" || formData.provider === "paystack") {
+    if (formData.provider === 'stripe' || formData.provider === 'paystack') {
       if (!formData.configuration.publicKey) {
-        newErrors.publicKey = "Public key is required"
+        newErrors.publicKey = 'Public key is required'
       }
       if (!formData.configuration.secretKey) {
-        newErrors.secretKey = "Secret key is required"
+        newErrors.secretKey = 'Secret key is required'
       }
     }
 
-    if (formData.provider === "flutterwave") {
+    if (formData.provider === 'flutterwave') {
       if (!formData.configuration.publicKey) {
-        newErrors.publicKey = "Public key is required"
+        newErrors.publicKey = 'Public key is required'
       }
       if (!formData.configuration.secretKey) {
-        newErrors.secretKey = "Secret key is required"
+        newErrors.secretKey = 'Secret key is required'
       }
     }
 
@@ -204,20 +215,20 @@ export function PaymentMethodFormDialog({
 
   const handleTestConnection = async () => {
     if (!formData.configuration.publicKey || !formData.configuration.secretKey) {
-      setErrors({ testConnection: "Public and Secret keys are required for testing" })
+      setErrors({ testConnection: 'Public and Secret keys are required for testing' })
       return
     }
 
     setIsTestingConnection(true)
-    
+
     // Simulate API test call
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      await new Promise((resolve) => setTimeout(resolve, 2000))
       // In real implementation, make actual API call to test connection
-      setErrors({ testConnection: "" })
-      alert("Connection test successful!")
+      setErrors({ testConnection: '' })
+      alert('Connection test successful!')
     } catch (error) {
-      setErrors({ testConnection: "Connection test failed. Please check your credentials." })
+      setErrors({ testConnection: 'Connection test failed. Please check your credentials.' })
     } finally {
       setIsTestingConnection(false)
     }
@@ -225,47 +236,45 @@ export function PaymentMethodFormDialog({
 
   const addCountry = (countryCode: string) => {
     if (!formData.countries.includes(countryCode)) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        countries: [...prev.countries, countryCode]
+        countries: [...prev.countries, countryCode],
       }))
     }
   }
 
   const removeCountry = (countryCode: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      countries: prev.countries.filter(c => c !== countryCode)
+      countries: prev.countries.filter((c) => c !== countryCode),
     }))
   }
 
   const addCurrency = (currency: string) => {
     if (!formData.supportedCurrencies.includes(currency)) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        supportedCurrencies: [...prev.supportedCurrencies, currency]
+        supportedCurrencies: [...prev.supportedCurrencies, currency],
       }))
     }
   }
 
   const removeCurrency = (currency: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      supportedCurrencies: prev.supportedCurrencies.filter(c => c !== currency)
+      supportedCurrencies: prev.supportedCurrencies.filter((c) => c !== currency),
     }))
   }
 
   const getCountryName = (code: string) => {
-    return countries.find(country => country.code === code)?.name || code
+    return countries.find((country) => country.code === code)?.name || code
   }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>
-            {mode === "add" ? "Add Payment Method" : "Edit Payment Method"}
-          </DialogTitle>
+          <DialogTitle>{mode === 'add' ? 'Add Payment Method' : 'Edit Payment Method'}</DialogTitle>
           <DialogDescription>
             Configure payment method settings and assign to countries.
           </DialogDescription>
@@ -279,7 +288,7 @@ export function PaymentMethodFormDialog({
               <Input
                 id="name"
                 value={formData.name}
-                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
                 placeholder="e.g., Flutterwave Nigeria"
               />
               {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
@@ -289,7 +298,9 @@ export function PaymentMethodFormDialog({
               <Label htmlFor="provider">Provider *</Label>
               <Select
                 value={formData.provider}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, provider: value as PaymentMethod["provider"] }))}
+                onValueChange={(value) =>
+                  setFormData((prev) => ({ ...prev, provider: value as PaymentMethod['provider'] }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select provider" />
@@ -309,7 +320,9 @@ export function PaymentMethodFormDialog({
               <Label htmlFor="type">Payment Type *</Label>
               <Select
                 value={formData.type}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, type: value as PaymentMethod["type"] }))}
+                onValueChange={(value) =>
+                  setFormData((prev) => ({ ...prev, type: value as PaymentMethod['type'] }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select payment type" />
@@ -329,7 +342,9 @@ export function PaymentMethodFormDialog({
               <Label htmlFor="status">Status</Label>
               <Select
                 value={formData.status}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, status: value as PaymentMethod["status"] }))}
+                onValueChange={(value) =>
+                  setFormData((prev) => ({ ...prev, status: value as PaymentMethod['status'] }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -346,17 +361,19 @@ export function PaymentMethodFormDialog({
           {/* Configuration */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Configuration</h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="publicKey">Public Key</Label>
                 <Input
                   id="publicKey"
                   value={formData.configuration.publicKey}
-                  onChange={(e) => setFormData(prev => ({
-                    ...prev,
-                    configuration: { ...prev.configuration, publicKey: e.target.value }
-                  }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      configuration: { ...prev.configuration, publicKey: e.target.value },
+                    }))
+                  }
                   placeholder="Enter public key"
                 />
                 {errors.publicKey && <p className="text-sm text-red-500">{errors.publicKey}</p>}
@@ -367,12 +384,14 @@ export function PaymentMethodFormDialog({
                 <div className="relative">
                   <Input
                     id="secretKey"
-                    type={showSecretKey ? "text" : "password"}
+                    type={showSecretKey ? 'text' : 'password'}
                     value={formData.configuration.secretKey}
-                    onChange={(e) => setFormData(prev => ({
-                      ...prev,
-                      configuration: { ...prev.configuration, secretKey: e.target.value }
-                    }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        configuration: { ...prev.configuration, secretKey: e.target.value },
+                      }))
+                    }
                     placeholder="Enter secret key"
                   />
                   <Button
@@ -382,11 +401,7 @@ export function PaymentMethodFormDialog({
                     className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                     onClick={() => setShowSecretKey(!showSecretKey)}
                   >
-                    {showSecretKey ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
+                    {showSecretKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </Button>
                 </div>
                 {errors.secretKey && <p className="text-sm text-red-500">{errors.secretKey}</p>}
@@ -397,10 +412,12 @@ export function PaymentMethodFormDialog({
                 <Input
                   id="merchantId"
                   value={formData.configuration.merchantId}
-                  onChange={(e) => setFormData(prev => ({
-                    ...prev,
-                    configuration: { ...prev.configuration, merchantId: e.target.value }
-                  }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      configuration: { ...prev.configuration, merchantId: e.target.value },
+                    }))
+                  }
                   placeholder="Enter merchant ID (optional)"
                 />
               </div>
@@ -410,10 +427,12 @@ export function PaymentMethodFormDialog({
                 <Input
                   id="webhookUrl"
                   value={formData.configuration.webhookUrl}
-                  onChange={(e) => setFormData(prev => ({
-                    ...prev,
-                    configuration: { ...prev.configuration, webhookUrl: e.target.value }
-                  }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      configuration: { ...prev.configuration, webhookUrl: e.target.value },
+                    }))
+                  }
                   placeholder="https://your-domain.com/webhook"
                 />
               </div>
@@ -423,10 +442,12 @@ export function PaymentMethodFormDialog({
               <Switch
                 id="testMode"
                 checked={formData.configuration.testMode}
-                onCheckedChange={(checked) => setFormData(prev => ({
-                  ...prev,
-                  configuration: { ...prev.configuration, testMode: checked }
-                }))}
+                onCheckedChange={(checked) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    configuration: { ...prev.configuration, testMode: checked },
+                  }))
+                }
               />
               <Label htmlFor="testMode">Test Mode</Label>
             </div>
@@ -440,7 +461,7 @@ export function PaymentMethodFormDialog({
                 className="flex items-center gap-2"
               >
                 <TestTube className="h-4 w-4" />
-                {isTestingConnection ? "Testing..." : "Test Connection"}
+                {isTestingConnection ? 'Testing...' : 'Test Connection'}
               </Button>
             </div>
             {errors.testConnection && (
@@ -451,10 +472,7 @@ export function PaymentMethodFormDialog({
           {/* Countries */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Supported Countries *</h3>
-            <CountrySelector
-              onValueChange={addCountry}
-              placeholder="Select countries..."
-            />
+            <CountrySelector onValueChange={addCountry} placeholder="Select countries..." />
             {formData.countries.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {formData.countries.map((countryCode) => (
@@ -479,7 +497,9 @@ export function PaymentMethodFormDialog({
                 <SelectValue placeholder="Add currency" />
               </SelectTrigger>
               <SelectContent>
-                {CURRENCIES.filter(currency => !formData.supportedCurrencies.includes(currency)).map((currency) => (
+                {CURRENCIES.filter(
+                  (currency) => !formData.supportedCurrencies.includes(currency)
+                ).map((currency) => (
                   <SelectItem key={currency} value={currency}>
                     {currency}
                   </SelectItem>
@@ -499,7 +519,9 @@ export function PaymentMethodFormDialog({
                 ))}
               </div>
             )}
-            {errors.supportedCurrencies && <p className="text-sm text-red-500">{errors.supportedCurrencies}</p>}
+            {errors.supportedCurrencies && (
+              <p className="text-sm text-red-500">{errors.supportedCurrencies}</p>
+            )}
           </div>
 
           {/* Transaction Fee */}
@@ -511,10 +533,17 @@ export function PaymentMethodFormDialog({
               step="0.1"
               min="0"
               value={formData.transactionFee}
-              onChange={(e) => setFormData(prev => ({ ...prev, transactionFee: parseFloat(e.target.value) || 0 }))}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  transactionFee: parseFloat(e.target.value) || 0,
+                }))
+              }
               placeholder="e.g., 2.9"
             />
-            {errors.transactionFee && <p className="text-sm text-red-500">{errors.transactionFee}</p>}
+            {errors.transactionFee && (
+              <p className="text-sm text-red-500">{errors.transactionFee}</p>
+            )}
           </div>
         </div>
 
@@ -523,7 +552,7 @@ export function PaymentMethodFormDialog({
             Cancel
           </Button>
           <Button onClick={handleSubmit}>
-            {mode === "add" ? "Add Payment Method" : "Save Changes"}
+            {mode === 'add' ? 'Add Payment Method' : 'Save Changes'}
           </Button>
         </DialogFooter>
       </DialogContent>

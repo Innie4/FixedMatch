@@ -1,6 +1,6 @@
-import { Search, Filter, ChevronDown } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
+import { Search, Filter, ChevronDown } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,20 +8,20 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from '@/components/ui/dropdown-menu'
 
 interface ReviewFilterProps {
-  searchTerm: string;
-  onSearchChange: (value: string) => void;
-  onFilterRatingChange: (value: string) => void;
-  onFilterDateRangeChange: (value: string) => void;
+  searchTerm: string
+  onSearchChange: (value: string) => void
+  onFilterRatingChange: (value: string) => void
+  onFilterDateRangeChange: (value: string) => void
 }
 
 export function ReviewFilter({
   searchTerm,
   onSearchChange,
   onFilterRatingChange,
-  onFilterDateRangeChange
+  onFilterDateRangeChange,
 }: ReviewFilterProps) {
   return (
     <div className="flex flex-1 items-center space-x-2">
@@ -46,37 +46,27 @@ export function ReviewFilter({
         <DropdownMenuContent align="end" className="w-[200px]">
           <DropdownMenuLabel>Filter by Rating</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => onFilterRatingChange("all")}>
+          <DropdownMenuItem onClick={() => onFilterRatingChange('all')}>
             All Ratings
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onFilterRatingChange("5")}>
-            5 Stars
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onFilterRatingChange("4")}>
-            4 Stars
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onFilterRatingChange("3")}>
-            3 Stars
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onFilterRatingChange("2")}>
-            2 Stars
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onFilterRatingChange("1")}>
-            1 Star
-          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => onFilterRatingChange('5')}>5 Stars</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => onFilterRatingChange('4')}>4 Stars</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => onFilterRatingChange('3')}>3 Stars</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => onFilterRatingChange('2')}>2 Stars</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => onFilterRatingChange('1')}>1 Star</DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuLabel>Filter by Date</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => onFilterDateRangeChange("all")}>
+          <DropdownMenuItem onClick={() => onFilterDateRangeChange('all')}>
             All Time
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onFilterDateRangeChange("today")}>
+          <DropdownMenuItem onClick={() => onFilterDateRangeChange('today')}>
             Today
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onFilterDateRangeChange("week")}>
+          <DropdownMenuItem onClick={() => onFilterDateRangeChange('week')}>
             This Week
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onFilterDateRangeChange("month")}>
+          <DropdownMenuItem onClick={() => onFilterDateRangeChange('month')}>
             This Month
           </DropdownMenuItem>
         </DropdownMenuContent>

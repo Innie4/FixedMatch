@@ -5,8 +5,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
 
 interface DeleteConfirmDialogProps {
   isOpen: boolean
@@ -15,14 +15,20 @@ interface DeleteConfirmDialogProps {
   packageName: string
 }
 
-export function DeleteConfirmDialog({ isOpen, onClose, onConfirm, packageName }: DeleteConfirmDialogProps) {
+export function DeleteConfirmDialog({
+  isOpen,
+  onClose,
+  onConfirm,
+  packageName,
+}: DeleteConfirmDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Delete Package</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete the package "{packageName}"? This action cannot be undone and will affect all current subscribers.
+            Are you sure you want to delete the package &quot;{packageName}&quot;? This action cannot be
+            undone and will affect all current subscribers.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

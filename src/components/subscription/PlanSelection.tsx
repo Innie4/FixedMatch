@@ -29,7 +29,7 @@ export default function PlanSelection({ packageType, onDurationSelect }: PlanSel
       days: 7,
       price: 9.99,
       originalPrice: 9.99,
-      popular: false
+      popular: false,
     },
     {
       id: 'biweekly',
@@ -37,7 +37,7 @@ export default function PlanSelection({ packageType, onDurationSelect }: PlanSel
       days: 14,
       price: 17.99,
       originalPrice: 19.98,
-      popular: false
+      popular: false,
     },
     {
       id: 'monthly',
@@ -45,7 +45,7 @@ export default function PlanSelection({ packageType, onDurationSelect }: PlanSel
       days: 30,
       price: 29.99,
       originalPrice: 39.99,
-      popular: true
+      popular: true,
     },
     {
       id: 'quarterly',
@@ -53,8 +53,8 @@ export default function PlanSelection({ packageType, onDurationSelect }: PlanSel
       days: 90,
       price: 79.99,
       originalPrice: 119.97,
-      popular: false
-    }
+      popular: false,
+    },
   ]
 
   const handleDurationSelect = (duration: Duration) => {
@@ -74,15 +74,12 @@ export default function PlanSelection({ packageType, onDurationSelect }: PlanSel
         {durations.map((duration) => {
           const savings = calculateSavings(duration.price, duration.originalPrice)
           return (
-            <Card 
+            <Card
               key={duration.id}
               className={`relative ${selectedDuration === duration.id ? 'border-primary' : ''}`}
             >
               {duration.popular && (
-                <Badge 
-                  className="absolute -top-2 -right-2 bg-primary"
-                  variant="secondary"
-                >
+                <Badge className="absolute -top-2 -right-2 bg-primary" variant="secondary">
                   Popular
                 </Badge>
               )}
@@ -117,14 +114,12 @@ export default function PlanSelection({ packageType, onDurationSelect }: PlanSel
                 </p>
               </CardContent>
               <CardFooter>
-                <Button 
+                <Button
                   className="w-full"
                   variant={selectedDuration === duration.id ? 'default' : 'outline'}
                   onClick={() => handleDurationSelect(duration)}
                 >
-                  {selectedDuration === duration.id && (
-                    <Check className="mr-2 h-4 w-4" />
-                  )}
+                  {selectedDuration === duration.id && <Check className="mr-2 h-4 w-4" />}
                   Select Plan
                 </Button>
               </CardFooter>

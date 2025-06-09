@@ -5,16 +5,16 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { AlertTriangle } from "lucide-react";
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { AlertTriangle } from 'lucide-react'
 
 interface DeleteConfirmDialogProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-  itemType: string;
-  itemId: number | null;
+  isOpen: boolean
+  onClose: () => void
+  onConfirm: () => void
+  itemType: string
+  itemId: number | null
 }
 
 export function DeleteConfirmDialog({
@@ -46,5 +46,5 @@ export function DeleteConfirmDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

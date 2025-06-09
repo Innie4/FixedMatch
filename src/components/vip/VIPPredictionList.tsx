@@ -53,7 +53,7 @@ export function VIPPredictionList({ category, filter, search }: VIPPredictionLis
   )
 }
 
-function getStatusVariant(status: string): "default" | "secondary" | "destructive" | "outline" {
+function getStatusVariant(status: string): 'default' | 'secondary' | 'destructive' | 'outline' {
   switch (status) {
     case 'won':
       return 'default'

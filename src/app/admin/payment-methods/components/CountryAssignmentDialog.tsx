@@ -1,6 +1,6 @@
-"use client"
+'use client'
 
-import { useState, useEffect } from "react"
+import { useState, useEffect } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -8,13 +8,13 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Badge } from "@/components/ui/badge"
-import { Search, Globe } from "lucide-react"
-import { countries } from "@/lib/countries"
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Badge } from '@/components/ui/badge'
+import { Search, Globe } from 'lucide-react'
+import { countries } from '@/lib/countries'
 
 interface PaymentMethod {
   id: number
@@ -34,9 +34,9 @@ export function CountryAssignmentDialog({
   isOpen,
   onClose,
   onSave,
-  method
+  method,
 }: CountryAssignmentDialogProps) {
-  const [searchTerm, setSearchTerm] = useState("")
+  const [searchTerm, setSearchTerm] = useState('')
   const [selectedCountries, setSelectedCountries] = useState<string[]>([])
 
   useEffect(() => {
@@ -45,15 +45,16 @@ export function CountryAssignmentDialog({
     }
   }, [method])
 
-  const filteredCountries = countries.filter(country =>
-    country.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    country.code.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredCountries = countries.filter(
+    (country) =>
+      country.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      country.code.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   const handleCountryToggle = (countryCode: string) => {
-    setSelectedCountries(prev => {
+    setSelectedCountries((prev) => {
       if (prev.includes(countryCode)) {
-        return prev.filter(c => c !== countryCode)
+        return prev.filter((c) => c !== countryCode)
       } else {
         return [...prev, countryCode]
       }
@@ -64,7 +65,7 @@ export function CountryAssignmentDialog({
     if (selectedCountries.length === filteredCountries.length) {
       setSelectedCountries([])
     } else {
-      setSelectedCountries(filteredCountries.map(c => c.code))
+      setSelectedCountries(filteredCountries.map((c) => c.code))
     }
   }
 
@@ -107,16 +108,17 @@ export function CountryAssignmentDialog({
             <div className="flex items-center space-x-2">
               <Checkbox
                 id="select-all"
-                checked={selectedCountries.length === filteredCountries.length && filteredCountries.length > 0}
+                checked={
+                  selectedCountries.length === filteredCountries.length &&
+                  filteredCountries.length > 0
+                }
                 onCheckedChange={handleSelectAll}
               />
               <label htmlFor="select-all" className="text-sm font-medium">
                 Select All ({filteredCountries.length})
               </label>
             </div>
-            <Badge variant="secondary">
-              {selectedCountries.length} selected
-            </Badge>
+            <Badge variant="secondary">{selectedCountries.length} selected</Badge>
           </div>
 
           {/* Countries List */}
@@ -132,10 +134,7 @@ export function CountryAssignmentDialog({
                     checked={selectedCountries.includes(country.code)}
                     onCheckedChange={() => handleCountryToggle(country.code)}
                   />
-                  <label
-                    htmlFor={country.code}
-                    className="flex-1 text-sm cursor-pointer"
-                  >
+                  <label htmlFor={country.code} className="flex-1 text-sm cursor-pointer">
                     <span className="font-medium">{country.name}</span>
                     <span className="text-gray-500 ml-2">({country.code})</span>
                   </label>
@@ -150,7 +149,7 @@ export function CountryAssignmentDialog({
               <h4 className="text-sm font-medium">Selected Countries:</h4>
               <div className="flex flex-wrap gap-1 max-h-24 overflow-y-auto">
                 {selectedCountries.map((countryCode) => {
-                  const country = countries.find(c => c.code === countryCode)
+                  const country = countries.find((c) => c.code === countryCode)
                   return (
                     <Badge key={countryCode} variant="secondary" className="text-xs">
                       {country?.name || countryCode}
@@ -166,9 +165,7 @@ export function CountryAssignmentDialog({
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={handleSave}>
-            Save Assignment
-          </Button>
+          <Button onClick={handleSave}>Save Assignment</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

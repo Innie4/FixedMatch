@@ -1,15 +1,15 @@
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Star, ArrowUpDown, MoreHorizontal } from "lucide-react"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Star, ArrowUpDown, MoreHorizontal } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,32 +17,32 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from '@/components/ui/dropdown-menu'
 
 // Define a proper Review type to replace 'any'
 interface Review {
-  id: number;
-  username: string;
-  userAvatar: string;
-  rating: number;
-  title: string;
-  date: string;
-  status: string;
+  id: number
+  username: string
+  userAvatar: string
+  rating: number
+  title: string
+  date: string
+  status: string
   // Add other properties as needed
 }
 
 interface ReviewTableProps {
-  reviews: Review[];
-  selectedRows: number[]; // Changed from any[] to number[]
-  onSelectRow: (id: number) => void;
-  onSelectAll: () => void;
-  onSort: (column: string) => void;
-  sortColumn: string;
-  sortDirection: string;
-  onViewDetails: (review: Review) => void;
-  onReply: (review: Review) => void;
-  onEdit: (review: Review) => void;
-  onDelete: (review: Review) => void;
+  reviews: Review[]
+  selectedRows: number[] // Changed from any[] to number[]
+  onSelectRow: (id: number) => void
+  onSelectAll: () => void
+  onSort: (column: string) => void
+  sortColumn: string
+  sortDirection: string
+  onViewDetails: (review: Review) => void
+  onReply: (review: Review) => void
+  onEdit: (review: Review) => void
+  onDelete: (review: Review) => void
 }
 
 export function ReviewTable({
@@ -56,42 +56,44 @@ export function ReviewTable({
   onViewDetails,
   onReply,
   onEdit,
-  onDelete
+  onDelete,
 }: ReviewTableProps) {
-  const isAllSelected = selectedRows.length === reviews.length && reviews.length > 0;
-  const isIndeterminate = selectedRows.length > 0 && selectedRows.length < reviews.length;
-  
+  const isAllSelected = selectedRows.length === reviews.length && reviews.length > 0
+  const isIndeterminate = selectedRows.length > 0 && selectedRows.length < reviews.length
+
   const getSortIcon = (column: string) => {
-    if (sortColumn !== column) return <ArrowUpDown className="h-4 w-4" />;
-    return sortDirection === "asc" ? 
-      <ArrowUpDown className="h-4 w-4 text-blue-600" /> : 
-      <ArrowUpDown className="h-4 w-4 text-blue-600 transform rotate-180" />;
-  };
-  
+    if (sortColumn !== column) return <ArrowUpDown className="h-4 w-4" />
+    return sortDirection === 'asc' ? (
+      <ArrowUpDown className="h-4 w-4 text-blue-600" />
+    ) : (
+      <ArrowUpDown className="h-4 w-4 text-blue-600 transform rotate-180" />
+    )
+  }
+
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case "approved":
+      case 'approved':
         return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Approved</Badge>
-      case "rejected":
+      case 'rejected':
         return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Rejected</Badge>
-      case "pending":
+      case 'pending':
         return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Pending</Badge>
       default:
-        return null;
+        return null
     }
-  };
-  
+  }
+
   return (
     <Table>
       <TableHeader>
         <TableRow>
           <TableHead className="w-12">
-            <Checkbox 
+            <Checkbox
               checked={isAllSelected}
               ref={(el) => {
                 if (el) {
                   // Cast the element to HTMLInputElement to fix the TypeScript error
-                  (el as HTMLInputElement).indeterminate = isIndeterminate;
+                  ;(el as HTMLInputElement).indeterminate = isIndeterminate
                 }
               }}
               onCheckedChange={onSelectAll}
@@ -100,31 +102,31 @@ export function ReviewTable({
           </TableHead>
           <TableHead className="w-12">ID</TableHead>
           <TableHead>
-            <Button 
-              variant="ghost" 
-              onClick={() => onSort("username")}
+            <Button
+              variant="ghost"
+              onClick={() => onSort('username')}
               className="flex items-center gap-1 p-0 h-auto font-medium"
             >
-              User {getSortIcon("username")}
+              User {getSortIcon('username')}
             </Button>
           </TableHead>
           <TableHead className="w-24">Rating</TableHead>
           <TableHead>
-            <Button 
-              variant="ghost" 
-              onClick={() => onSort("title")}
+            <Button
+              variant="ghost"
+              onClick={() => onSort('title')}
               className="flex items-center gap-1 p-0 h-auto font-medium"
             >
-              Title {getSortIcon("title")}
+              Title {getSortIcon('title')}
             </Button>
           </TableHead>
           <TableHead>
-            <Button 
-              variant="ghost" 
-              onClick={() => onSort("date")}
+            <Button
+              variant="ghost"
+              onClick={() => onSort('date')}
               className="flex items-center gap-1 p-0 h-auto font-medium"
             >
-              Date {getSortIcon("date")}
+              Date {getSortIcon('date')}
             </Button>
           </TableHead>
           <TableHead>Status</TableHead>
@@ -135,7 +137,7 @@ export function ReviewTable({
         {reviews.map((review) => (
           <TableRow key={review.id}>
             <TableCell>
-              <Checkbox 
+              <Checkbox
                 checked={selectedRows.includes(review.id)}
                 onCheckedChange={() => onSelectRow(review.id)}
                 aria-label={`Select review ${review.id}`}
@@ -145,7 +147,11 @@ export function ReviewTable({
             <TableCell>
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-full overflow-hidden">
-                  <img src={review.userAvatar} alt={review.username} className="w-full h-full object-cover" />
+                  <img
+                    src={review.userAvatar}
+                    alt={review.username}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <span>{review.username}</span>
               </div>
@@ -156,7 +162,7 @@ export function ReviewTable({
                   <Star
                     key={i}
                     className={`h-4 w-4 ${
-                      i < review.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+                      i < review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'
                     }`}
                   />
                 ))}
@@ -179,17 +185,10 @@ export function ReviewTable({
                   <DropdownMenuItem onClick={() => onViewDetails(review)}>
                     View details
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => onReply(review)}>
-                    Reply
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => onEdit(review)}>
-                    Edit
-                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onReply(review)}>Reply</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onEdit(review)}>Edit</DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem 
-                    onClick={() => onDelete(review)}
-                    className="text-red-600"
-                  >
+                  <DropdownMenuItem onClick={() => onDelete(review)} className="text-red-600">
                     Delete
                   </DropdownMenuItem>
                 </DropdownMenuContent>

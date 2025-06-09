@@ -1,6 +1,6 @@
-import Image from "next/image";
-import { Calendar, User, DollarSign, Check, X } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import Image from 'next/image'
+import { Calendar, User, DollarSign, Check, X } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
 import {
   Sheet,
   SheetContent,
@@ -8,24 +8,20 @@ import {
   SheetHeader,
   SheetTitle,
   SheetFooter,
-} from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { WinningTicket } from "../../types";
+} from '@/components/ui/sheet'
+import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
+import { WinningTicket } from '../../types'
 
 interface TicketDetailsSheetProps {
-  ticket: WinningTicket | null;
-  isOpen: boolean;
-  onClose: () => void;
+  ticket: WinningTicket | null
+  isOpen: boolean
+  onClose: () => void
 }
 
-export function TicketDetailsSheet({
-  ticket,
-  isOpen,
-  onClose
-}: TicketDetailsSheetProps) {
-  if (!ticket) return null;
-  
+export function TicketDetailsSheet({ ticket, isOpen, onClose }: TicketDetailsSheetProps) {
+  if (!ticket) return null
+
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent className="sm:max-w-md">
@@ -33,7 +29,7 @@ export function TicketDetailsSheet({
           <SheetTitle>Ticket Details</SheetTitle>
           <SheetDescription>View winning ticket information</SheetDescription>
         </SheetHeader>
-        
+
         <div className="py-6 space-y-6">
           <div className="flex flex-col items-center gap-4">
             <Image
@@ -51,7 +47,7 @@ export function TicketDetailsSheet({
               </div>
             </div>
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
               <p className="text-sm text-muted-foreground">Odds</p>
@@ -67,14 +63,14 @@ export function TicketDetailsSheet({
             </div>
             <div className="space-y-1">
               <p className="text-sm text-muted-foreground">Status</p>
-              <Badge variant={ticket.status === "active" ? "default" : "secondary"}>
-                {ticket.status === "active" ? "Active" : "Archived"}
+              <Badge variant={ticket.status === 'active' ? 'default' : 'secondary'}>
+                {ticket.status === 'active' ? 'Active' : 'Archived'}
               </Badge>
             </div>
           </div>
-          
+
           <Separator />
-          
+
           <div>
             <h4 className="font-medium mb-3">Matches</h4>
             <div className="space-y-3">
@@ -89,9 +85,9 @@ export function TicketDetailsSheet({
               ))}
             </div>
           </div>
-          
+
           <Separator />
-          
+
           <div className="space-y-2">
             <div className="flex items-center text-sm">
               <User className="h-4 w-4 mr-2" />
@@ -105,11 +101,13 @@ export function TicketDetailsSheet({
             </div>
           </div>
         </div>
-        
+
         <SheetFooter>
-          <Button variant="outline" onClick={onClose}>Close</Button>
+          <Button variant="outline" onClick={onClose}>
+            Close
+          </Button>
         </SheetFooter>
       </SheetContent>
     </Sheet>
-  );
+  )
 }

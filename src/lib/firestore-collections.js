@@ -1,20 +1,20 @@
-import { db } from './firebase';
-import { collection } from 'firebase/firestore';
+import { db } from './firebase'
+import { collection } from 'firebase/firestore'
 
 // Define collection references
-export const usersCollection = collection(db, 'users');
-export const adminUsersCollection = collection(db, 'adminUsers');
-export const rolesCollection = collection(db, 'roles');
-export const vipSubscriptionsCollection = collection(db, 'vipSubscriptions');
-export const vipAccessLogsCollection = collection(db, 'vipAccessLogs');
-export const vipPredictionCategoriesCollection = collection(db, 'vipPredictionCategories');
-export const vipPredictionsCollection = collection(db, 'vipPredictions');
-export const packagesCollection = collection(db, 'packages');
-export const reviewsCollection = collection(db, 'reviews');
-export const analyticsCollection = collection(db, 'analytics');
-export const settingsCollection = collection(db, 'settings');
-export const activityLogsCollection = collection(db, 'activityLogs');
-export const notificationsCollection = collection(db, 'notifications');
+export const usersCollection = collection(db, 'users')
+export const adminUsersCollection = collection(db, 'adminUsers')
+export const rolesCollection = collection(db, 'roles')
+export const vipSubscriptionsCollection = collection(db, 'vipSubscriptions')
+export const vipAccessLogsCollection = collection(db, 'vipAccessLogs')
+export const vipPredictionCategoriesCollection = collection(db, 'vipPredictionCategories')
+export const vipPredictionsCollection = collection(db, 'vipPredictions')
+export const packagesCollection = collection(db, 'packages')
+export const reviewsCollection = collection(db, 'reviews')
+export const analyticsCollection = collection(db, 'analytics')
+export const settingsCollection = collection(db, 'settings')
+export const activityLogsCollection = collection(db, 'activityLogs')
+export const notificationsCollection = collection(db, 'notifications')
 
 // Define collection schemas (for documentation purposes)
 export const collectionSchemas = {
@@ -27,7 +27,7 @@ export const collectionSchemas = {
     lastLogin: 'timestamp',
     profile: 'object',
     status: 'string', // 'active', 'suspended', etc.
-    subscriptions: 'array'
+    subscriptions: 'array',
   },
   adminUsers: {
     uid: 'string',
@@ -41,7 +41,7 @@ export const collectionSchemas = {
     createdAt: 'timestamp',
     twoFactorEnabled: 'boolean',
     notes: 'string',
-    contactPhone: 'string'
+    contactPhone: 'string',
   },
   roles: {
     id: 'string',
@@ -50,7 +50,7 @@ export const collectionSchemas = {
     permissions: 'array',
     createdBy: 'string',
     createdAt: 'timestamp',
-    isSystem: 'boolean'
+    isSystem: 'boolean',
   },
   vipSubscriptions: {
     id: 'string',
@@ -61,13 +61,13 @@ export const collectionSchemas = {
     status: 'string', // 'active', 'grace_period', 'expired'
     lastNotificationDate: 'timestamp',
     createdAt: 'timestamp',
-    updatedAt: 'timestamp'
+    updatedAt: 'timestamp',
   },
   vipAccessLogs: {
     id: 'string',
     subscriptionId: 'string',
     action: 'string',
-    timestamp: 'timestamp'
+    timestamp: 'timestamp',
   },
   vipPredictionCategories: {
     id: 'string',
@@ -77,7 +77,7 @@ export const collectionSchemas = {
     successRate: 'number',
     totalPicks: 'number',
     createdAt: 'timestamp',
-    updatedAt: 'timestamp'
+    updatedAt: 'timestamp',
   },
   vipPredictions: {
     id: 'string',
@@ -96,7 +96,7 @@ export const collectionSchemas = {
     createdAt: 'timestamp',
     updatedAt: 'timestamp',
     createdBy: 'string',
-    publishAt: 'timestamp'
+    publishAt: 'timestamp',
   },
   packages: {
     id: 'string',
@@ -107,7 +107,7 @@ export const collectionSchemas = {
     features: 'array',
     isActive: 'boolean',
     createdAt: 'timestamp',
-    updatedAt: 'timestamp'
+    updatedAt: 'timestamp',
   },
   reviews: {
     id: 'string',
@@ -117,12 +117,12 @@ export const collectionSchemas = {
     content: 'string',
     status: 'string', // 'pending', 'approved', 'rejected'
     createdAt: 'timestamp',
-    adminResponse: 'string'
+    adminResponse: 'string',
   },
   analytics: {
     id: 'string',
     date: 'timestamp',
-    metrics: 'object'
+    metrics: 'object',
   },
   settings: {
     id: 'string',
@@ -130,14 +130,14 @@ export const collectionSchemas = {
     key: 'string',
     value: 'any',
     updatedAt: 'timestamp',
-    updatedBy: 'string'
+    updatedBy: 'string',
   },
   activityLogs: {
     id: 'string',
     action: 'string',
     admin: 'string',
     timestamp: 'timestamp',
-    details: 'string'
+    details: 'string',
   },
   notifications: {
     id: 'string',
@@ -147,6 +147,6 @@ export const collectionSchemas = {
     type: 'string',
     priority: 'string',
     isRead: 'boolean',
-    targetUsers: 'array'
-  }
-};
+    targetUsers: 'array',
+  },
+}

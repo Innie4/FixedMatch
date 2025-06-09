@@ -1,9 +1,9 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import Image from "next/image"
-import Link from "next/link"
-import { ChevronRight, TrendingUp } from "lucide-react"
+import { useState } from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { ChevronRight, TrendingUp } from 'lucide-react'
 
 interface PredictionCardProps {
   prediction: {
@@ -27,16 +27,16 @@ export default function PredictionCard({ prediction }: PredictionCardProps) {
 
   // Determine confidence color
   const getConfidenceColor = (confidence: number) => {
-    if (confidence >= 85) return "bg-green-500"
-    if (confidence >= 70) return "bg-green-400"
-    if (confidence >= 50) return "bg-yellow-500"
-    return "bg-red-500"
+    if (confidence >= 85) return 'bg-green-500'
+    if (confidence >= 70) return 'bg-green-400'
+    if (confidence >= 50) return 'bg-yellow-500'
+    return 'bg-red-500'
   }
 
   return (
     <div
       className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 ${
-        isHovered ? "shadow-md transform -translate-y-1" : ""
+        isHovered ? 'shadow-md transform -translate-y-1' : ''
       }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -45,13 +45,15 @@ export default function PredictionCard({ prediction }: PredictionCardProps) {
         <div className="flex justify-between items-center mb-3">
           <div className="flex items-center gap-2">
             <Image
-              src={prediction.leagueLogo || "/placeholder.svg"}
+              src={prediction.leagueLogo || '/placeholder.svg'}
               alt={prediction.league}
               width={24}
               height={24}
               className="rounded-full"
             />
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{prediction.league}</span>
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              {prediction.league}
+            </span>
           </div>
           <span className="text-xs text-gray-500 dark:text-gray-400">{prediction.matchTime}</span>
         </div>
@@ -59,18 +61,22 @@ export default function PredictionCard({ prediction }: PredictionCardProps) {
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-2">
             <Image
-              src={prediction.homeTeamLogo || "/placeholder.svg"}
+              src={prediction.homeTeamLogo || '/placeholder.svg'}
               alt={prediction.homeTeam}
               width={40}
               height={40}
             />
-            <span className="font-semibold text-gray-900 dark:text-white">{prediction.homeTeam}</span>
+            <span className="font-semibold text-gray-900 dark:text-white">
+              {prediction.homeTeam}
+            </span>
           </div>
           <span className="text-sm text-gray-500 dark:text-gray-400">vs</span>
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-gray-900 dark:text-white">{prediction.awayTeam}</span>
+            <span className="font-semibold text-gray-900 dark:text-white">
+              {prediction.awayTeam}
+            </span>
             <Image
-              src={prediction.awayTeamLogo || "/placeholder.svg"}
+              src={prediction.awayTeamLogo || '/placeholder.svg'}
               alt={prediction.awayTeam}
               width={40}
               height={40}
@@ -80,8 +86,12 @@ export default function PredictionCard({ prediction }: PredictionCardProps) {
 
         <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-3">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Prediction:</span>
-            <span className="font-semibold text-gray-900 dark:text-white">{prediction.prediction}</span>
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Prediction:
+            </span>
+            <span className="font-semibold text-gray-900 dark:text-white">
+              {prediction.prediction}
+            </span>
           </div>
 
           <div className="flex items-center gap-2 mb-1">
@@ -95,11 +105,11 @@ export default function PredictionCard({ prediction }: PredictionCardProps) {
             <span className="text-xs font-medium">{prediction.confidence}%</span>
           </div>
 
-          {prediction.status === "completed" && prediction.result && (
+          {prediction.status === 'completed' && prediction.result && (
             <div
-              className={`mt-2 text-xs font-medium ${prediction.result === "won" ? "text-green-500" : "text-red-500"}`}
+              className={`mt-2 text-xs font-medium ${prediction.result === 'won' ? 'text-green-500' : 'text-red-500'}`}
             >
-              {prediction.result === "won" ? "✓ Prediction Won" : "✗ Prediction Lost"}
+              {prediction.result === 'won' ? '✓ Prediction Won' : '✗ Prediction Lost'}
             </div>
           )}
         </div>

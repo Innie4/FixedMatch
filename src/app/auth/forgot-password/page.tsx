@@ -1,97 +1,109 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import Link from "next/link"
-import { Mail } from 'lucide-react'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import AuthFormWrapper from "@/components/auth/auth-form-wrapper"
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import Link from 'next/link'
+import { Image } from 'next/image'
 
 export default function ForgotPasswordPage() {
+  const [email, setEmail] = useState('')
+  const [message, setMessage] = useState('')
+  const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [email, setEmail] = useState("")
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError(null)
-    setSuccess(false)
     setIsLoading(true)
+    setMessage('')
+    setError('')
 
     try {
-      // Validate email
-      if (!email) {
-        throw new Error("Please enter your email address")
+      const response = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setMessage(
+          data.message || "If an account with that email exists, we've sent a password reset link."
+        )
+      } else {
+        setError(data.error || 'Failed to send password reset email. Please try again.')
       }
-
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      if (!emailRegex.test(email)) {
-        throw new Error("Please enter a valid email address")
-      }
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-
-      // For demo purposes, let's simulate a successful password reset request
-      setSuccess(true)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred")
+      setError('An unexpected error occurred.')
+      console.error(err)
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <AuthFormWrapper title="Reset your password" subtitle="Enter your email to receive a password reset link">
-      {success ? (
+    <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900 px-4 py-12">
+      <div className="w-full max-w-md space-y-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
         <div className="text-center">
-          <div className="bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-400 p-4 rounded-lg mb-6">
-            <p>Password reset link sent!</p>
-            <p className="text-sm mt-2">
-              We've sent a password reset link to <strong>{email}</strong>. Please check your inbox and follow the
-              instructions to reset your password.
-            </p>
-          </div>
-          <Button asChild className="bg-[#1a56db] hover:bg-[#1e40af]">
-            <Link href="/auth/login">Return to login</Link>
-          </Button>
+          <Link href="/">
+            <Image
+              src="/FIXEDMatchD.png"
+              alt="Legit Soccer Tips Logo"
+              width={512}
+              height={512}
+              className="mx-auto mb-3"
+            />
+          </Link>
+          <h2 className="mt-6 text-3xl font-extrabold text-gray-900 dark:text-white">
+            Forgot your password?
+          </h2>
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+            Enter your email address and we'll send you a link to reset your password.
+          </p>
         </div>
-      ) : (
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {error && (
-            <Alert variant="destructive">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div>
+            <Label htmlFor="email" className="sr-only">
+              Email address
+            </Label>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-[#1a56db] focus:outline-none focus:ring-[#1a56db] dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+              placeholder="Email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+          <div>
+            <Button
+              type="submit"
+              className="relative flex w-full justify-center rounded-md border border-transparent bg-[#1a56db] py-2 px-4 text-sm font-medium text-white hover:bg-[#1e40af] focus:outline-none focus:ring-2 focus:ring-[#1a56db] focus:ring-offset-2"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Sending...' : 'Send reset link'}
+            </Button>
+          </div>
+          {message && (
+            <p className="mt-2 text-center text-sm text-green-600 dark:text-green-400">{message}</p>
           )}
-
-          <div className="space-y-2">
-            <div className="relative">
-              <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              <Input
-                type="email"
-                placeholder="Email address"
-                className="pl-10"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={isLoading}
-                required
-              />
-            </div>
-          </div>
-
-          <Button type="submit" className="w-full bg-[#1a56db] hover:bg-[#1e40af]" disabled={isLoading}>
-            {isLoading ? "Sending reset link..." : "Send reset link"}
-          </Button>
-
-          <div className="text-center">
-            <Link href="/auth/login" className="text-sm text-[#1a56db] hover:underline">
-              Back to login
-            </Link>
-          </div>
+          {error && (
+            <p className="mt-2 text-center text-sm text-red-600 dark:text-red-400">{error}</p>
+          )}
         </form>
-      )}
-    </AuthFormWrapper>
+        <div className="text-center text-sm">
+          <Link href="/auth/login" className="font-medium text-[#1a56db] hover:text-[#1e40af]">
+            Remember your password? Log in
+          </Link>
+        </div>
+      </div>
+    </div>
   )
 }

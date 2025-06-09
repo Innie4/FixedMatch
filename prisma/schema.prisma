@@ -9,6 +9,35 @@ generator client {
 
 // Add these models to your schema
 
+model User {
+  id              Int             @id @default(autoincrement())
+  email           String          @unique
+  name            String?
+  passwordHash    String
+  isEmailVerified Boolean         @default(false)
+  emailVerificationToken String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  subscriptions   VIPSubscription[]
+  passwordResetTokens PasswordResetToken[]
+  // Add other user-related fields as needed
+}
+
+model Package {
+  id              Int             @id @default(autoincrement())
+  name            String
+  price           Float
+  duration        String          // e.g., "Monthly", "Annually"
+  description     String?
+  features        String[]        // Store as array of strings
+  popular         Boolean         @default(false)
+  color           String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  subscriptions   VIPSubscription[]
+  // Add other package-related fields as needed
+}
+
 model VIPSubscription {
   id                  Int       @id @default(autoincrement())
   userId              Int
@@ -66,4 +95,60 @@ model VIPPrediction {
   updatedAt   DateTime              @updatedAt
   createdBy   Int                   // Admin user ID
   publishAt   DateTime              @default(now())
+  
+  matchId     Int?
+  match       Match?                @relation(fields: [matchId], references: [id])
+}
+
+// General Prediction
+model Prediction {
+  id          Int       @id @default(autoincrement())
+  homeTeam    String
+  awayTeam    String
+  league      String
+  matchTime   DateTime
+  prediction  String
+  odds        Float?
+  confidence  Int?
+  status      String    @default("upcoming") // upcoming, completed, cancelled
+  result      String?   // e.g., "2-1", "Draw", "Won", "Lost"
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// Match (for Upcoming Matches)
+model Match {
+  id          Int       @id @default(autoincrement())
+  homeTeam    String
+  homeTeamLogo String?
+  awayTeam    String
+  awayTeamLogo String?
+  league      String
+  leagueLogo  String?
+  matchTime   DateTime
+  stadium     String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// Testimonial
+model Testimonial {
+  id        Int       @id @default(autoincrement())
+  author    String
+  rating    Float     @default(5.0) // e.g., 1.0 to 5.0
+  content   String
+  source    String?   // e.g., "Trustpilot", "Google Reviews", "Direct"
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+// Team Member
+model TeamMember {
+  id        Int       @id @default(autoincrement())
+  name      String
+  role      String
+  bio       String?
+  imageUrl  String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }

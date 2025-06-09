@@ -1,9 +1,21 @@
 import { useState } from 'react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 interface VIPPredictionDialogProps {
   open: boolean
@@ -13,17 +25,19 @@ interface VIPPredictionDialogProps {
 
 export function VIPPredictionDialog({ open, onClose, prediction }: VIPPredictionDialogProps) {
   const [loading, setLoading] = useState(false)
-  const [formData, setFormData] = useState(prediction || {
-    categoryId: '',
-    homeTeam: '',
-    awayTeam: '',
-    league: '',
-    matchTime: '',
-    prediction: '',
-    odds: '',
-    analysis: '',
-    confidence: ''
-  })
+  const [formData, setFormData] = useState(
+    prediction || {
+      categoryId: '',
+      homeTeam: '',
+      awayTeam: '',
+      league: '',
+      matchTime: '',
+      prediction: '',
+      odds: '',
+      analysis: '',
+      confidence: '',
+    }
+  )
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -33,7 +47,7 @@ export function VIPPredictionDialog({ open, onClose, prediction }: VIPPrediction
       const response = await fetch('/api/admin/vip-predictions', {
         method: prediction ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(prediction ? { ...formData, id: prediction.id } : formData)
+        body: JSON.stringify(prediction ? { ...formData, id: prediction.id } : formData),
       })
 
       if (!response.ok) throw new Error('Failed to save prediction')
@@ -60,9 +74,7 @@ export function VIPPredictionDialog({ open, onClose, prediction }: VIPPrediction
             <SelectTrigger>
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
-            <SelectContent>
-              {/* Add category options */}
-            </SelectContent>
+            <SelectContent>{/* Add category options */}</SelectContent>
           </Select>
 
           <Input
@@ -117,7 +129,9 @@ export function VIPPredictionDialog({ open, onClose, prediction }: VIPPrediction
           />
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
+            <Button type="button" variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
             <Button type="submit" disabled={loading}>
               {loading ? 'Saving...' : prediction ? 'Update' : 'Create'}
             </Button>

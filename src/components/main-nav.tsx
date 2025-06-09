@@ -1,74 +1,102 @@
-"use client"
+'use client'
 
-import * as React from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { 
-  Home, 
-  Info, 
-  BarChart2, 
-  User, 
-  Mail, 
-  LogIn 
-} from "lucide-react"
+import * as React from 'react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import {
+  Home,
+  Info,
+  BarChart2,
+  User,
+  Mail,
+  LogIn,
+  Crown,
+  GaugeCircle,
+  ListChecks,
+  Wallet,
+} from 'lucide-react'
 
 interface MainNavProps {
-  isLoggedIn: boolean;
+  isLoggedIn: boolean
 }
 
 export function MainNav({ isLoggedIn }: MainNavProps) {
   const pathname = usePathname()
-  
+
   const baseRoutes = [
     {
-      href: "/",
-      label: "Home",
+      href: '/',
+      label: 'Home',
       icon: <Home className="h-4 w-4 mr-2" />,
-      active: pathname === "/"
+      active: pathname === '/',
     },
     {
-      href: "/predictions",
-      label: "Predictions",
+      href: '/predictions',
+      label: 'Predictions',
       icon: <BarChart2 className="h-4 w-4 mr-2" />,
-      active: pathname === "/predictions" || pathname.startsWith("/prediction/")
+      active: pathname === '/predictions' || pathname.startsWith('/prediction/'),
     },
     {
-      href: "/about",
-      label: "About",
+      href: '/live-scores',
+      label: 'Live Scores',
+      icon: <GaugeCircle className="h-4 w-4 mr-2" />,
+      active: pathname === '/live-scores',
+    },
+    {
+      href: '/vip',
+      label: 'VIP Content',
+      icon: <Crown className="h-4 w-4 mr-2" />,
+      active: pathname === '/vip',
+    },
+    {
+      href: '/about',
+      label: 'About',
       icon: <Info className="h-4 w-4 mr-2" />,
-      active: pathname === "/about"
+      active: pathname === '/about',
     },
     {
-      href: "/contact",
-      label: "Contact",
+      href: '/contact',
+      label: 'Contact',
       icon: <Mail className="h-4 w-4 mr-2" />,
-      active: pathname === "/contact"
+      active: pathname === '/contact',
     },
   ]
 
   const authRoutes = isLoggedIn
     ? [
         {
-          href: "/account",
-          label: "My Account",
+          href: '/account',
+          label: 'My Account',
           icon: <User className="h-4 w-4 mr-2" />,
-          active: pathname === "/account"
+          active: pathname === '/account',
+        },
+        {
+          href: '/subscription',
+          label: 'Subscription',
+          icon: <Wallet className="h-4 w-4 mr-2" />,
+          active: pathname === '/subscription',
+        },
+        {
+          href: '/admin',
+          label: 'Admin',
+          icon: <ListChecks className="h-4 w-4 mr-2" />,
+          active: pathname === '/admin',
         },
       ]
     : [
         {
-          href: "/auth/login",
-          label: "Login",
+          href: '/auth/login',
+          label: 'Login',
           icon: <LogIn className="h-4 w-4 mr-2" />,
-          active: pathname === "/auth/login"
+          active: pathname === '/auth/login',
         },
         {
-          href: "/auth/signup",
-          label: "Sign Up",
+          href: '/auth/signup',
+          label: 'Sign Up',
           icon: <User className="h-4 w-4 mr-2" />,
-          active: pathname === "/auth/signup"
+          active: pathname === '/auth/signup',
         },
       ]
 
@@ -81,10 +109,10 @@ export function MainNav({ isLoggedIn }: MainNavProps) {
           key={route.href}
           href={route.href}
           className={cn(
-            "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors",
-            route.active 
-              ? "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white" 
-              : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
+            'flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors',
+            route.active
+              ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white'
+              : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
           )}
         >
           {route.icon}
@@ -97,38 +125,50 @@ export function MainNav({ isLoggedIn }: MainNavProps) {
 
 export function MobileNav() {
   const pathname = usePathname()
-  
+
   const routes = [
     {
-      href: "/",
-      label: "Home",
+      href: '/',
+      label: 'Home',
       icon: <Home className="h-5 w-5" />,
-      active: pathname === "/"
+      active: pathname === '/',
     },
     {
-      href: "/predictions",
-      label: "Predictions",
+      href: '/predictions',
+      label: 'Predictions',
       icon: <BarChart2 className="h-5 w-5" />,
-      active: pathname === "/predictions" || pathname.startsWith("/prediction/")
+      active: pathname === '/predictions' || pathname.startsWith('/prediction/'),
     },
     {
-      href: "/about",
-      label: "About",
-      icon: <Info className="h-5 w-5" />,
-      active: pathname === "/about"
+      href: '/live-scores',
+      label: 'Live Scores',
+      icon: <GaugeCircle className="h-5 w-5" />,
+      active: pathname === '/live-scores',
     },
     {
-      href: "/contact",
-      label: "Contact",
-      icon: <Mail className="h-5 w-5" />,
-      active: pathname === "/contact"
+      href: '/vip',
+      label: 'VIP',
+      icon: <Crown className="h-5 w-5" />,
+      active: pathname === '/vip',
     },
     {
-      href: "/account",
-      label: "Account",
+      href: '/account',
+      label: 'Account',
       icon: <User className="h-5 w-5" />,
-      active: pathname === "/account"
-    }
+      active: pathname === '/account',
+    },
+    {
+      href: '/subscription',
+      label: 'Subscription',
+      icon: <Wallet className="h-5 w-5" />,
+      active: pathname === '/subscription',
+    },
+    {
+      href: '/admin',
+      label: 'Admin',
+      icon: <ListChecks className="h-5 w-5" />,
+      active: pathname === '/admin',
+    },
   ]
 
   return (
@@ -139,10 +179,10 @@ export function MobileNav() {
             key={route.href}
             href={route.href}
             className={cn(
-              "flex flex-col items-center justify-center text-xs font-medium p-2 rounded-md",
-              route.active 
-                ? "text-[#1a56db]" 
-                : "text-gray-600 dark:text-gray-400 hover:text-[#1a56db]"
+              'flex flex-col items-center justify-center text-xs font-medium p-2 rounded-md',
+              route.active
+                ? 'text-[#1a56db]'
+                : 'text-gray-600 dark:text-gray-400 hover:text-[#1a56db]'
             )}
           >
             {route.icon}

@@ -6,7 +6,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
   try {
     const { id } = params
     const { status, adminComment } = await request.json()
-    
+
     // TODO: Implement authentication and authorization check
     // TODO: Update payment confirmation status in database
     // TODO: If approved:
@@ -15,10 +15,10 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     //   - Send approval email
     // TODO: If declined:
     //   - Send decline email with reason
-    
+
     return NextResponse.json({
       success: true,
-      message: `Payment confirmation ${status === 'approved' ? 'approved' : 'declined'} successfully`
+      message: `Payment confirmation ${status === 'approved' ? 'approved' : 'declined'} successfully`,
     })
   } catch (error) {
     return NextResponse.json(

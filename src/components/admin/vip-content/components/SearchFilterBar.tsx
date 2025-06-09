@@ -1,6 +1,6 @@
-import { Search, Filter, ChevronDown } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Search, Filter, ChevronDown } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,24 +8,24 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu'
 
 interface SearchFilterBarProps {
-  searchPlaceholder: string;
-  searchTerm: string;
-  onSearchChange: (value: string) => void;
+  searchPlaceholder: string
+  searchTerm: string
+  onSearchChange: (value: string) => void
   filterOptions: {
     status: Array<{
-      value: string;
-      label: string;
-    }>;
+      value: string
+      label: string
+    }>
     date: Array<{
-      value: string;
-      label: string;
-    }>;
-  };
-  onFilterChange: (type: "status" | "date", value: string) => void;
-  actionButton?: React.ReactNode;
+      value: string
+      label: string
+    }>
+  }
+  onFilterChange: (type: 'status' | 'date', value: string) => void
+  actionButton?: React.ReactNode
 }
 
 export function SearchFilterBar({
@@ -61,9 +61,9 @@ export function SearchFilterBar({
             <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {filterOptions.status.map((option) => (
-              <DropdownMenuItem 
-                key={option.value} 
-                onClick={() => onFilterChange("status", option.value)}
+              <DropdownMenuItem
+                key={option.value}
+                onClick={() => onFilterChange('status', option.value)}
               >
                 {option.label}
               </DropdownMenuItem>
@@ -72,9 +72,9 @@ export function SearchFilterBar({
             <DropdownMenuLabel>Filter by Date</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {filterOptions.date.map((option) => (
-              <DropdownMenuItem 
-                key={option.value} 
-                onClick={() => onFilterChange("date", option.value)}
+              <DropdownMenuItem
+                key={option.value}
+                onClick={() => onFilterChange('date', option.value)}
               >
                 {option.label}
               </DropdownMenuItem>
@@ -82,12 +82,8 @@ export function SearchFilterBar({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      
-      {actionButton && (
-        <div className="flex items-center gap-2">
-          {actionButton}
-        </div>
-      )}
+
+      {actionButton && <div className="flex items-center gap-2">{actionButton}</div>}
     </div>
-  );
+  )
 }

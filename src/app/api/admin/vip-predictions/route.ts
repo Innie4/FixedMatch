@@ -15,24 +15,26 @@ export async function GET(request: Request) {
       AND: [
         category ? { category: { slug: category } } : {},
         status ? { status } : {},
-        search ? {
-          OR: [
-            { homeTeam: { contains: search, mode: 'insensitive' } },
-            { awayTeam: { contains: search, mode: 'insensitive' } },
-            { league: { contains: search, mode: 'insensitive' } }
-          ]
-        } : {},
+        search
+          ? {
+              OR: [
+                { homeTeam: { contains: search, mode: 'insensitive' } },
+                { awayTeam: { contains: search, mode: 'insensitive' } },
+                { league: { contains: search, mode: 'insensitive' } },
+              ],
+            }
+          : {},
         startDate ? { matchTime: { gte: new Date(startDate) } } : {},
         endDate ? { matchTime: { lte: new Date(endDate) } } : {},
-        { isArchived: archived }
-      ]
+        { isArchived: archived },
+      ],
     },
     include: {
-      category: true
+      category: true,
     },
     orderBy: {
-      matchTime: 'desc'
-    }
+      matchTime: 'desc',
+    },
   })
 
   return NextResponse.json(predictions)
@@ -40,15 +42,15 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   const data = await request.json()
-  
+
   const prediction = await prisma.vIPPrediction.create({
     data: {
       ...data,
       createdBy: 1, // Replace with actual admin ID from session
     },
     include: {
-      category: true
-    }
+      category: true,
+    },
   })
 
   return NextResponse.json(prediction)
@@ -62,8 +64,8 @@ export async function PUT(request: Request) {
     where: { id },
     data: updateData,
     include: {
-      category: true
-    }
+      category: true,
+    },
   })
 
   return NextResponse.json(prediction)
@@ -75,7 +77,7 @@ export async function PATCH(request: Request) {
 
   const currentPrediction = await prisma.vIPPrediction.findUnique({
     where: { id },
-    include: { category: true }
+    include: { category: true },
   })
 
   if (!currentPrediction) {
@@ -87,22 +89,30 @@ export async function PATCH(request: Request) {
     data: {
       status,
       result,
-      ...(status === 'won' || status === 'lost' ? {
-        category: {
-          update: {
-            totalPicks: { increment: 1 },
-            successRate: {
-              set: status === 'won'
-                ? ((currentPrediction.category.successRate * currentPrediction.category.totalPicks + 100) / (currentPrediction.category.totalPicks + 1))
-                : ((currentPrediction.category.successRate * currentPrediction.category.totalPicks) / (currentPrediction.category.totalPicks + 1))
-            }
+      ...(status === 'won' || status === 'lost'
+        ? {
+            category: {
+              update: {
+                totalPicks: { increment: 1 },
+                successRate: {
+                  set:
+                    status === 'won'
+                      ? (currentPrediction.category.successRate *
+                          currentPrediction.category.totalPicks +
+                          100) /
+                        (currentPrediction.category.totalPicks + 1)
+                      : (currentPrediction.category.successRate *
+                          currentPrediction.category.totalPicks) /
+                        (currentPrediction.category.totalPicks + 1),
+                },
+              },
+            },
           }
-        }
-      } : {})
+        : {}),
     },
     include: {
-      category: true
-    }
+      category: true,
+    },
   })
 
   return NextResponse.json(prediction)

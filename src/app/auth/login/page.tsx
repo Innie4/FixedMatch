@@ -1,61 +1,83 @@
-"use client"
+'use client'
 
-import type React from "react"
+import type React from 'react'
 
-import { useState } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Loader2, AlertCircle, EyeOff, Eye } from "lucide-react"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Separator } from "@/components/ui/separator"
+import { useState } from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Loader2, EyeOff, Eye } from 'lucide-react'
+import { Separator } from '@/components/ui/separator'
+import { signIn } from 'next-auth/react'
+import { useToast } from '@/components/ui/use-toast'
 
 export default function LoginPage() {
   const router = useRouter()
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const { toast } = useToast()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // Reset error
-    setError(null)
-
     // Basic validation
     if (!email || !password) {
-      setError("Please enter both email and password")
+      toast({
+        title: 'Error',
+        description: 'Please enter both email and password.',
+        variant: 'destructive',
+      })
       return
     }
 
-    // Simulate API call
     setIsLoading(true)
 
     try {
-      // Check if the password is "####" and email is valid
-      if (password === "####" && email.includes("@")) {
-        // Redirect to admin dashboard
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-        router.push("/admin/dashboard")
+      const result = await signIn('credentials', {
+        redirect: false,
+        email,
+        password,
+      })
+
+      if (result?.error) {
+        toast({
+          title: 'Login Failed',
+          description:
+            result.error === 'CredentialsSignin' ? 'Invalid email or password.' : result.error,
+          variant: 'destructive',
+        })
       } else {
-        // For other credentials, simulate an API call
-        await new Promise((resolve) => setTimeout(resolve, 1500))
-        
-        // Regular users go to homepage
-        router.push("/")
+        toast({
+          title: 'Success',
+          description: 'Logged in successfully! Redirecting...',
+          variant: 'default',
+        })
+        router.push('/')
       }
     } catch (err) {
-      setError("Invalid email or password. Please try again.")
+      toast({
+        title: 'Error',
+        description: 'An unexpected error occurred. Please try again.',
+        variant: 'destructive',
+      })
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const handleGoogleLogin = () => {
+    signIn('google', { callbackUrl: '/' })
+  }
+
+  const handleFacebookLogin = () => {
+    signIn('facebook', { callbackUrl: '/' })
   }
 
   return (
@@ -64,23 +86,17 @@ export default function LoginPage() {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
           <div className="text-center mb-8">
             <Link href="/">
-            <Image 
-                src="/FIXEDMatchD.png" 
-                alt="Legit Soccer Tips Logo" 
-                width={512} 
-                height={512} 
-                className="mx-auto mb-3" />
+              <Image
+                src="/FIXEDMatchD.png"
+                alt="Legit Soccer Tips Logo"
+                width={512}
+                height={512}
+                className="mx-auto mb-3"
+              />
             </Link>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Welcome back</h1>
             <p className="text-gray-600 dark:text-gray-400 mt-1">Log in to access your account</p>
           </div>
-
-          {error && (
-            <Alert variant="destructive" className="mb-6">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
@@ -99,14 +115,17 @@ export default function LoginPage() {
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <Label htmlFor="password">Password</Label>
-                <Link href="/auth/forgot-password" className="text-xs text-[#1a56db] hover:underline">
+                <Link
+                  href="/auth/forgot-password"
+                  className="text-xs text-[#1a56db] hover:underline"
+                >
                   Forgot password?
                 </Link>
               </div>
               <div className="relative">
                 <Input
                   id="password"
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -139,9 +158,13 @@ export default function LoginPage() {
               </Label>
             </div>
 
-            <Button type="submit" className="w-full bg-[#1a56db] hover:bg-[#1e40af]" disabled={isLoading}>
+            <Button
+              type="submit"
+              className="w-full bg-[#1a56db] hover:bg-[#1e40af]"
+              disabled={isLoading}
+            >
               {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              {isLoading ? "Logging in..." : "Log in"}
+              {isLoading ? 'Logging in...' : 'Log in'}
             </Button>
           </form>
 
@@ -158,7 +181,13 @@ export default function LoginPage() {
             </div>
 
             <div className="mt-4 flex gap-3">
-              <Button type="button" variant="outline" className="w-full" disabled={isLoading}>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                disabled={isLoading}
+                onClick={handleGoogleLogin}
+              >
                 <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24">
                   <path
                     d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -179,8 +208,18 @@ export default function LoginPage() {
                 </svg>
                 Google
               </Button>
-              <Button type="button" variant="outline" className="w-full" disabled={isLoading}>
-                <svg className="h-5 w-5 mr-2 text-[#1877F2]" fill="currentColor" viewBox="0 0 24 24">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                disabled={isLoading}
+                onClick={handleFacebookLogin}
+              >
+                <svg
+                  className="h-5 w-5 mr-2 text-[#1877F2]"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path d="M9.198 21.5h4v-8.01h3.604l.396-3.98h-4V7.5a1 1 0 0 1 1-1h3v-4h-3a5 5 0 0 0-5 5v2.01h-2l-.396 3.98h2.396v8.01Z" />
                 </svg>
                 Facebook
@@ -191,7 +230,7 @@ export default function LoginPage() {
 
         <div className="text-center mt-6">
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Don't have an account?{" "}
+            Don't have an account?{' '}
             <Link href="/auth/signup" className="text-[#1a56db] hover:underline font-medium">
               Sign up
             </Link>

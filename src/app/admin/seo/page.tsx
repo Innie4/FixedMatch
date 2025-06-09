@@ -1,21 +1,57 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import { 
-  Search, Filter, ChevronDown, MoreHorizontal, Edit, ArrowUpDown,
-  BarChart3, FileText, LineChart, TrendingUp, TrendingDown,
-  CheckCircle2, Plus
-} from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
+import { useState } from 'react'
+import {
+  Search,
+  Filter,
+  ChevronDown,
+  MoreHorizontal,
+  Edit,
+  ArrowUpDown,
+  BarChart3,
+  FileText,
+  LineChart,
+  TrendingUp,
+  TrendingDown,
+  CheckCircle2,
+  Plus,
+} from 'lucide-react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { Badge } from '@/components/ui/badge'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Checkbox } from '@/components/ui/checkbox'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
 
 interface Page {
   id: number
@@ -46,41 +82,39 @@ interface Keyword {
 }
 
 export default function SEOManagementPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [filterStatus, setFilterStatus] = useState("all")
-  const [sortColumn, setSortColumn] = useState("position")
-  const [sortDirection, setSortDirection] = useState("asc")
+  const [searchTerm, setSearchTerm] = useState('')
+  const [filterStatus, setFilterStatus] = useState('all')
+  const [sortColumn, setSortColumn] = useState('position')
+  const [sortDirection, setSortDirection] = useState('asc')
   const [selectedRows, setSelectedRows] = useState<number[]>([])
-  const [activeTab, setActiveTab] = useState("keyword-performance")
+  const [activeTab, setActiveTab] = useState('keyword-performance')
   const [selectedPage, setSelectedPage] = useState<Page | null>(null)
-  const [timeRange, setTimeRange] = useState("30d")
+  const [timeRange, setTimeRange] = useState('30d')
 
   const keywords: Keyword[] = [
     {
       id: 1,
-      keyword: "sports prediction",
+      keyword: 'sports prediction',
       position: 12,
       previousPosition: 15,
       change: 3,
       searchVolume: 8200,
       difficulty: 68,
-      opportunity: "high",
-      lastUpdated: "2023-06-10",
-      status: "tracking"
+      opportunity: 'high',
+      lastUpdated: '2023-06-10',
+      status: 'tracking',
     },
     // ... Add more keywords as needed
   ]
 
   const handleRowSelect = (id: number) => {
-    setSelectedRows(prev => 
-      prev.includes(id) ? prev.filter(rowId => rowId !== id) : [...prev, id]
+    setSelectedRows((prev) =>
+      prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
     )
   }
 
   const handleSelectAll = (items: Keyword[]) => {
-    setSelectedRows(prev => 
-      prev.length === items.length ? [] : items.map(item => item.id)
-    )
+    setSelectedRows((prev) => (prev.length === items.length ? [] : items.map((item) => item.id)))
   }
 
   return (
@@ -99,9 +133,11 @@ export default function SEOManagementPage() {
             </BreadcrumbList>
           </Breadcrumb>
           <h1 className="text-2xl font-bold tracking-tight">SEO Management</h1>
-          <p className="text-muted-foreground">Monitor and optimize your site's search engine performance.</p>
+          <p className="text-muted-foreground">
+            Monitor and optimize your site's search engine performance.
+          </p>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <div className="relative w-full md:w-auto">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -113,7 +149,7 @@ export default function SEOManagementPage() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          
+
           <Select value={timeRange} onValueChange={setTimeRange}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select time range" />
@@ -168,10 +204,18 @@ export default function SEOManagementPage() {
                 <DropdownMenuContent align="end" className="w-[200px]">
                   <DropdownMenuLabel>Filter by Opportunity</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => setFilterStatus("all")}>All Keywords</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setFilterStatus("high")}>High Opportunity</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setFilterStatus("medium")}>Medium Opportunity</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setFilterStatus("low")}>Low Opportunity</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setFilterStatus('all')}>
+                    All Keywords
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setFilterStatus('high')}>
+                    High Opportunity
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setFilterStatus('medium')}>
+                    Medium Opportunity
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setFilterStatus('low')}>
+                    Low Opportunity
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -187,17 +231,20 @@ export default function SEOManagementPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[40px]">
-                      <Checkbox 
-                        checked={selectedRows.length === keywords.length} 
+                      <Checkbox
+                        checked={selectedRows.length === keywords.length}
                         onCheckedChange={() => handleSelectAll(keywords)}
                       />
                     </TableHead>
                     <TableHead>Keyword</TableHead>
                     <TableHead>
-                      <div className="flex items-center space-x-1" onClick={() => {
-                        setSortColumn("position")
-                        setSortDirection(sortDirection === "asc" ? "desc" : "asc")
-                      }}>
+                      <div
+                        className="flex items-center space-x-1"
+                        onClick={() => {
+                          setSortColumn('position')
+                          setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
+                        }}
+                      >
                         <span>Position</span>
                         <ArrowUpDown className="h-4 w-4" />
                       </div>
@@ -212,8 +259,8 @@ export default function SEOManagementPage() {
                   {keywords.map((keyword) => (
                     <TableRow key={keyword.id}>
                       <TableCell>
-                        <Checkbox 
-                          checked={selectedRows.includes(keyword.id)} 
+                        <Checkbox
+                          checked={selectedRows.includes(keyword.id)}
                           onCheckedChange={() => handleRowSelect(keyword.id)}
                         />
                       </TableCell>
@@ -238,10 +285,15 @@ export default function SEOManagementPage() {
                       </TableCell>
                       <TableCell>{keyword.searchVolume.toLocaleString()}</TableCell>
                       <TableCell>
-                        <Badge variant={
-                          keyword.opportunity === "high" ? "default" :
-                          keyword.opportunity === "medium" ? "secondary" : "outline"
-                        }>
+                        <Badge
+                          variant={
+                            keyword.opportunity === 'high'
+                              ? 'default'
+                              : keyword.opportunity === 'medium'
+                                ? 'secondary'
+                                : 'outline'
+                          }
+                        >
                           {keyword.opportunity}
                         </Badge>
                       </TableCell>
@@ -257,7 +309,9 @@ export default function SEOManagementPage() {
                             <DropdownMenuItem>View Details</DropdownMenuItem>
                             <DropdownMenuItem>Edit Tracking</DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-red-600">Remove Tracking</DropdownMenuItem>
+                            <DropdownMenuItem className="text-red-600">
+                              Remove Tracking
+                            </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>

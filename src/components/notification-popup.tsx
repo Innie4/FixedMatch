@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import { useState, useEffect } from "react"
-import { Bell, X } from "lucide-react"
+import { useState, useEffect } from 'react'
+import { Bell, X } from 'lucide-react'
 
 export default function NotificationPopup() {
   const [isVisible, setIsVisible] = useState(false)
@@ -9,7 +9,7 @@ export default function NotificationPopup() {
 
   useEffect(() => {
     // Check if user has already interacted with the popup
-    const hasSeenPopup = localStorage.getItem("hasSeenNotificationPopup")
+    const hasSeenPopup = localStorage.getItem('hasSeenNotificationPopup')
 
     if (!hasSeenPopup) {
       // Show popup after 5 seconds
@@ -22,21 +22,21 @@ export default function NotificationPopup() {
   }, [])
 
   const handleAccept = () => {
-    localStorage.setItem("hasSeenNotificationPopup", "true")
-    localStorage.setItem("notificationsEnabled", "true")
+    localStorage.setItem('hasSeenNotificationPopup', 'true')
+    localStorage.setItem('notificationsEnabled', 'true')
     setHasInteracted(true)
     setIsVisible(false)
   }
 
   const handleDecline = () => {
-    localStorage.setItem("hasSeenNotificationPopup", "true")
-    localStorage.setItem("notificationsEnabled", "false")
+    localStorage.setItem('hasSeenNotificationPopup', 'true')
+    localStorage.setItem('notificationsEnabled', 'false')
     setHasInteracted(true)
     setIsVisible(false)
   }
 
   const handleClose = () => {
-    localStorage.setItem("hasSeenNotificationPopup", "true")
+    localStorage.setItem('hasSeenNotificationPopup', 'true')
     setIsVisible(false)
   }
 
@@ -51,7 +51,10 @@ export default function NotificationPopup() {
         <div className="flex-1">
           <div className="flex justify-between items-start">
             <h3 className="font-semibold text-gray-900 dark:text-white">Enable Notifications</h3>
-            <button onClick={handleClose} className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
+            <button
+              onClick={handleClose}
+              className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
+            >
               <X className="h-5 w-5" />
             </button>
           </div>

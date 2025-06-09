@@ -1,5 +1,5 @@
-import { Check } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Check } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface PricingCardProps {
   plan: {
@@ -18,7 +18,9 @@ export default function PricingCard({ plan }: PricingCardProps) {
   return (
     <div
       className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm border ${
-        plan.popular ? "border-[#10b981] dark:border-[#10b981]/70 shadow-md" : "border-gray-200 dark:border-gray-700"
+        plan.popular
+          ? 'border-[#10b981] dark:border-[#10b981]/70 shadow-md'
+          : 'border-gray-200 dark:border-gray-700'
       } overflow-hidden relative`}
     >
       {plan.popular && (
@@ -42,10 +44,10 @@ export default function PricingCard({ plan }: PricingCardProps) {
         <Button
           className={`w-full mb-6 ${
             plan.popular
-              ? "bg-[#10b981] hover:bg-[#0d9668]"
-              : plan.color === "blue"
-                ? "bg-[#1a56db] hover:bg-[#1e40af]"
-                : "bg-gray-800 hover:bg-gray-900 dark:bg-gray-700 dark:hover:bg-gray-600"
+              ? 'bg-[#10b981] hover:bg-[#0d9668]'
+              : plan.color === 'blue'
+                ? 'bg-[#1a56db] hover:bg-[#1e40af]'
+                : 'bg-gray-800 hover:bg-gray-900 dark:bg-gray-700 dark:hover:bg-gray-600'
           }`}
         >
           Get Started

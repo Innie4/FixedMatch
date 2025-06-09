@@ -1,24 +1,24 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { 
+import { useState } from 'react'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Search, Filter, ChevronLeft, ChevronRight } from "lucide-react"
+} from '@/components/ui/select'
+import { Search, Filter, ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface DataTableProps<T> {
   data: T[]
@@ -50,7 +50,7 @@ interface DataTableProps<T> {
 export function DataTable<T extends { id: string | number }>({
   data,
   columns,
-  searchPlaceholder = "Search...",
+  searchPlaceholder = 'Search...',
   onSearch,
   filters,
   pagination,
@@ -60,7 +60,7 @@ export function DataTable<T extends { id: string | number }>({
   onRowSelect,
   onSelectAll,
 }: DataTableProps<T>) {
-  const [searchTerm, setSearchTerm] = useState("")
+  const [searchTerm, setSearchTerm] = useState('')
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value
@@ -84,7 +84,7 @@ export function DataTable<T extends { id: string | number }>({
               onChange={handleSearch}
             />
           </div>
-          
+
           {filters && filters.length > 0 && (
             <div className="flex items-center gap-2">
               {filters.map((filter) => (
@@ -106,11 +106,9 @@ export function DataTable<T extends { id: string | number }>({
             </div>
           )}
         </div>
-        
+
         {bulkActions && selectedRows.length > 0 && (
-          <div className="flex items-center gap-2">
-            {bulkActions}
-          </div>
+          <div className="flex items-center gap-2">{bulkActions}</div>
         )}
       </div>
 
@@ -137,7 +135,10 @@ export function DataTable<T extends { id: string | number }>({
           <TableBody>
             {data.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={columns.length + (onRowSelect ? 1 : 0) + (rowActions ? 1 : 0)} className="text-center py-8">
+                <TableCell
+                  colSpan={columns.length + (onRowSelect ? 1 : 0) + (rowActions ? 1 : 0)}
+                  className="text-center py-8"
+                >
                   No data found
                 </TableCell>
               </TableRow>
@@ -159,9 +160,7 @@ export function DataTable<T extends { id: string | number }>({
                       {column.render ? column.render(item) : (item as any)[column.key]}
                     </TableCell>
                   ))}
-                  {rowActions && (
-                    <TableCell>{rowActions(item)}</TableCell>
-                  )}
+                  {rowActions && <TableCell>{rowActions(item)}</TableCell>}
                 </TableRow>
               ))
             )}

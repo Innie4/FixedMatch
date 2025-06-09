@@ -12,10 +12,13 @@ export async function sendEmail({ to, subject, html }: EmailOptions) {
 
 const emailStyles = {
   container: 'font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;',
-  header: 'background-color: #1a365d; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0;',
-  content: 'background-color: #ffffff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 0 0 5px 5px;',
-  button: 'display: inline-block; background-color: #3182ce; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; margin-top: 20px;',
-  footer: 'text-align: center; margin-top: 20px; color: #718096; font-size: 14px;'
+  header:
+    'background-color: #1a365d; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0;',
+  content:
+    'background-color: #ffffff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 0 0 5px 5px;',
+  button:
+    'display: inline-block; background-color: #3182ce; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; margin-top: 20px;',
+  footer: 'text-align: center; margin-top: 20px; color: #718096; font-size: 14px;',
 }
 
 const baseTemplate = (content: string) => `
@@ -39,9 +42,9 @@ export const emailTemplates = {
         <p>We have received your payment confirmation. Our team will review it shortly.</p>
         <p>You will receive another email once the review is complete.</p>
       </div>
-    `)
+    `),
   }),
-  
+
   paymentApproved: (username: string, packageName: string, expirationDate: string) => ({
     subject: 'Payment Approved - VIP Access Granted',
     html: baseTemplate(`
@@ -54,9 +57,9 @@ export const emailTemplates = {
         <p><strong>Package:</strong> ${packageName}</p>
         <p><strong>Expires:</strong> ${expirationDate}</p>
       </div>
-    `)
+    `),
   }),
-  
+
   paymentDeclined: (username: string, reason: string) => ({
     subject: 'Payment Confirmation Declined',
     html: baseTemplate(`
@@ -69,10 +72,16 @@ export const emailTemplates = {
         <p style="color: #e53e3e;">${reason}</p>
         <p>Please submit a new payment confirmation with the correct information.</p>
       </div>
-    `)
+    `),
   }),
 
-  subscriptionExpiring: (username: string, packageName: string, daysRemaining: number, expiryDate: string, renewalUrl: string) => ({
+  subscriptionExpiring: (
+    username: string,
+    packageName: string,
+    daysRemaining: number,
+    expiryDate: string,
+    renewalUrl: string
+  ) => ({
     subject: `Your VIP Access Expires in ${daysRemaining} ${daysRemaining === 1 ? 'Day' : 'Days'}`,
     html: baseTemplate(`
       <div style="${emailStyles.header}">
@@ -84,7 +93,7 @@ export const emailTemplates = {
         <p><strong>Expiry Date:</strong> ${expiryDate}</p>
         <a href="${renewalUrl}" style="${emailStyles.button}">Renew Your Subscription</a>
       </div>
-    `)
+    `),
   }),
 
   subscriptionExpired: (username: string, renewalUrl: string) => ({
@@ -98,6 +107,6 @@ export const emailTemplates = {
         <p>Your VIP access has expired. To continue enjoying our premium features, please renew your subscription.</p>
         <a href="${renewalUrl}" style="${emailStyles.button}">Renew Now</a>
       </div>
-    `)
-  })
+    `),
+  }),
 }

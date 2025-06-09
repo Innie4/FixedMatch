@@ -1,18 +1,18 @@
-import { useState } from "react"
-import Image from "next/image"
-import { 
-  Star, 
-  Calendar, 
-  MessageSquare, 
-  ThumbsUp, 
-  Eye, 
-  CheckCircle2, 
-  XCircle, 
-  Edit, 
-  Flag 
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { useState } from 'react'
+import Image from 'next/image'
+import {
+  Star,
+  Calendar,
+  MessageSquare,
+  ThumbsUp,
+  Eye,
+  CheckCircle2,
+  XCircle,
+  Edit,
+  Flag,
+} from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import {
   Sheet,
   SheetContent,
@@ -20,57 +20,57 @@ import {
   SheetHeader,
   SheetTitle,
   SheetFooter,
-} from "@/components/ui/sheet"
-import { Separator } from "@/components/ui/separator"
+} from '@/components/ui/sheet'
+import { Separator } from '@/components/ui/separator'
 
 // Define types for review and related objects
 interface Reply {
-  id: number;
-  adminName: string;
-  comment: string;
-  date: string;
+  id: number
+  adminName: string
+  comment: string
+  date: string
   engagement: {
-    likes: number;
-    views: number;
-  };
+    likes: number
+    views: number
+  }
 }
 
 interface EditHistory {
-  editedBy: string;
-  editDate: string;
-  originalComment: string;
-  reason: string;
+  editedBy: string
+  editDate: string
+  originalComment: string
+  reason: string
 }
 
 interface Review {
-  id: number;
-  username: string;
-  userAvatar: string;
-  rating: number;
-  title: string;
-  comment: string;
-  date: string;
-  status: string;
-  featured: boolean;
-  flagged: boolean;
-  edited: boolean;
-  editHistory: EditHistory[];
-  replies: Reply[];
+  id: number
+  username: string
+  userAvatar: string
+  rating: number
+  title: string
+  comment: string
+  date: string
+  status: string
+  featured: boolean
+  flagged: boolean
+  edited: boolean
+  editHistory: EditHistory[]
+  replies: Reply[]
   engagement: {
-    likes: number;
-    views: number;
-  };
+    likes: number
+    views: number
+  }
 }
 
 interface ReviewDetailsSheetProps {
-  review: Review | null;
-  isOpen: boolean;
-  onClose: () => void;
-  onReply: (review: Review) => void;
-  onEdit: (review: Review) => void;
-  onApprove: (id: number) => void;
-  onReject: (id: number) => void;
-  onFlag: (id: number) => void;
+  review: Review | null
+  isOpen: boolean
+  onClose: () => void
+  onReply: (review: Review) => void
+  onEdit: (review: Review) => void
+  onApprove: (id: number) => void
+  onReject: (id: number) => void
+  onFlag: (id: number) => void
 }
 
 export function ReviewDetailsSheet({
@@ -81,10 +81,10 @@ export function ReviewDetailsSheet({
   onEdit,
   onApprove,
   onReject,
-  onFlag
+  onFlag,
 }: ReviewDetailsSheetProps) {
-  if (!review) return null;
-  
+  if (!review) return null
+
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent className="sm:max-w-md">
@@ -92,7 +92,7 @@ export function ReviewDetailsSheet({
           <SheetTitle>Review Details</SheetTitle>
           <SheetDescription>View and manage review information</SheetDescription>
         </SheetHeader>
-        
+
         <div className="py-6 space-y-6">
           <div className="flex items-start gap-4">
             <Image
@@ -113,24 +113,32 @@ export function ReviewDetailsSheet({
                   <Star
                     key={i}
                     className={`h-4 w-4 ${
-                      i < review.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+                      i < review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'
                     }`}
                   />
                 ))}
               </div>
             </div>
           </div>
-          
+
           <div>
             <h4 className="font-medium mb-1">{review.title}</h4>
             <p className="text-sm text-gray-600 dark:text-gray-400">{review.comment}</p>
           </div>
-          
+
           <div className="flex flex-wrap gap-2">
-            <Badge variant={review.status === "approved" ? "secondary" : review.status === "rejected" ? "destructive" : "outline"}>
-              {review.status === "approved" ? (
+            <Badge
+              variant={
+                review.status === 'approved'
+                  ? 'secondary'
+                  : review.status === 'rejected'
+                    ? 'destructive'
+                    : 'outline'
+              }
+            >
+              {review.status === 'approved' ? (
                 <CheckCircle2 className="h-3 w-3 mr-1" />
-              ) : review.status === "rejected" ? (
+              ) : review.status === 'rejected' ? (
                 <XCircle className="h-3 w-3 mr-1" />
               ) : null}
               {review.status.charAt(0).toUpperCase() + review.status.slice(1)}
@@ -148,7 +156,7 @@ export function ReviewDetailsSheet({
               </Badge>
             )}
           </div>
-          
+
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center">
               <ThumbsUp className="h-4 w-4 mr-1" />
@@ -163,7 +171,7 @@ export function ReviewDetailsSheet({
               {review.replies.length} replies
             </div>
           </div>
-          
+
           {review.replies.length > 0 && (
             <div>
               <h4 className="font-medium mb-2">Replies</h4>
@@ -180,7 +188,7 @@ export function ReviewDetailsSheet({
               </div>
             </div>
           )}
-          
+
           {review.edited && review.editHistory.length > 0 && (
             <div>
               <h4 className="font-medium mb-2">Edit History</h4>
@@ -200,9 +208,9 @@ export function ReviewDetailsSheet({
             </div>
           )}
         </div>
-        
+
         <Separator />
-        
+
         <SheetFooter className="mt-4 gap-2 sm:justify-start">
           <Button onClick={() => onReply(review)}>
             <MessageSquare className="h-4 w-4 mr-2" />
@@ -212,13 +220,17 @@ export function ReviewDetailsSheet({
             <Edit className="h-4 w-4 mr-2" />
             Edit
           </Button>
-          {review.status !== "approved" && (
-            <Button variant="outline" className="text-green-600" onClick={() => onApprove(review.id)}>
+          {review.status !== 'approved' && (
+            <Button
+              variant="outline"
+              className="text-green-600"
+              onClick={() => onApprove(review.id)}
+            >
               <CheckCircle2 className="h-4 w-4 mr-2" />
               Approve
             </Button>
           )}
-          {review.status !== "rejected" && (
+          {review.status !== 'rejected' && (
             <Button variant="outline" className="text-red-600" onClick={() => onReject(review.id)}>
               <XCircle className="h-4 w-4 mr-2" />
               Reject

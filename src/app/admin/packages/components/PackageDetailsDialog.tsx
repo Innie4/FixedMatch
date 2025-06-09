@@ -4,11 +4,11 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { DollarSign, Users, Globe, Calendar } from "lucide-react"
-import { countries } from "@/lib/countries"
+} from '@/components/ui/dialog'
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { DollarSign, Users, Globe, Calendar } from 'lucide-react'
+import { countries } from '@/lib/countries'
 
 interface SubscriptionPackage {
   id: number
@@ -21,7 +21,7 @@ interface SubscriptionPackage {
     sixMonths: { price: number; enabled: boolean }
   }
   countries: string[]
-  status: "active" | "inactive"
+  status: 'active' | 'inactive'
   subscribers: number
   revenue: number
   createdAt: string
@@ -38,15 +38,17 @@ export function PackageDetailsDialog({ isOpen, onClose, package: pkg }: PackageD
   if (!pkg) return null
 
   const getCountryNames = (countryCodes: string[]) => {
-    if (countryCodes.length === 0) return "Global"
-    return countryCodes.map(code => {
-      const country = countries.find(c => c.code === code)
-      return country ? country.name : code
-    }).join(", ")
+    if (countryCodes.length === 0) return 'Global'
+    return countryCodes
+      .map((code) => {
+        const country = countries.find((c) => c.code === code)
+        return country ? country.name : code
+      })
+      .join(', ')
   }
 
   const enabledDurations = Object.entries(pkg.durations)
-    .filter(([_, duration]) => duration.enabled)
+    .filter(([_key, duration]) => duration.enabled)
     .map(([key, duration]) => ({ key, ...duration }))
 
   return (
@@ -55,13 +57,11 @@ export function PackageDetailsDialog({ isOpen, onClose, package: pkg }: PackageD
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             {pkg.name}
-            <Badge variant={pkg.status === "active" ? "default" : "secondary"}>
-              {pkg.status}
-            </Badge>
+            <Badge variant={pkg.status === 'active' ? 'default' : 'secondary'}>{pkg.status}</Badge>
           </DialogTitle>
           <DialogDescription>{pkg.description}</DialogDescription>
         </DialogHeader>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -72,7 +72,7 @@ export function PackageDetailsDialog({ isOpen, onClose, package: pkg }: PackageD
               <div className="text-2xl font-bold">{pkg.subscribers}</div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
@@ -98,14 +98,16 @@ export function PackageDetailsDialog({ isOpen, onClose, package: pkg }: PackageD
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {enabledDurations.map(({ key, price }) => {
                 const durationLabels = {
-                  twoWeeks: "2 Weeks",
-                  oneMonth: "1 Month",
-                  threeMonths: "3 Months",
-                  sixMonths: "6 Months"
+                  twoWeeks: '2 Weeks',
+                  oneMonth: '1 Month',
+                  threeMonths: '3 Months',
+                  sixMonths: '6 Months',
                 }
                 return (
                   <div key={key} className="flex justify-between items-center p-2 bg-muted rounded">
-                    <span className="text-sm">{durationLabels[key as keyof typeof durationLabels]}</span>
+                    <span className="text-sm">
+                      {durationLabels[key as keyof typeof durationLabels]}
+                    </span>
                     <span className="text-sm font-medium">${price}</span>
                   </div>
                 )

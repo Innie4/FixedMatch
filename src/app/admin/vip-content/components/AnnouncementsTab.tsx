@@ -1,28 +1,28 @@
-import { useState } from "react"
-import { 
-  Search, 
-  Filter, 
-  ChevronDown, 
-  MoreHorizontal, 
-  Trash2, 
-  Edit, 
-  Eye, 
-  ArrowUpDown, 
-  Megaphone, 
-  Calendar, 
-  Clock 
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
+import { useState } from 'react'
+import {
+  Search,
+  Filter,
+  ChevronDown,
+  MoreHorizontal,
+  Trash2,
+  Edit,
+  Eye,
+  ArrowUpDown,
+  Megaphone,
+  Calendar,
+  Clock,
+} from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { Badge } from '@/components/ui/badge'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,35 +30,35 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Checkbox } from "@/components/ui/checkbox"
+} from '@/components/ui/dropdown-menu'
+import { Checkbox } from '@/components/ui/checkbox'
 interface Announcement {
-  id: number;
-  title: string;
-  content: string;
-  publishDate: string;
-  expiryDate: string;
-  targetAudience: string;
-  views: number;
-  clicks: number;
-  status: "published" | "scheduled" | "expired" | "draft";
+  id: number
+  title: string
+  content: string
+  publishDate: string
+  expiryDate: string
+  targetAudience: string
+  views: number
+  clicks: number
+  status: 'published' | 'scheduled' | 'expired' | 'draft'
 }
 
 interface AnnouncementsTabProps {
-  announcements: Announcement[];
-  searchTerm: string;
-  setSearchTerm: (value: string) => void;
-  filterStatus: string;
-  setFilterStatus: (value: string) => void;
-  sortColumn: string;
-  setSortColumn: (value: string) => void;
-  sortDirection: string;
-  setSortDirection: (value: string) => void;
-  selectedRows: number[];
-  setSelectedRows: (value: number[]) => void;
-  onDeleteConfirm: (type: string, id: number) => void;
-  onEdit: (item: any) => void;
-  onCreateAnnouncement: () => void;
+  announcements: Announcement[]
+  searchTerm: string
+  setSearchTerm: (value: string) => void
+  filterStatus: string
+  setFilterStatus: (value: string) => void
+  sortColumn: string
+  setSortColumn: (value: string) => void
+  sortDirection: string
+  setSortDirection: (value: string) => void
+  selectedRows: number[]
+  setSelectedRows: (value: number[]) => void
+  onDeleteConfirm: (type: string, id: number) => void
+  onEdit: (item: any) => void
+  onCreateAnnouncement: () => void
 }
 
 export function AnnouncementsTab({
@@ -75,73 +75,66 @@ export function AnnouncementsTab({
   setSelectedRows,
   onDeleteConfirm,
   onEdit,
-  onCreateAnnouncement
+  onCreateAnnouncement,
 }: AnnouncementsTabProps) {
-  
   // Filter announcements
-  const filteredAnnouncements = announcements.filter(announcement => {
-    const matchesSearch = 
+  const filteredAnnouncements = announcements.filter((announcement) => {
+    const matchesSearch =
       announcement.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      announcement.content.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = 
-      filterStatus === "all" || 
-      announcement.status === filterStatus;
-    
-    return matchesSearch && matchesStatus;
-  });
-  
+      announcement.content.toLowerCase().includes(searchTerm.toLowerCase())
+
+    const matchesStatus = filterStatus === 'all' || announcement.status === filterStatus
+
+    return matchesSearch && matchesStatus
+  })
+
   // Sort announcements
   const sortedAnnouncements = [...filteredAnnouncements].sort((a, b) => {
-    if (sortColumn === "date") {
-      return sortDirection === "asc" 
+    if (sortColumn === 'date') {
+      return sortDirection === 'asc'
         ? new Date(a.publishDate).getTime() - new Date(b.publishDate).getTime()
-        : new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime();
-    } else if (sortColumn === "views") {
-      return sortDirection === "asc" 
-        ? a.views - b.views
-        : b.views - a.views;
-    } else if (sortColumn === "clicks") {
-      return sortDirection === "asc" 
-        ? a.clicks - b.clicks
-        : b.clicks - a.clicks;
+        : new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime()
+    } else if (sortColumn === 'views') {
+      return sortDirection === 'asc' ? a.views - b.views : b.views - a.views
+    } else if (sortColumn === 'clicks') {
+      return sortDirection === 'asc' ? a.clicks - b.clicks : b.clicks - a.clicks
     }
-    return 0;
-  });
-  
+    return 0
+  })
+
   // Handle sort
   const handleSort = (column: string) => {
     if (sortColumn === column) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
     } else {
-      setSortColumn(column);
-      setSortDirection("asc");
+      setSortColumn(column)
+      setSortDirection('asc')
     }
-  };
-  
+  }
+
   // Handle row selection
   const handleRowSelect = (id: number) => {
     if (selectedRows.includes(id)) {
-      setSelectedRows(selectedRows.filter(rowId => rowId !== id));
+      setSelectedRows(selectedRows.filter((rowId) => rowId !== id))
     } else {
-      setSelectedRows([...selectedRows, id]);
+      setSelectedRows([...selectedRows, id])
     }
-  };
-  
+  }
+
   // Handle select all
   const handleSelectAll = () => {
     if (selectedRows.length === filteredAnnouncements.length) {
-      setSelectedRows([]);
+      setSelectedRows([])
     } else {
-      setSelectedRows(filteredAnnouncements.map(item => item.id));
+      setSelectedRows(filteredAnnouncements.map((item) => item.id))
     }
-  };
-  
+  }
+
   // Handle bulk actions
   const handleBulkAction = (action: string) => {
-    console.log(`Performing ${action} on announcements:`, selectedRows);
-    setSelectedRows([]);
-  };
+    console.log(`Performing ${action} on announcements:`, selectedRows)
+    setSelectedRows([])
+  }
 
   return (
     <div className="space-y-4">
@@ -168,21 +161,19 @@ export function AnnouncementsTab({
             <DropdownMenuContent align="end" className="w-[200px]">
               <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setFilterStatus("all")}>
+              <DropdownMenuItem onClick={() => setFilterStatus('all')}>
                 All Announcements
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilterStatus("published")}>
+              <DropdownMenuItem onClick={() => setFilterStatus('published')}>
                 Published
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilterStatus("scheduled")}>
+              <DropdownMenuItem onClick={() => setFilterStatus('scheduled')}>
                 Scheduled
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilterStatus("expired")}>
+              <DropdownMenuItem onClick={() => setFilterStatus('expired')}>
                 Expired
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilterStatus("draft")}>
-                Draft
-              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setFilterStatus('draft')}>Draft</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -191,17 +182,17 @@ export function AnnouncementsTab({
           Create Announcement
         </Button>
       </div>
-      
+
       {selectedRows.length > 0 && (
         <div className="flex items-center gap-2 bg-muted/50 p-2 rounded-md">
           <span className="text-sm font-medium">{selectedRows.length} selected</span>
-          <Button variant="outline" size="sm" onClick={() => handleBulkAction("publish")}>
+          <Button variant="outline" size="sm" onClick={() => handleBulkAction('publish')}>
             Publish
           </Button>
-          <Button variant="outline" size="sm" onClick={() => handleBulkAction("archive")}>
+          <Button variant="outline" size="sm" onClick={() => handleBulkAction('archive')}>
             Archive
           </Button>
-          <Button variant="outline" size="sm" onClick={() => handleBulkAction("delete")}>
+          <Button variant="outline" size="sm" onClick={() => handleBulkAction('delete')}>
             Delete
           </Button>
           <Button variant="outline" size="sm" onClick={() => setSelectedRows([])}>
@@ -209,14 +200,17 @@ export function AnnouncementsTab({
           </Button>
         </div>
       )}
-      
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead className="w-[40px]">
-                <Checkbox 
-                  checked={selectedRows.length === filteredAnnouncements.length && filteredAnnouncements.length > 0} 
+                <Checkbox
+                  checked={
+                    selectedRows.length === filteredAnnouncements.length &&
+                    filteredAnnouncements.length > 0
+                  }
                   onCheckedChange={handleSelectAll}
                 />
               </TableHead>
@@ -226,9 +220,9 @@ export function AnnouncementsTab({
                 </div>
               </TableHead>
               <TableHead>
-                <div 
+                <div
                   className="flex items-center space-x-1 cursor-pointer"
-                  onClick={() => handleSort("date")}
+                  onClick={() => handleSort('date')}
                 >
                   <span>Publish Date</span>
                   <ArrowUpDown className="h-4 w-4" />
@@ -237,18 +231,18 @@ export function AnnouncementsTab({
               <TableHead>Expiry Date</TableHead>
               <TableHead>Target</TableHead>
               <TableHead>
-                <div 
+                <div
                   className="flex items-center space-x-1 cursor-pointer"
-                  onClick={() => handleSort("views")}
+                  onClick={() => handleSort('views')}
                 >
                   <span>Views</span>
                   <ArrowUpDown className="h-4 w-4" />
                 </div>
               </TableHead>
               <TableHead>
-                <div 
+                <div
                   className="flex items-center space-x-1 cursor-pointer"
-                  onClick={() => handleSort("clicks")}
+                  onClick={() => handleSort('clicks')}
                 >
                   <span>Clicks</span>
                   <ArrowUpDown className="h-4 w-4" />
@@ -259,11 +253,11 @@ export function AnnouncementsTab({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedAnnouncements.map(announcement => (
+            {sortedAnnouncements.map((announcement) => (
               <TableRow key={announcement.id}>
                 <TableCell>
-                  <Checkbox 
-                    checked={selectedRows.includes(announcement.id)} 
+                  <Checkbox
+                    checked={selectedRows.includes(announcement.id)}
                     onCheckedChange={() => handleRowSelect(announcement.id)}
                   />
                 </TableCell>
@@ -291,11 +285,15 @@ export function AnnouncementsTab({
                 <TableCell>{announcement.views}</TableCell>
                 <TableCell>{announcement.clicks}</TableCell>
                 <TableCell>
-                  <Badge 
+                  <Badge
                     variant={
-                      announcement.status === "published" ? "default" : 
-                      announcement.status === "scheduled" ? "secondary" :
-                      announcement.status === "expired" ? "destructive" : "outline"
+                      announcement.status === 'published'
+                        ? 'default'
+                        : announcement.status === 'scheduled'
+                          ? 'secondary'
+                          : announcement.status === 'expired'
+                            ? 'destructive'
+                            : 'outline'
                     }
                   >
                     {announcement.status}
@@ -318,9 +316,9 @@ export function AnnouncementsTab({
                         View
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem 
+                      <DropdownMenuItem
                         className="text-destructive focus:text-destructive"
-                        onClick={() => onDeleteConfirm("announcement", announcement.id)}
+                        onClick={() => onDeleteConfirm('announcement', announcement.id)}
                       >
                         <Trash2 className="mr-2 h-4 w-4" />
                         Delete
@@ -341,5 +339,5 @@ export function AnnouncementsTab({
         </Table>
       </div>
     </div>
-  );
+  )
 }

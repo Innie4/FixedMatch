@@ -1,5 +1,5 @@
-import Link from "next/link"
-import { Facebook, Twitter, Instagram, Youtube, Mail } from "lucide-react"
+import Link from 'next/link'
+import { Facebook, Twitter, Instagram, Youtube, Mail } from 'lucide-react'
 
 export default function Footer() {
   return (
@@ -11,22 +11,36 @@ export default function Footer() {
               <div className="bg-[#1a56db] text-white font-bold text-xl w-10 h-10 rounded-full flex items-center justify-center">
                 FP
               </div>
-              <span className="font-bold text-xl text-gray-900 dark:text-white">Legit Soccer Tips</span>
+              <span className="font-bold text-xl text-gray-900 dark:text-white">
+                Legit Soccer Tips
+              </span>
             </div>
             <p className="text-gray-600 dark:text-gray-400 mb-4">
               Expert football predictions and live scores for all major leagues worldwide.
             </p>
             <div className="flex space-x-4">
-              <Link href="#" className="text-gray-500 hover:text-[#1a56db] dark:text-gray-400 dark:hover:text-white">
+              <Link
+                href="#"
+                className="text-gray-500 hover:text-[#1a56db] dark:text-gray-400 dark:hover:text-white"
+              >
                 <Facebook className="h-5 w-5" />
               </Link>
-              <Link href="#" className="text-gray-500 hover:text-[#1a56db] dark:text-gray-400 dark:hover:text-white">
+              <Link
+                href="#"
+                className="text-gray-500 hover:text-[#1a56db] dark:text-gray-400 dark:hover:text-white"
+              >
                 <Twitter className="h-5 w-5" />
               </Link>
-              <Link href="#" className="text-gray-500 hover:text-[#1a56db] dark:text-gray-400 dark:hover:text-white">
+              <Link
+                href="#"
+                className="text-gray-500 hover:text-[#1a56db] dark:text-gray-400 dark:hover:text-white"
+              >
                 <Instagram className="h-5 w-5" />
               </Link>
-              <Link href="#" className="text-gray-500 hover:text-[#1a56db] dark:text-gray-400 dark:hover:text-white">
+              <Link
+                href="#"
+                className="text-gray-500 hover:text-[#1a56db] dark:text-gray-400 dark:hover:text-white"
+              >
                 <Youtube className="h-5 w-5" />
               </Link>
             </div>
@@ -36,7 +50,10 @@ export default function Footer() {
             <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/" className="text-gray-600 dark:text-gray-400 hover:text-[#1a56db] dark:hover:text-white">
+                <Link
+                  href="/"
+                  className="text-gray-600 dark:text-gray-400 hover:text-[#1a56db] dark:hover:text-white"
+                >
                   Home
                 </Link>
               </li>
@@ -84,7 +101,9 @@ export default function Footer() {
               </li>
             </ul>
             <div className="mt-6">
-              <h4 className="font-medium text-gray-900 dark:text-white mb-2">Subscribe to our newsletter</h4>
+              <h4 className="font-medium text-gray-900 dark:text-white mb-2">
+                Subscribe to our newsletter
+              </h4>
               <div className="flex">
                 <input
                   type="email"

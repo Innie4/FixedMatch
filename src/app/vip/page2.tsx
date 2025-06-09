@@ -16,7 +16,7 @@ export default function VIPPage() {
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">VIP Predictions</h1>
-      
+
       <SubscriptionStatus />
 
       {/* Filters */}
@@ -35,9 +35,9 @@ export default function VIPPage() {
         <div className="flex w-full md:w-auto gap-2">
           <div className="relative w-full md:w-64">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
-            <Input 
-              type="search" 
-              placeholder="Search teams or leagues..." 
+            <Input
+              type="search"
+              placeholder="Search teams or leagues..."
               className="pl-8"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}

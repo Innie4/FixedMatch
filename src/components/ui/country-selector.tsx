@@ -1,9 +1,9 @@
-"use client"
+'use client'
 
-import * as React from "react"
-import { Check, ChevronDown, Search } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import * as React from 'react'
+import { Check, ChevronDown, Search } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
 import {
   Command,
   CommandEmpty,
@@ -11,13 +11,9 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import { countries, type Country } from "@/lib/countries"
+} from '@/components/ui/command'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { countries, type Country } from '@/lib/countries'
 
 interface CountrySelectorProps {
   value?: string
@@ -30,18 +26,18 @@ interface CountrySelectorProps {
 export function CountrySelector({
   value,
   onValueChange,
-  placeholder = "Select country...",
+  placeholder = 'Select country...',
   disabled = false,
   className,
 }: CountrySelectorProps) {
   const [open, setOpen] = React.useState(false)
-  const [searchValue, setSearchValue] = React.useState("")
+  const [searchValue, setSearchValue] = React.useState('')
 
   const selectedCountry = countries.find((country) => country.code === value)
 
   const filteredCountries = React.useMemo(() => {
     if (!searchValue) return countries
-    
+
     const lowercaseSearch = searchValue.toLowerCase()
     return countries.filter(
       (country) =>
@@ -58,8 +54,8 @@ export function CountrySelector({
           role="combobox"
           aria-expanded={open}
           className={cn(
-            "w-full justify-between h-10 px-3 py-2 text-sm",
-            !selectedCountry && "text-muted-foreground",
+            'w-full justify-between h-10 px-3 py-2 text-sm',
+            !selectedCountry && 'text-muted-foreground',
             className
           )}
           disabled={disabled}
@@ -98,7 +94,7 @@ export function CountrySelector({
                     onSelect={() => {
                       onValueChange?.(country.code)
                       setOpen(false)
-                      setSearchValue("")
+                      setSearchValue('')
                     }}
                     className="flex items-center gap-2 px-2 py-1.5"
                   >
@@ -106,10 +102,8 @@ export function CountrySelector({
                     <span className="flex-1 truncate">{country.name}</span>
                     <Check
                       className={cn(
-                        "ml-auto h-4 w-4",
-                        selectedCountry?.code === country.code
-                          ? "opacity-100"
-                          : "opacity-0"
+                        'ml-auto h-4 w-4',
+                        selectedCountry?.code === country.code ? 'opacity-100' : 'opacity-0'
                       )}
                     />
                   </CommandItem>

@@ -1,36 +1,36 @@
-"use client"
+'use client'
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { usePathname } from "next/navigation"
-import { 
-  BarChart3, 
-  Users, 
-  FileText, 
-  Star, 
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
+import { usePathname } from 'next/navigation'
+import {
+  BarChart3,
+  Users,
+  FileText,
+  Star,
   Search,
-  Settings, 
-  Globe, 
+  Settings,
+  Globe,
   Bell,
   Menu,
   ChevronDown,
   LogOut,
   UserCog,
-  User
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
-} from "@/components/ui/dropdown-menu"
-import { ModeToggle } from "@/components/mode-toggle"
-import { AdminSidebar } from "@/components/admin/sidebar"
+  User,
+} from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { ModeToggle } from '@/components/mode-toggle'
+import { AdminSidebar } from '@/components/admin/sidebar'
 
 interface NavItem {
   title: string
@@ -41,7 +41,7 @@ interface NavItem {
 export function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const [isMobileOpen, setIsMobileOpen] = useState(false)
-  
+
   // Close mobile menu when route changes
   useEffect(() => {
     setIsMobileOpen(false)
@@ -49,43 +49,43 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
 
   const navItems: NavItem[] = [
     {
-      title: "Dashboard",
-      href: "/admin/dashboard",
+      title: 'Dashboard',
+      href: '/admin/dashboard',
       icon: <BarChart3 className="h-5 w-5" />,
     },
     {
-      title: "User Management",
-      href: "/admin/users",
+      title: 'User Management',
+      href: '/admin/users',
       icon: <Users className="h-5 w-5" />,
     },
     {
-      title: "Prediction Management",
-      href: "/admin/predictions",
+      title: 'Prediction Management',
+      href: '/admin/predictions',
       icon: <FileText className="h-5 w-5" />,
     },
     {
-      title: "Review Management",
-      href: "/admin/reviews",
+      title: 'Review Management',
+      href: '/admin/reviews',
       icon: <Star className="h-5 w-5" />,
     },
     {
-      title: "VIP Content Management",
-      href: "/admin/vip-content",
+      title: 'VIP Content Management',
+      href: '/admin/vip-content',
       icon: <Star className="h-5 w-5" />,
     },
     {
-      title: "SEO Management",
-      href: "/admin/seo",
+      title: 'SEO Management',
+      href: '/admin/seo',
       icon: <Globe className="h-5 w-5" />,
     },
     {
-      title: "System Settings",
-      href: "/admin/settings",
+      title: 'System Settings',
+      href: '/admin/settings',
       icon: <Settings className="h-5 w-5" />,
     },
     {
-      title: "Admin User Management",
-      href: "/admin/admin-users",
+      title: 'Admin User Management',
+      href: '/admin/admin-users',
       icon: <UserCog className="h-5 w-5" />,
     },
   ]
@@ -107,7 +107,9 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
                 <div className="flex flex-col gap-6 py-6">
                   <Link href="/admin/dashboard" className="flex items-center gap-2">
                     <Image src="/placeholder.svg" alt="Logo" width={32} height={32} />
-                    <span className="font-bold text-xl text-gray-900 dark:text-white">Admin Dashboard</span>
+                    <span className="font-bold text-xl text-gray-900 dark:text-white">
+                      Admin Dashboard
+                    </span>
                   </Link>
                   <nav className="flex flex-col gap-2">
                     {navItems.map((item) => (
@@ -115,10 +117,10 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
                         key={item.href}
                         href={item.href}
                         className={cn(
-                          "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium",
+                          'flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium',
                           pathname === item.href
-                            ? "bg-gray-100 dark:bg-gray-800 text-[#1a56db]"
-                            : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                            ? 'bg-gray-100 dark:bg-gray-800 text-[#1a56db]'
+                            : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
                         )}
                       >
                         {item.icon}
@@ -131,17 +133,19 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
             </Sheet>
             <Link href="/admin/dashboard" className="flex items-center gap-2">
               <Image src="/placeholder.svg" alt="Logo" width={32} height={32} />
-              <span className="font-bold text-xl text-gray-900 dark:text-white hidden md:inline-block">Admin Panel</span>
+              <span className="font-bold text-xl text-gray-900 dark:text-white hidden md:inline-block">
+                Admin Panel
+              </span>
             </Link>
           </div>
-          
+
           <div className="hidden md:flex md:flex-1 md:items-center md:justify-center px-6">
             <div className="relative w-full max-w-md">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
               <Input type="search" placeholder="Search..." className="w-full pl-8" />
             </div>
           </div>
-          
+
           <div className="flex items-center gap-2">
             <Button variant="outline" size="icon" className="relative">
               <Bell className="h-5 w-5" />
@@ -149,9 +153,9 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
                 3
               </span>
             </Button>
-            
+
             <ModeToggle />
-            
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="gap-1 pl-2 pr-1">
@@ -185,16 +189,14 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </header>
-      
+
       {/* Main Content */}
       <div className="flex">
         {/* Sidebar (desktop only) */}
         <AdminSidebar navItems={navItems} />
-        
+
         {/* Main content area */}
-        <div className="flex-1 md:ml-64 p-4 md:p-6">
-          {children}
-        </div>
+        <div className="flex-1 md:ml-64 p-4 md:p-6">{children}</div>
       </div>
     </div>
   )
@@ -202,5 +204,5 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
 
 // Helper function
 function cn(...classes: (string | boolean | undefined)[]) {
-  return classes.filter(Boolean).join(" ")
+  return classes.filter(Boolean).join(' ')
 }

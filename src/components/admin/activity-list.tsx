@@ -1,5 +1,12 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 
 interface ActivityItem {
   id: number | string
@@ -34,7 +41,7 @@ export function ActivityList({ title, activities }: ActivityListProps) {
             {activities.map((activity) => (
               <TableRow key={activity.id}>
                 <TableCell className="font-medium">{activity.action}</TableCell>
-                <TableCell>{activity.admin || "System"}</TableCell>
+                <TableCell>{activity.admin || 'System'}</TableCell>
                 <TableCell>{activity.timestamp}</TableCell>
                 <TableCell>{activity.details}</TableCell>
               </TableRow>

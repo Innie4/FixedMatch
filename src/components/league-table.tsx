@@ -1,16 +1,16 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import Image from "next/image"
-import { ArrowDown, ArrowUp, ArrowRight, Info } from "lucide-react"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { useState } from 'react'
+import Image from 'next/image'
+import { ArrowDown, ArrowUp, ArrowRight, Info } from 'lucide-react'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 // Sample team data
 const teams = [
   {
     id: 1,
-    name: "Arsenal",
-    logo: "/placeholder.svg?height=24&width=24",
+    name: 'Arsenal',
+    logo: '/placeholder.svg?height=24&width=24',
     played: 38,
     won: 26,
     drawn: 6,
@@ -18,14 +18,14 @@ const teams = [
     goalsFor: 88,
     goalsAgainst: 43,
     points: 84,
-    form: ["W", "W", "D", "W", "L"],
+    form: ['W', 'W', 'D', 'W', 'L'],
     position: 1,
     positionChange: 1,
   },
   {
     id: 2,
-    name: "Manchester City",
-    logo: "/placeholder.svg?height=24&width=24",
+    name: 'Manchester City',
+    logo: '/placeholder.svg?height=24&width=24',
     played: 38,
     won: 25,
     drawn: 8,
@@ -33,14 +33,14 @@ const teams = [
     goalsFor: 94,
     goalsAgainst: 33,
     points: 83,
-    form: ["W", "W", "W", "D", "W"],
+    form: ['W', 'W', 'W', 'D', 'W'],
     position: 2,
     positionChange: -1,
   },
   {
     id: 3,
-    name: "Liverpool",
-    logo: "/placeholder.svg?height=24&width=24",
+    name: 'Liverpool',
+    logo: '/placeholder.svg?height=24&width=24',
     played: 38,
     won: 23,
     drawn: 10,
@@ -48,14 +48,14 @@ const teams = [
     goalsFor: 82,
     goalsAgainst: 41,
     points: 79,
-    form: ["W", "D", "W", "W", "W"],
+    form: ['W', 'D', 'W', 'W', 'W'],
     position: 3,
     positionChange: 0,
   },
   {
     id: 4,
-    name: "Chelsea",
-    logo: "/placeholder.svg?height=24&width=24",
+    name: 'Chelsea',
+    logo: '/placeholder.svg?height=24&width=24',
     played: 38,
     won: 21,
     drawn: 11,
@@ -63,14 +63,14 @@ const teams = [
     goalsFor: 76,
     goalsAgainst: 33,
     points: 74,
-    form: ["W", "D", "W", "L", "W"],
+    form: ['W', 'D', 'W', 'L', 'W'],
     position: 4,
     positionChange: 0,
   },
   {
     id: 5,
-    name: "Tottenham",
-    logo: "/placeholder.svg?height=24&width=24",
+    name: 'Tottenham',
+    logo: '/placeholder.svg?height=24&width=24',
     played: 38,
     won: 22,
     drawn: 5,
@@ -78,14 +78,14 @@ const teams = [
     goalsFor: 69,
     goalsAgainst: 40,
     points: 71,
-    form: ["L", "W", "W", "W", "D"],
+    form: ['L', 'W', 'W', 'W', 'D'],
     position: 5,
     positionChange: 3,
   },
   {
     id: 6,
-    name: "Manchester United",
-    logo: "/placeholder.svg?height=24&width=24",
+    name: 'Manchester United',
+    logo: '/placeholder.svg?height=24&width=24',
     played: 38,
     won: 20,
     drawn: 7,
@@ -93,14 +93,14 @@ const teams = [
     goalsFor: 57,
     goalsAgainst: 57,
     points: 67,
-    form: ["L", "W", "L", "W", "W"],
+    form: ['L', 'W', 'L', 'W', 'W'],
     position: 6,
     positionChange: -1,
   },
   {
     id: 7,
-    name: "West Ham",
-    logo: "/placeholder.svg?height=24&width=24",
+    name: 'West Ham',
+    logo: '/placeholder.svg?height=24&width=24',
     played: 38,
     won: 16,
     drawn: 8,
@@ -108,14 +108,14 @@ const teams = [
     goalsFor: 60,
     goalsAgainst: 51,
     points: 56,
-    form: ["D", "W", "L", "W", "D"],
+    form: ['D', 'W', 'L', 'W', 'D'],
     position: 7,
     positionChange: 0,
   },
   {
     id: 8,
-    name: "Leicester",
-    logo: "/placeholder.svg?height=24&width=24",
+    name: 'Leicester',
+    logo: '/placeholder.svg?height=24&width=24',
     played: 38,
     won: 14,
     drawn: 10,
@@ -123,14 +123,14 @@ const teams = [
     goalsFor: 62,
     goalsAgainst: 59,
     points: 52,
-    form: ["W", "D", "L", "W", "W"],
+    form: ['W', 'D', 'L', 'W', 'W'],
     position: 8,
     positionChange: 0,
   },
   {
     id: 9,
-    name: "Brighton",
-    logo: "/placeholder.svg?height=24&width=24",
+    name: 'Brighton',
+    logo: '/placeholder.svg?height=24&width=24',
     played: 38,
     won: 12,
     drawn: 15,
@@ -138,14 +138,14 @@ const teams = [
     goalsFor: 42,
     goalsAgainst: 44,
     points: 51,
-    form: ["W", "D", "W", "D", "L"],
+    form: ['W', 'D', 'W', 'D', 'L'],
     position: 9,
     positionChange: 2,
   },
   {
     id: 10,
-    name: "Wolves",
-    logo: "/placeholder.svg?height=24&width=24",
+    name: 'Wolves',
+    logo: '/placeholder.svg?height=24&width=24',
     played: 38,
     won: 15,
     drawn: 6,
@@ -153,22 +153,22 @@ const teams = [
     goalsFor: 38,
     goalsAgainst: 43,
     points: 51,
-    form: ["L", "L", "W", "L", "W"],
+    form: ['L', 'L', 'W', 'L', 'W'],
     position: 10,
     positionChange: -2,
   },
 ]
 
 export default function LeagueTable() {
-  const [sortColumn, setSortColumn] = useState("points")
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc")
+  const [sortColumn, setSortColumn] = useState('points')
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
 
   const handleSort = (column: string) => {
     if (sortColumn === column) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc")
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
     } else {
       setSortColumn(column)
-      setSortDirection("desc")
+      setSortDirection('desc')
     }
   }
 
@@ -177,8 +177,8 @@ export default function LeagueTable() {
     const aValue = a[sortColumn as keyof typeof a]
     const bValue = b[sortColumn as keyof typeof b]
 
-    if (typeof aValue === "number" && typeof bValue === "number") {
-      return sortDirection === "asc" ? aValue - bValue : bValue - aValue
+    if (typeof aValue === 'number' && typeof bValue === 'number') {
+      return sortDirection === 'asc' ? aValue - bValue : bValue - aValue
     }
 
     return 0
@@ -200,10 +200,10 @@ export default function LeagueTable() {
     return (
       <div className="flex gap-1">
         {form.map((result, index) => {
-          let bgColor = ""
-          if (result === "W") bgColor = "bg-green-500"
-          else if (result === "D") bgColor = "bg-gray-400"
-          else bgColor = "bg-red-500"
+          let bgColor = ''
+          if (result === 'W') bgColor = 'bg-green-500'
+          else if (result === 'D') bgColor = 'bg-gray-400'
+          else bgColor = 'bg-red-500'
 
           return (
             <div
@@ -228,12 +228,12 @@ export default function LeagueTable() {
               <th className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">Team</th>
               <th
                 className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400 text-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/70"
-                onClick={() => handleSort("played")}
+                onClick={() => handleSort('played')}
               >
                 <div className="flex items-center justify-center">
                   <span>MP</span>
-                  {sortColumn === "played" &&
-                    (sortDirection === "asc" ? (
+                  {sortColumn === 'played' &&
+                    (sortDirection === 'asc' ? (
                       <ArrowUp className="h-3 w-3 ml-1" />
                     ) : (
                       <ArrowDown className="h-3 w-3 ml-1" />
@@ -242,12 +242,12 @@ export default function LeagueTable() {
               </th>
               <th
                 className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400 text-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/70"
-                onClick={() => handleSort("won")}
+                onClick={() => handleSort('won')}
               >
                 <div className="flex items-center justify-center">
                   <span>W</span>
-                  {sortColumn === "won" &&
-                    (sortDirection === "asc" ? (
+                  {sortColumn === 'won' &&
+                    (sortDirection === 'asc' ? (
                       <ArrowUp className="h-3 w-3 ml-1" />
                     ) : (
                       <ArrowDown className="h-3 w-3 ml-1" />
@@ -256,12 +256,12 @@ export default function LeagueTable() {
               </th>
               <th
                 className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400 text-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/70"
-                onClick={() => handleSort("drawn")}
+                onClick={() => handleSort('drawn')}
               >
                 <div className="flex items-center justify-center">
                   <span>D</span>
-                  {sortColumn === "drawn" &&
-                    (sortDirection === "asc" ? (
+                  {sortColumn === 'drawn' &&
+                    (sortDirection === 'asc' ? (
                       <ArrowUp className="h-3 w-3 ml-1" />
                     ) : (
                       <ArrowDown className="h-3 w-3 ml-1" />
@@ -270,12 +270,12 @@ export default function LeagueTable() {
               </th>
               <th
                 className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400 text-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/70"
-                onClick={() => handleSort("lost")}
+                onClick={() => handleSort('lost')}
               >
                 <div className="flex items-center justify-center">
                   <span>L</span>
-                  {sortColumn === "lost" &&
-                    (sortDirection === "asc" ? (
+                  {sortColumn === 'lost' &&
+                    (sortDirection === 'asc' ? (
                       <ArrowUp className="h-3 w-3 ml-1" />
                     ) : (
                       <ArrowDown className="h-3 w-3 ml-1" />
@@ -284,12 +284,12 @@ export default function LeagueTable() {
               </th>
               <th
                 className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400 text-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/70"
-                onClick={() => handleSort("goalsFor")}
+                onClick={() => handleSort('goalsFor')}
               >
                 <div className="flex items-center justify-center">
                   <span>GF</span>
-                  {sortColumn === "goalsFor" &&
-                    (sortDirection === "asc" ? (
+                  {sortColumn === 'goalsFor' &&
+                    (sortDirection === 'asc' ? (
                       <ArrowUp className="h-3 w-3 ml-1" />
                     ) : (
                       <ArrowDown className="h-3 w-3 ml-1" />
@@ -298,12 +298,12 @@ export default function LeagueTable() {
               </th>
               <th
                 className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400 text-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/70"
-                onClick={() => handleSort("goalsAgainst")}
+                onClick={() => handleSort('goalsAgainst')}
               >
                 <div className="flex items-center justify-center">
                   <span>GA</span>
-                  {sortColumn === "goalsAgainst" &&
-                    (sortDirection === "asc" ? (
+                  {sortColumn === 'goalsAgainst' &&
+                    (sortDirection === 'asc' ? (
                       <ArrowUp className="h-3 w-3 ml-1" />
                     ) : (
                       <ArrowDown className="h-3 w-3 ml-1" />
@@ -312,12 +312,12 @@ export default function LeagueTable() {
               </th>
               <th
                 className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400 text-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/70"
-                onClick={() => handleSort("points")}
+                onClick={() => handleSort('points')}
               >
                 <div className="flex items-center justify-center">
                   <span>Pts</span>
-                  {sortColumn === "points" &&
-                    (sortDirection === "asc" ? (
+                  {sortColumn === 'points' &&
+                    (sortDirection === 'asc' ? (
                       <ArrowUp className="h-3 w-3 ml-1" />
                     ) : (
                       <ArrowDown className="h-3 w-3 ml-1" />
@@ -347,10 +347,10 @@ export default function LeagueTable() {
                 key={team.id}
                 className={`hover:bg-gray-50 dark:hover:bg-gray-800/60 ${
                   index < 4
-                    ? "border-l-4 border-[#10b981]"
+                    ? 'border-l-4 border-[#10b981]'
                     : index >= teams.length - 3
-                      ? "border-l-4 border-red-500"
-                      : ""
+                      ? 'border-l-4 border-red-500'
+                      : ''
                 }`}
               >
                 <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">
@@ -361,17 +361,36 @@ export default function LeagueTable() {
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2">
-                    <Image src={team.logo || "/placeholder.svg"} alt={team.name} width={24} height={24} />
+                    <Image
+                      src={team.logo || '/placeholder.svg'}
+                      alt={team.name}
+                      width={24}
+                      height={24}
+                    />
                     <span className="font-medium text-gray-900 dark:text-white">{team.name}</span>
                   </div>
                 </td>
-                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300">{team.played}</td>
-                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300">{team.won}</td>
-                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300">{team.drawn}</td>
-                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300">{team.lost}</td>
-                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300">{team.goalsFor}</td>
-                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300">{team.goalsAgainst}</td>
-                <td className="px-4 py-3 text-center font-bold text-gray-900 dark:text-white">{team.points}</td>
+                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300">
+                  {team.played}
+                </td>
+                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300">
+                  {team.won}
+                </td>
+                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300">
+                  {team.drawn}
+                </td>
+                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300">
+                  {team.lost}
+                </td>
+                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300">
+                  {team.goalsFor}
+                </td>
+                <td className="px-4 py-3 text-center text-gray-700 dark:text-gray-300">
+                  {team.goalsAgainst}
+                </td>
+                <td className="px-4 py-3 text-center font-bold text-gray-900 dark:text-white">
+                  {team.points}
+                </td>
                 <td className="px-4 py-3 text-center">
                   <div className="flex justify-center">{renderForm(team.form)}</div>
                 </td>

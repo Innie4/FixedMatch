@@ -1,20 +1,20 @@
-"use client"
+'use client'
 
-import Link from "next/link"
-import Image from "next/image"
-import { Bell, ChevronDown, LogOut, Menu, Search, Settings, User } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
-} from "@/components/ui/dropdown-menu"
-import { ModeToggle } from "@/components/mode-toggle"
-import { AdminSidebarContent } from "@/components/admin/layout/admin-sidebar"
+import Link from 'next/link'
+import Image from 'next/image'
+import { Bell, ChevronDown, LogOut, Menu, Search, Settings, User } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { ModeToggle } from '@/components/mode-toggle'
+import { AdminSidebarContent } from '@/components/admin/layout/admin-sidebar'
 
 export function AdminHeader() {
   return (
@@ -32,7 +32,9 @@ export function AdminHeader() {
               <div className="flex flex-col gap-6 py-6">
                 <Link href="/admin/dashboard" className="flex items-center gap-2">
                   <Image src="/placeholder.svg" alt="Logo" width={32} height={32} />
-                  <span className="font-bold text-xl text-gray-900 dark:text-white">Admin Dashboard</span>
+                  <span className="font-bold text-xl text-gray-900 dark:text-white">
+                    Admin Dashboard
+                  </span>
                 </Link>
                 <AdminSidebarContent />
               </div>
@@ -40,17 +42,19 @@ export function AdminHeader() {
           </Sheet>
           <Link href="/admin/dashboard" className="flex items-center gap-2">
             <Image src="/placeholder.svg" alt="Logo" width={32} height={32} />
-            <span className="font-bold text-xl text-gray-900 dark:text-white hidden md:inline-block">Admin Panel</span>
+            <span className="font-bold text-xl text-gray-900 dark:text-white hidden md:inline-block">
+              Admin Panel
+            </span>
           </Link>
         </div>
-        
+
         <div className="hidden md:flex md:flex-1 md:items-center md:justify-center px-6">
           <div className="relative w-full max-w-md">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
             <Input type="search" placeholder="Search..." className="w-full pl-8" />
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <Button variant="outline" size="icon" className="relative">
             <Bell className="h-5 w-5" />
@@ -58,9 +62,9 @@ export function AdminHeader() {
               3
             </span>
           </Button>
-          
+
           <ModeToggle />
-          
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" className="gap-1 pl-2 pr-1">

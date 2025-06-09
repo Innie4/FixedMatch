@@ -1,8 +1,8 @@
-"use client"
+'use client'
 
-import { Search, Filter, ChevronDown } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Search, Filter, ChevronDown } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,7 +10,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from '@/components/ui/dropdown-menu'
 
 interface SearchFilterBarProps {
   searchTerm: string
@@ -29,8 +29,8 @@ export function SearchFilterBar({
   onSearchChange,
   onFilterStatus,
   onFilterDateRange,
-  placeholder = "Search...",
-  filterOptions = { status: true, date: true }
+  placeholder = 'Search...',
+  filterOptions = { status: true, date: true },
 }: SearchFilterBarProps) {
   return (
     <div className="flex flex-1 items-center space-x-2">
@@ -57,30 +57,24 @@ export function SearchFilterBar({
             <>
               <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => onFilterStatus("all")}>
-                All Items
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onFilterStatus("active")}>
-                Active
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onFilterStatus("archived")}>
+              <DropdownMenuItem onClick={() => onFilterStatus('all')}>All Items</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onFilterStatus('active')}>Active</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onFilterStatus('archived')}>
                 Archived
               </DropdownMenuItem>
             </>
           )}
-          
+
           {filterOptions.date && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuLabel>Filter by Date</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => onFilterDateRange("all")}>
-                All Time
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onFilterDateRange("week")}>
+              <DropdownMenuItem onClick={() => onFilterDateRange('all')}>All Time</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onFilterDateRange('week')}>
                 This Week
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onFilterDateRange("month")}>
+              <DropdownMenuItem onClick={() => onFilterDateRange('month')}>
                 This Month
               </DropdownMenuItem>
             </>

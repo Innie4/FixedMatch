@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { ImagePlus, Trash2, CreditCard, Check, AlertCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useState } from 'react'
+import { ImagePlus, Trash2, CreditCard, Check, AlertCircle } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
   Dialog,
   DialogContent,
@@ -10,15 +10,15 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+} from '@/components/ui/dialog'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 interface PaymentConfirmationDialogProps {
-  isOpen: boolean;
-  onClose: () => void;
-  paymentMethod: string;
-  packageName: string;
-  amount: number;
+  isOpen: boolean
+  onClose: () => void
+  paymentMethod: string
+  packageName: string
+  amount: number
 }
 
 export function PaymentConfirmationDialog({
@@ -26,64 +26,64 @@ export function PaymentConfirmationDialog({
   onClose,
   paymentMethod,
   packageName,
-  amount
+  amount,
 }: PaymentConfirmationDialogProps) {
-  const [transactionId, setTransactionId] = useState("");
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  
+  const [transactionId, setTransactionId] = useState('')
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSuccess, setIsSuccess] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+    const file = e.target.files?.[0]
     if (file) {
       // Check file size (max 2MB)
       if (file.size > 2 * 1024 * 1024) {
-        setError("Image size must be less than 2MB");
-        return;
+        setError('Image size must be less than 2MB')
+        return
       }
-      
+
       // Check file type
       if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
-        setError("Only JPEG, PNG, and WEBP images are allowed");
-        return;
+        setError('Only JPEG, PNG, and WEBP images are allowed')
+        return
       }
-      
-      const reader = new FileReader();
+
+      const reader = new FileReader()
       reader.onload = (event) => {
-        setImagePreview(event.target?.result as string);
-        setError(null);
-      };
-      reader.readAsDataURL(file);
+        setImagePreview(event.target?.result as string)
+        setError(null)
+      }
+      reader.readAsDataURL(file)
     }
-  };
-  
+  }
+
   const validateForm = () => {
     if (!transactionId.trim()) {
-      setError("Transaction ID is required");
-      return false;
+      setError('Transaction ID is required')
+      return false
     }
-    
+
     if (!imagePreview) {
-      setError("Payment screenshot is required");
-      return false;
+      setError('Payment screenshot is required')
+      return false
     }
-    
-    return true;
-  };
-  
+
+    return true
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateForm()) return;
-    
-    setIsSubmitting(true);
-    setError(null);
-    
+    e.preventDefault()
+
+    if (!validateForm()) return
+
+    setIsSubmitting(true)
+    setError(null)
+
     try {
       // Simulate API call to submit payment confirmation
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1500))
+
       // In a real implementation, you would make an API call here
       // const response = await fetch('/api/payment-confirmations', {
       //   method: 'POST',
@@ -95,35 +95,37 @@ export function PaymentConfirmationDialog({
       //     amount
       //   })
       // });
-      
-      setIsSuccess(true);
-      
+
+      setIsSuccess(true)
+
       // Reset form after 2 seconds and close dialog
       setTimeout(() => {
-        resetForm();
-        onClose();
-      }, 2000);
-      
+        resetForm()
+        onClose()
+      }, 2000)
     } catch (error) {
-      setError("Failed to submit payment confirmation. Please try again.");
+      setError('Failed to submit payment confirmation. Please try again.')
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
-  
+  }
+
   const resetForm = () => {
-    setTransactionId("");
-    setImagePreview(null);
-    setIsSuccess(false);
-    setError(null);
-  };
-  
+    setTransactionId('')
+    setImagePreview(null)
+    setIsSuccess(false)
+    setError(null)
+  }
+
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => {
-      if (!open) {
-        onClose();
-      }
-    }}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) {
+          onClose()
+        }
+      }}
+    >
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Confirm Your Payment</DialogTitle>
@@ -131,7 +133,7 @@ export function PaymentConfirmationDialog({
             Please provide your transaction details to confirm your payment for {packageName}.
           </DialogDescription>
         </DialogHeader>
-        
+
         {isSuccess ? (
           <div className="py-6 flex flex-col items-center justify-center text-center">
             <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded-full mb-4">
@@ -141,8 +143,8 @@ export function PaymentConfirmationDialog({
               Payment Confirmation Submitted
             </h3>
             <p className="text-gray-600 dark:text-gray-400 max-w-sm">
-              Thank you! Your payment confirmation has been submitted and is pending approval.
-              You will receive an email once it's approved.
+              Thank you! Your payment confirmation has been submitted and is pending approval. You
+              will receive an email once it's approved.
             </p>
           </div>
         ) : (
@@ -154,7 +156,7 @@ export function PaymentConfirmationDialog({
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
-            
+
             <div className="space-y-4">
               <div className="grid w-full gap-1.5">
                 <Label htmlFor="payment-method">Payment Method</Label>
@@ -163,7 +165,7 @@ export function PaymentConfirmationDialog({
                   {paymentMethod}
                 </div>
               </div>
-              
+
               <div className="grid w-full gap-1.5">
                 <Label htmlFor="transaction-id">Transaction ID</Label>
                 <Input
@@ -173,17 +175,19 @@ export function PaymentConfirmationDialog({
                   onChange={(e) => setTransactionId(e.target.value)}
                   required
                 />
-                <p className="text-xs text-gray-500">You can find this in your payment receipt or bank statement</p>
+                <p className="text-xs text-gray-500">
+                  You can find this in your payment receipt or bank statement
+                </p>
               </div>
-              
+
               <div className="grid w-full gap-1.5">
                 <Label htmlFor="payment-screenshot">Payment Screenshot</Label>
                 <div className="flex flex-col items-center justify-center border-2 border-dashed rounded-md p-4">
                   {imagePreview ? (
                     <div className="relative w-full">
-                      <img 
-                        src={imagePreview} 
-                        alt="Payment screenshot" 
+                      <img
+                        src={imagePreview}
+                        alt="Payment screenshot"
                         className="w-full h-auto rounded-md"
                       />
                       <Button
@@ -207,12 +211,14 @@ export function PaymentConfirmationDialog({
                     id="payment-screenshot"
                     type="file"
                     accept="image/jpeg,image/png,image/webp"
-                    className={imagePreview ? "hidden" : "absolute inset-0 opacity-0 cursor-pointer"}
+                    className={
+                      imagePreview ? 'hidden' : 'absolute inset-0 opacity-0 cursor-pointer'
+                    }
                     onChange={handleImageChange}
                   />
                 </div>
               </div>
-              
+
               <div className="grid w-full gap-1.5">
                 <Label htmlFor="amount">Amount</Label>
                 <div className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-muted-foreground">
@@ -220,7 +226,7 @@ export function PaymentConfirmationDialog({
                 </div>
               </div>
             </div>
-            
+
             <DialogFooter>
               <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
                 Cancel
@@ -229,13 +235,29 @@ export function PaymentConfirmationDialog({
                 {isSubmitting ? (
                   <>
                     <span className="mr-2">Submitting</span>
-                    <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    <svg
+                      className="animate-spin h-4 w-4"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
                     </svg>
                   </>
                 ) : (
-                  "Submit Confirmation"
+                  'Submit Confirmation'
                 )}
               </Button>
             </DialogFooter>
@@ -243,5 +265,5 @@ export function PaymentConfirmationDialog({
         )}
       </DialogContent>
     </Dialog>
-  );
+  )
 }

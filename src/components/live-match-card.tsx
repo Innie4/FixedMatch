@@ -1,13 +1,13 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import Image from "next/image"
-import Link from "next/link"
-import { ChevronDown, ChevronUp, Clock } from "lucide-react"
+import { useState } from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { ChevronDown, ChevronUp, Clock } from 'lucide-react'
 
 interface MatchEvent {
-  type: "goal" | "yellowCard" | "redCard" | "substitution"
-  team: "home" | "away"
+  type: 'goal' | 'yellowCard' | 'redCard' | 'substitution'
+  team: 'home' | 'away'
   player: string
   minute: number
   penalty?: boolean
@@ -24,7 +24,7 @@ interface LiveMatchCardProps {
     awayScore?: number
     league: string
     leagueLogo: string
-    status: "LIVE" | "FINISHED" | "UPCOMING"
+    status: 'LIVE' | 'FINISHED' | 'UPCOMING'
     minute?: number
     kickoff?: string
     events?: MatchEvent[]
@@ -37,20 +37,20 @@ export default function LiveMatchCard({ match }: LiveMatchCardProps) {
   // Determine background color based on match status
   const getStatusColor = () => {
     switch (match.status) {
-      case "LIVE":
-        return "bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-400"
-      case "FINISHED":
-        return "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
-      case "UPCOMING":
-        return "bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-400"
+      case 'LIVE':
+        return 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-400'
+      case 'FINISHED':
+        return 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
+      case 'UPCOMING':
+        return 'bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-400'
       default:
-        return "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
+        return 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
     }
   }
 
   // Render match status
   const renderStatus = () => {
-    if (match.status === "LIVE") {
+    if (match.status === 'LIVE') {
       return (
         <div className="flex items-center gap-1">
           <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
@@ -59,7 +59,7 @@ export default function LiveMatchCard({ match }: LiveMatchCardProps) {
       )
     }
 
-    if (match.status === "UPCOMING") {
+    if (match.status === 'UPCOMING') {
       return (
         <div className="flex items-center gap-1">
           <Clock className="h-3 w-3" />
@@ -77,28 +77,41 @@ export default function LiveMatchCard({ match }: LiveMatchCardProps) {
         <div className="flex justify-between items-center mb-3">
           <div className="flex items-center gap-2">
             <Image
-              src={match.leagueLogo || "/placeholder.svg"}
+              src={match.leagueLogo || '/placeholder.svg'}
               alt={match.league}
               width={20}
               height={20}
               className="rounded-full"
             />
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{match.league}</span>
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              {match.league}
+            </span>
           </div>
-          <div className={`text-xs font-medium px-2 py-1 rounded-full ${getStatusColor()}`}>{renderStatus()}</div>
+          <div className={`text-xs font-medium px-2 py-1 rounded-full ${getStatusColor()}`}>
+            {renderStatus()}
+          </div>
         </div>
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 flex-1">
-            <Image src={match.homeTeamLogo || "/placeholder.svg"} alt={match.homeTeam} width={40} height={40} />
+            <Image
+              src={match.homeTeamLogo || '/placeholder.svg'}
+              alt={match.homeTeam}
+              width={40}
+              height={40}
+            />
             <span className="font-semibold text-gray-900 dark:text-white">{match.homeTeam}</span>
           </div>
 
-          {match.status !== "UPCOMING" ? (
+          {match.status !== 'UPCOMING' ? (
             <div className="flex items-center gap-2 px-4">
-              <span className="text-2xl font-bold text-gray-900 dark:text-white">{match.homeScore}</span>
+              <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                {match.homeScore}
+              </span>
               <span className="text-gray-400">-</span>
-              <span className="text-2xl font-bold text-gray-900 dark:text-white">{match.awayScore}</span>
+              <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                {match.awayScore}
+              </span>
             </div>
           ) : (
             <div className="px-4 text-sm text-gray-500 dark:text-gray-400">vs</div>
@@ -106,7 +119,12 @@ export default function LiveMatchCard({ match }: LiveMatchCardProps) {
 
           <div className="flex items-center gap-3 flex-1 justify-end">
             <span className="font-semibold text-gray-900 dark:text-white">{match.awayTeam}</span>
-            <Image src={match.awayTeamLogo || "/placeholder.svg"} alt={match.awayTeam} width={40} height={40} />
+            <Image
+              src={match.awayTeamLogo || '/placeholder.svg'}
+              alt={match.awayTeam}
+              width={40}
+              height={40}
+            />
           </div>
         </div>
 
@@ -137,33 +155,35 @@ export default function LiveMatchCard({ match }: LiveMatchCardProps) {
             {match.events.map((event, index) => (
               <div key={index} className="flex items-start gap-2">
                 <div className="absolute left-0 w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-500 transform -translate-x-[4.5px]"></div>
-                <div className="min-w-[30px] text-sm font-medium text-gray-700 dark:text-gray-300">{event.minute}'</div>
+                <div className="min-w-[30px] text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {event.minute}'
+                </div>
                 <div className="flex items-center gap-1">
-                  {event.type === "goal" && (
+                  {event.type === 'goal' && (
                     <div className="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 text-xs font-medium px-2 py-0.5 rounded">
                       ⚽ Goal
                     </div>
                   )}
-                  {event.type === "yellowCard" && (
+                  {event.type === 'yellowCard' && (
                     <div className="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400 text-xs font-medium px-2 py-0.5 rounded">
                       🟨 Yellow Card
                     </div>
                   )}
-                  {event.type === "redCard" && (
+                  {event.type === 'redCard' && (
                     <div className="bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400 text-xs font-medium px-2 py-0.5 rounded">
                       🟥 Red Card
                     </div>
                   )}
-                  {event.type === "substitution" && (
+                  {event.type === 'substitution' && (
                     <div className="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 text-xs font-medium px-2 py-0.5 rounded">
                       ↔️ Substitution
                     </div>
                   )}
                   <span className="text-sm text-gray-700 dark:text-gray-300">
-                    {event.player} {event.penalty ? "(Penalty)" : ""}
+                    {event.player} {event.penalty ? '(Penalty)' : ''}
                   </span>
                   <span className="text-xs text-gray-500 dark:text-gray-400">
-                    {event.team === "home" ? match.homeTeam : match.awayTeam}
+                    {event.team === 'home' ? match.homeTeam : match.awayTeam}
                   </span>
                 </div>
               </div>

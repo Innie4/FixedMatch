@@ -1,8 +1,8 @@
-"use client"
+'use client'
 
-import { useEffect, useRef } from "react"
-import { Chart, registerables } from "chart.js"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useEffect, useRef } from 'react'
+import { Chart, registerables } from 'chart.js'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 Chart.register(...registerables)
 
@@ -26,16 +26,16 @@ export default function UserStats({ stats }: UserStatsProps) {
   useEffect(() => {
     // Success Rate Chart
     if (successChartRef.current) {
-      const ctx = successChartRef.current.getContext("2d")
+      const ctx = successChartRef.current.getContext('2d')
       if (ctx) {
         new Chart(ctx, {
-          type: "doughnut",
+          type: 'doughnut',
           data: {
-            labels: ["Won", "Lost"],
+            labels: ['Won', 'Lost'],
             datasets: [
               {
                 data: [stats.won, stats.lost],
-                backgroundColor: ["#10b981", "#ef4444"],
+                backgroundColor: ['#10b981', '#ef4444'],
                 borderWidth: 0,
               },
             ],
@@ -43,16 +43,19 @@ export default function UserStats({ stats }: UserStatsProps) {
           options: {
             responsive: true,
             maintainAspectRatio: false,
-            cutout: "75%",
+            cutout: '75%',
             plugins: {
               legend: {
-                position: "bottom",
+                position: 'bottom',
               },
               tooltip: {
                 callbacks: {
                   label: (context) => {
                     const value = context.raw as number
-                    const total = (context.dataset.data as number[]).reduce((a, b) => (a as number) + (b as number), 0)
+                    const total = (context.dataset.data as number[]).reduce(
+                      (a, b) => (a as number) + (b as number),
+                      0
+                    )
                     const percentage = Math.round((value / total) * 100)
                     return `${context.label}: ${value} (${percentage}%)`
                   },
@@ -66,21 +69,21 @@ export default function UserStats({ stats }: UserStatsProps) {
 
     // Profit Chart
     if (profitChartRef.current) {
-      const ctx = profitChartRef.current.getContext("2d")
+      const ctx = profitChartRef.current.getContext('2d')
       if (ctx) {
         // Sample profit data over time
         const profit = [0, 12, 28, 45, 32, 60, 78, 95, 110, 126.5]
 
         new Chart(ctx, {
-          type: "line",
+          type: 'line',
           data: {
-            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"],
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
             datasets: [
               {
-                label: "Profit (units)",
+                label: 'Profit (units)',
                 data: profit,
-                borderColor: "#1a56db",
-                backgroundColor: "rgba(26, 86, 219, 0.1)",
+                borderColor: '#1a56db',
+                backgroundColor: 'rgba(26, 86, 219, 0.1)',
                 tension: 0.4,
                 fill: true,
               },
@@ -99,7 +102,7 @@ export default function UserStats({ stats }: UserStatsProps) {
                 beginAtZero: true,
                 grid: {
                   display: true,
-                  color: "rgba(156, 163, 175, 0.1)",
+                  color: 'rgba(156, 163, 175, 0.1)',
                 },
               },
               x: {
@@ -115,23 +118,29 @@ export default function UserStats({ stats }: UserStatsProps) {
 
     // Prediction Types Chart
     if (predictionTypesRef.current) {
-      const ctx = predictionTypesRef.current.getContext("2d")
+      const ctx = predictionTypesRef.current.getContext('2d')
       if (ctx) {
         // Sample prediction types data
         new Chart(ctx, {
-          type: "bar",
+          type: 'bar',
           data: {
-            labels: ["Match Result", "Both Teams to Score", "Over/Under", "Asian Handicap", "Other"],
+            labels: [
+              'Match Result',
+              'Both Teams to Score',
+              'Over/Under',
+              'Asian Handicap',
+              'Other',
+            ],
             datasets: [
               {
-                label: "Predictions",
+                label: 'Predictions',
                 data: [98, 62, 45, 28, 15],
                 backgroundColor: [
-                  "rgba(26, 86, 219, 0.7)",
-                  "rgba(16, 185, 129, 0.7)",
-                  "rgba(251, 191, 36, 0.7)",
-                  "rgba(139, 92, 246, 0.7)",
-                  "rgba(239, 68, 68, 0.7)",
+                  'rgba(26, 86, 219, 0.7)',
+                  'rgba(16, 185, 129, 0.7)',
+                  'rgba(251, 191, 36, 0.7)',
+                  'rgba(139, 92, 246, 0.7)',
+                  'rgba(239, 68, 68, 0.7)',
                 ],
                 borderWidth: 0,
               },
@@ -150,7 +159,7 @@ export default function UserStats({ stats }: UserStatsProps) {
                 beginAtZero: true,
                 grid: {
                   display: true,
-                  color: "rgba(156, 163, 175, 0.1)",
+                  color: 'rgba(156, 163, 175, 0.1)',
                 },
               },
               x: {
@@ -183,7 +192,9 @@ export default function UserStats({ stats }: UserStatsProps) {
           <div className="h-64 flex items-center justify-center">
             <canvas ref={successChartRef}></canvas>
             <div className="absolute text-center">
-              <span className="text-3xl font-bold text-gray-900 dark:text-white">{stats.successRate}%</span>
+              <span className="text-3xl font-bold text-gray-900 dark:text-white">
+                {stats.successRate}%
+              </span>
               <p className="text-sm text-gray-600 dark:text-gray-400">Success Rate</p>
             </div>
           </div>
