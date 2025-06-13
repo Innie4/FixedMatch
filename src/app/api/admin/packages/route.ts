@@ -65,7 +65,7 @@ export async function POST(request: Request) {
     const body = await request.json()
     const validatedData = packageSchema.parse(body)
 
-    const package = await prisma.package.create({
+    const pkg = await prisma.package.create({
       data: {
         name: validatedData.name,
         description: validatedData.description,
@@ -75,7 +75,7 @@ export async function POST(request: Request) {
       }
     })
 
-    return NextResponse.json(package, { status: 201 })
+    return NextResponse.json(pkg, { status: 201 })
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -107,7 +107,7 @@ export async function PUT(
     const body = await request.json()
     const validatedData = packageSchema.parse(body)
 
-    const package = await prisma.package.update({
+    const pkg = await prisma.package.update({
       where: { id: parseInt(params.id) },
       data: {
         name: validatedData.name,
@@ -119,7 +119,7 @@ export async function PUT(
       }
     })
 
-    return NextResponse.json(package)
+    return NextResponse.json(pkg)
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(

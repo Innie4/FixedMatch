@@ -1,6 +1,8 @@
+"use client"
+
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowRight, Calendar, ChevronRight, Star, Trophy, Check } from 'lucide-react'
+import { ArrowRight, Calendar, ChevronRight, Check } from 'lucide-react'
 import PredictionCard from '@/components/prediction-card'
 import TestimonialCarousel from '@/components/testimonial-carousel'
 import UpcomingMatches from '@/components/upcoming-matches'
@@ -9,16 +11,24 @@ import NotificationPopup from '@/components/notification-popup'
 import RecentWins from '@/components/recent-wins'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import { useEffect, useState } from 'react'
+import { useRealTimeUpdates } from '@/hooks/useRealTimeUpdates'
+import { UpdateNotification } from '@/components/update-notification'
+import type { Prediction, Package } from '@/types'
 
 export default function Home() {
-  const [predictions, setPredictions] = useState<any[]>([])
+  const [predictions, setPredictions] = useState<Prediction[]>([])
   const [loadingPredictions, setLoadingPredictions] = useState(true)
   const [errorPredictions, setErrorPredictions] = useState<string | null>(null)
 
-  const [packages, setPackages] = useState<any[]>([])
+  const { data: realtimePredictions } = useRealTimeUpdates<Prediction[]>('PREDICTIONS_UPDATED')
+
+  const [packages, setPackages] = useState<Package[]>([])
   const [loadingPackages, setLoadingPackages] = useState(true)
   const [errorPackages, setErrorPackages] = useState<string | null>(null)
+
+  const { data: realtimePackages } = useRealTimeUpdates<Package[]>('PACKAGES_UPDATED')
 
   useEffect(() => {
     const fetchPredictions = async () => {
@@ -30,14 +40,20 @@ export default function Home() {
         }
         const data = await response.json()
         setPredictions(data)
-      } catch (err: any) {
-        setErrorPredictions(err.message)
+      } catch (err: unknown) {
+        setErrorPredictions(err instanceof Error ? err.message : 'An error occurred')
       } finally {
         setLoadingPredictions(false)
       }
     }
     fetchPredictions()
   }, [])
+
+  useEffect(() => {
+    if (realtimePredictions) {
+      setPredictions(realtimePredictions)
+    }
+  }, [realtimePredictions])
 
   useEffect(() => {
     const fetchPackages = async () => {
@@ -49,8 +65,8 @@ export default function Home() {
         }
         const data = await response.json()
         setPackages(data)
-      } catch (err: any) {
-        setErrorPackages(err.message)
+      } catch (err: unknown) {
+        setErrorPackages(err instanceof Error ? err.message : 'An error occurred')
       } finally {
         setLoadingPackages(false)
       }
@@ -58,8 +74,24 @@ export default function Home() {
     fetchPackages()
   }, [])
 
+  useEffect(() => {
+    if (realtimePackages) {
+      setPackages(realtimePackages)
+    }
+  }, [realtimePackages])
+
   return (
     <main className="min-h-screen">
+      {/* Add UpdateNotification components */}
+      <UpdateNotification 
+        type="PREDICTIONS_UPDATED" 
+        message="New predictions available" 
+      />
+      <UpdateNotification 
+        type="PACKAGES_UPDATED" 
+        message="Package updates available" 
+      />
+
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-[#1a56db] to-[#1e293b] text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10">
@@ -98,7 +130,7 @@ export default function Home() {
             {errorPredictions && <p className="text-red-500">Error: {errorPredictions}</p>}
             {!loadingPredictions &&
               !errorPredictions &&
-              predictions.slice(0, 3).map((prediction: any) => (
+              predictions.slice(0, 3).map((prediction: Prediction) => (
                 <div
                   key={prediction.id}
                   className="bg-white/10 backdrop-blur-sm rounded-lg p-4 hover:bg-white/15 transition-all"
@@ -189,7 +221,7 @@ export default function Home() {
             )}
             {!loadingPredictions &&
               !errorPredictions &&
-              predictions.map((prediction: any) => (
+              predictions.map((prediction: Prediction) => (
                 <PredictionCard key={prediction.id} prediction={prediction} />
               ))}
           </div>
@@ -233,7 +265,7 @@ export default function Home() {
             )}
             {!loadingPackages &&
               !errorPackages &&
-              packages.map((pkg: any) => (
+              packages.map((pkg: Package) => (
                 <Card
                   key={pkg.id}
                   className={`${pkg.color} ${pkg.popular ? 'border-2 border-[#1a56db]' : ''} text-white dark:text-gray-900`}
@@ -257,7 +289,7 @@ export default function Home() {
                   </CardHeader>
                   <CardContent className="py-6 px-4">
                     <ul className="space-y-3">
-                      {pkg.features.map((feature: any, index: any) => (
+                      {pkg.features.map((feature: string, index: number) => (
                         <li key={index} className="flex items-center justify-center gap-2">
                           <Check
                             className={`h-5 w-5 ${pkg.popular ? 'text-green-300' : 'text-green-500'}`}

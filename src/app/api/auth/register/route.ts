@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 import crypto from 'crypto'
 import { z } from 'zod'
 import rateLimit from '@/lib/rate-limit'
 
-const limiter = rateLimit({
+const { check } = rateLimit({
   uniqueTokenPerInterval: 500, // Max 500 requests per minute per IP
   interval: 60 * 1000, // 60 seconds
 })
@@ -23,10 +23,9 @@ export async function POST(request: Request) {
     // Apply rate limiting
     const ip =
       request.headers.get('x-forwarded-for') || request.connection?.remoteAddress || '127.0.0.1'
-    const res = NextResponse.next()
-    const isRateLimited = await limiter.check(res, 10, ip) // 10 requests per IP per interval (60s)
+    const { isRateLimited } = check(10, ip) // 10 requests per IP per interval (60s)
 
-    if (!isRateLimited) {
+    if (isRateLimited) {
       return NextResponse.json(
         { message: 'Too many requests, please try again later.' },
         { status: 429 }
@@ -34,7 +33,7 @@ export async function POST(request: Request) {
     }
 
     // Validate and parse the request body using Zod
-    const { fullName, email, password, country } = registerSchema.parse(await request.json())
+    const { fullName, email, password } = registerSchema.parse(await request.json())
 
     // Implement basic CORS here if needed. Next.js handles most cases by default.
     // const headers = new Headers(request.headers);

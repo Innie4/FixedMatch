@@ -1,64 +1,180 @@
-# Project Environment Configuration
+# Football Predictions Platform
 
-This document outlines the environment variables required for running the Legit Soccer Tips application and best practices for managing them across different environments (development, staging, production).
+A real-time football predictions platform with VIP access, payment processing, and admin dashboard.
 
-## 1. .env.example File
+## Features
 
-A `.env.example` file is provided in the project root. This file lists all the necessary environment variables with placeholder values. It serves as a template for your actual `.env` files.
+- Real-time predictions updates
+- VIP subscription system
+- Payment confirmation workflow
+- Admin dashboard
+- User authentication
+- Email notifications
+- File uploads
+- Rate limiting
+- Security features
 
-**Do NOT commit your actual `.env` files to version control.** These files contain sensitive information (like API keys and database credentials) and should be kept private.
+## Tech Stack
 
-## 2. Required Environment Variables
+- Next.js 14
+- TypeScript
+- Prisma
+- PostgreSQL
+- AWS S3
+- SendGrid
+- WebSocket
+- Tailwind CSS
+- Framer Motion
 
-Here's a breakdown of the environment variables used in this project:
+## Prerequisites
 
-- **`NODE_ENV`**: Sets the application's environment.
+- Node.js 18+
+- PostgreSQL
+- AWS Account (for S3)
+- SendGrid Account
+- Redis (for rate limiting)
 
-  - `development`: For local development. Enables development-specific features (e.g., Prisma Studio, detailed error logging).
-  - `production`: For production deployments. Optimizes build, disables development features, and ensures secure configurations.
-  - `test`: For running tests.
-  - **Example**: `NODE_ENV=development`
+## Environment Variables
 
-- **`NEXT_PUBLIC_APP_URL`**: The base URL of your application. This is a public environment variable and is accessible in both client-side and server-side code.
+Create a `.env` file in the root directory:
 
-  - **Development Example**: `NEXT_PUBLIC_APP_URL=http://localhost:3000`
-  - **Production Example**: `NEXT_PUBLIC_APP_URL=https://www.yourdomain.com`
+```env
+# Database
+DATABASE_URL="postgresql://user:password@localhost:5432/predicts"
 
-- **`DATABASE_URL`**: The connection string for your PostgreSQL database.
+# Authentication
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="your-secret"
 
-  - **Example**: `DATABASE_URL="postgresql://user:password@localhost:5432/mydb?schema=public"`
-  - **Note**: Ensure your database server is running and accessible.
+# AWS
+AWS_REGION="your-region"
+AWS_ACCESS_KEY_ID="your-access-key"
+AWS_SECRET_ACCESS_KEY="your-secret-key"
+AWS_S3_BUCKET="your-bucket"
 
-- **`NEXTAUTH_SECRET`**: A secret key used by NextAuth.js for signing and encrypting session tokens. **Generate a strong, random string for this.**
+# Email
+SENDGRID_API_KEY="your-api-key"
+EMAIL_FROM="noreply@predicts.com"
 
-  - You can generate one using `openssl rand -base64 32` or by visiting [generate-secret.now.sh](https://generate-secret.now.sh/).
+# Redis
+REDIS_URL="redis://localhost:6379"
 
-- **`GOOGLE_CLIENT_ID`** & **`GOOGLE_CLIENT_SECRET`**: Credentials for Google OAuth provider, used with NextAuth.js. Obtain these from the Google Cloud Console.
+# WebSocket
+NEXT_PUBLIC_WS_URL="ws://localhost:8090/ws"
+```
 
-- **`FACEBOOK_CLIENT_ID`** & **`FACEBOOK_CLIENT_SECRET`**: Credentials for Facebook OAuth provider, used with NextAuth.js. Obtain these from the Facebook Developer Portal.
+## Installation
 
-- **`STRIPE_SECRET_KEY`**: Your Stripe secret API key for processing payments. Obtain this from your Stripe Dashboard.
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/predicts.git
+cd predicts
+```
 
-- **`CRON_SECRET`**: A secret key used to secure internal API endpoints triggered by cron jobs (e.g., Vercel Cron). This should be a strong, random string.
+2. Install dependencies:
+```bash
+npm install
+```
 
-## 3. Setting Up Environment Configurations
+3. Set up the database:
+```bash
+npx prisma migrate dev
+```
 
-To manage configurations for different environments, follow these steps:
+4. Start the development server:
+```bash
+npm run dev
+```
 
-1.  **Local Development (`.env.development.local` / `.env.local`):**
+## Project Structure
 
-    - Create a file named `.env.local` or `.env.development.local` in your project root.
-    - Copy the contents from `.env.example` into this file.
-    - Replace the placeholder values with your actual development credentials and URLs.
-    - For `DATABASE_URL`, ensure it points to your local PostgreSQL instance.
+```
+src/
+├── app/                 # Next.js app directory
+├── components/          # React components
+├── hooks/              # Custom React hooks
+├── lib/                # Utility functions
+├── services/           # External services
+├── types/              # TypeScript types
+└── __tests__/          # Test files
+```
 
-2.  **Staging/Production:**
-    - **Do NOT** create `.env` files directly in your repository for staging or production.
-    - Instead, configure these environment variables directly within your hosting provider's (e.g., Vercel, Netlify, AWS, Heroku) dashboard or CI/CD pipeline settings.
-    - Each hosting provider has a secure way to manage environment variables for deployed applications. This keeps sensitive data out of your codebase.
+## API Routes
 
-### Secure API Key Management
+### Authentication
+- `POST /api/auth/forgot-password` - Request password reset
+- `POST /api/auth/reset-password` - Reset password
 
-- **Never hardcode API keys or sensitive information** directly into your source code.
-- Always use environment variables for sensitive data.
-- Ensure your `
+### Predictions
+- `GET /api/predictions` - Get predictions
+- `POST /api/predictions` - Create prediction
+- `PUT /api/predictions/:id` - Update prediction
+- `DELETE /api/predictions/:id` - Delete prediction
+
+### VIP
+- `GET /api/vip/access` - Check VIP access
+- `POST /api/vip/subscribe` - Subscribe to VIP
+- `GET /api/vip/predictions` - Get VIP predictions
+
+### Payment
+- `POST /api/payment-confirmations` - Submit payment confirmation
+- `GET /api/payment-confirmations` - Get payment confirmations
+- `PUT /api/payment-confirmations/:id` - Update payment confirmation
+
+## WebSocket Events
+
+### Client Events
+- `PREDICTIONS_UPDATED` - New predictions available
+- `PACKAGES_UPDATED` - Package updates
+- `PAYMENT_CONFIRMED` - Payment confirmation status
+- `VIP_ACTIVATED` - VIP access activated
+
+### Admin Events
+- `ADMIN_UPDATE` - Admin dashboard updates
+- `USER_ACTIVITY` - User activity updates
+- `SYSTEM_ALERT` - System alerts
+
+## Development
+
+### Code Style
+- Use TypeScript for type safety
+- Follow ESLint rules
+- Use Prettier for formatting
+- Write meaningful commit messages
+
+### Testing
+```bash
+# Run unit tests
+npm test
+
+# Run integration tests
+npm run test:integration
+
+# Run e2e tests
+npm run test:e2e
+```
+
+### Deployment
+```bash
+# Build for production
+npm run build
+
+# Start production server
+npm start
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## License
+
+MIT
+
+## Support
+
+For support, email support@predicts.com or join our Discord server.

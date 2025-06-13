@@ -3,6 +3,11 @@ import type { NextRequest } from 'next/server'
 import { getToken } from 'next-auth/jwt'
 
 export async function middleware(request: NextRequest) {
+  // Handle WebSocket upgrade requests
+  if (request.headers.get('upgrade') === 'websocket') {
+    return NextResponse.next()
+  }
+
   const token = await getToken({ req: request })
 
   const response = NextResponse.next()
@@ -82,5 +87,10 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/vip/:path*', '/api/vip/:path*'],
+  matcher: [
+    // Add WebSocket endpoint to matcher
+    '/api/ws',
+    '/vip/:path*',
+    '/api/vip/:path*',
+  ],
 }

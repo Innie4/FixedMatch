@@ -4,13 +4,9 @@ import { useState } from 'react'
 import {
   CreditCard,
   Search,
-  Filter,
-  ChevronDown,
   MoreHorizontal,
   Trash2,
   Edit,
-  Eye,
-  ArrowUpDown,
   Plus,
   Globe,
   Settings,
@@ -243,13 +239,18 @@ export default function PaymentMethodsPage() {
     setSelectedMethod(null)
   }
 
-  const handleDeleteConfirm = () => {
-    if (selectedMethod) {
-      setPaymentMethods((methods) => methods.filter((method) => method.id !== selectedMethod.id))
-      setIsDeleteConfirmOpen(false)
-      setSelectedMethod(null)
-    }
-  }
+  // const handleDeleteConfirm = () => {
+  //   if (selectedMethod) {
+  //     // Implement actual delete logic here
+  //     setPaymentMethods((prev) => prev.filter((method) => method.id !== selectedMethod.id))
+  //     toast({
+  //       title: 'Payment Method Deleted',
+  //       description: `${selectedMethod.name} has been successfully deleted.`,
+  //     })
+  //     setIsDeleteConfirmOpen(false)
+  //     setSelectedMethod(null)
+  //   }
+  // }
 
   const getProviderIcon = (provider: string) => {
     switch (provider) {

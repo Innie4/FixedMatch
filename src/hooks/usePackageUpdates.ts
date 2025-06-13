@@ -1,49 +1,77 @@
-import { useEffect, useCallback } from 'react'
-import { useQueryClient } from '@tanstack/react-query'
+import { useState, useEffect, useCallback } from 'react'
+import type { Package } from '@/types'
 import { packageAnalytics } from '@/lib/analytics'
 
-export function usePackageUpdates() {
-  const queryClient = useQueryClient()
+interface PackageUpdateHook {
+  packages: Package[];
+  loading: boolean;
+  error: Error | null;
+  updatePackage: (id: string, data: Partial<Package>) => Promise<void>;
+  deletePackage: (id: string) => Promise<void>;
+}
 
-  const handleUpdate = useCallback((event: MessageEvent) => {
+export function usePackageUpdates(): PackageUpdateHook {
+  const [packages, setPackages] = useState<Package[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<Error | null>(null)
+
+  const fetchPackages = useCallback(async () => {
     try {
-      const data = JSON.parse(event.data)
-      
-      // Update the cache based on the event type
-      switch (data.type) {
-        case 'create':
-          queryClient.setQueryData(['packages'], (old: any) => [...old, data.data])
-          packageAnalytics.trackPackageCreated(data.data)
-          break
-        case 'update':
-          queryClient.setQueryData(['packages'], (old: any) =>
-            old.map((pkg: any) => (pkg.id === data.data.id ? data.data : pkg))
-          )
-          packageAnalytics.trackPackageUpdated(data.data.id, data.data)
-          break
-        case 'delete':
-          queryClient.setQueryData(['packages'], (old: any) =>
-            old.filter((pkg: any) => pkg.id !== data.data.id)
-          )
-          packageAnalytics.trackPackageDeleted(data.data.id, data.data.name)
-          break
+      setLoading(true)
+      const response = await fetch('/api/packages')
+      if (!response.ok) {
+        throw new Error('Failed to fetch packages')
       }
-    } catch (error) {
-      console.error('Error processing package update:', error)
+      const data = await response.json()
+      setPackages(data)
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to fetch packages'))
+    } finally {
+      setLoading(false)
     }
-  }, [queryClient])
+  }, [])
+
+  const updatePackage = useCallback(async (id: string, data: Partial<Package>) => {
+    try {
+      const response = await fetch(`/api/packages/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+      if (!response.ok) {
+        throw new Error('Failed to update package')
+      }
+      await fetchPackages()
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to update package'))
+    }
+  }, [fetchPackages])
+
+  const deletePackage = useCallback(async (id: string) => {
+    try {
+      const response = await fetch(`/api/packages/${id}`, {
+        method: 'DELETE',
+      })
+      if (!response.ok) {
+        throw new Error('Failed to delete package')
+      }
+      await fetchPackages()
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to delete package'))
+    }
+  }, [fetchPackages])
 
   useEffect(() => {
-    const eventSource = new EventSource('/api/packages/updates')
+    fetchPackages()
+  }, [fetchPackages])
 
-    eventSource.onmessage = handleUpdate
-    eventSource.onerror = (error) => {
-      console.error('SSE Error:', error)
-      eventSource.close()
-    }
-
-    return () => {
-      eventSource.close()
-    }
-  }, [handleUpdate])
+  return {
+    packages,
+    loading,
+    error,
+    updatePackage,
+    deletePackage,
+  }
 } 

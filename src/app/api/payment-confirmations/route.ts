@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
 import { z } from 'zod'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
+import { sendEmail } from '@/lib/email'
+import { uploadToS3 } from '@/lib/s3'
+import rateLimit from '@/lib/rate-limit'
 
 // Define a schema for payment confirmation data using Zod
 const paymentConfirmationSchema = z.object({
@@ -14,77 +20,159 @@ const paymentConfirmationSchema = z.object({
   // file is handled separately as it's formData
 })
 
-export async function POST(request: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const token = await getToken({ req: request })
-    if (!token) {
-      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
+    const session = await getServerSession(authOptions)
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      )
     }
 
-    const formData = await request.formData()
-    const file = formData.get('screenshot') as File
+    // Rate limiting
+    const identifier = req.ip || 'anonymous'
+    const { check } = rateLimit({ interval: 60000, uniqueTokenPerInterval: 5 })
+    const { isRateLimited } = check(5, identifier)
 
-    // Parse and validate non-file fields using Zod
-    const { transactionId, packageName, packageDuration, amount } = paymentConfirmationSchema.parse(
-      Object.fromEntries(formData.entries())
-    )
+    if (isRateLimited) {
+      return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 })
+    }
 
-    // Validate file presence
-    if (!file) {
+    const formData = await req.formData()
+    const file = formData.get('file') as File
+    const packageId = formData.get('packageId') as string
+    const paymentMethod = formData.get('paymentMethod') as string
+    const amount = formData.get('amount') as string
+
+    if (!file || !packageId || !paymentMethod || !amount) {
       return NextResponse.json(
-        { success: false, error: 'Screenshot file is required.' },
+        { error: 'Missing required fields' },
         { status: 400 }
       )
     }
 
     // Validate file type
-    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+    if (!file.type.startsWith('image/')) {
       return NextResponse.json(
-        { success: false, error: 'Invalid file type. Only JPEG, PNG, WEBP are allowed.' },
+        { error: 'Only image files are allowed' },
         { status: 400 }
       )
     }
 
-    // Validate file size (max 2MB)
-    if (file.size > 2 * 1024 * 1024) {
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
       return NextResponse.json(
-        { success: false, error: 'File size must be less than 2MB.' },
+        { error: 'File size must be less than 5MB' },
         { status: 400 }
       )
     }
 
-    // TODO: Upload file to cloud storage (e.g., AWS S3)
-    // const uploadResult = await uploadToCloudStorage(file)
+    // Upload file to S3
+    const fileBuffer = await file.arrayBuffer()
+    const fileName = `payment-confirmations/${session.user.id}/${Date.now()}-${file.name}`
+    const fileUrl = await uploadToS3(fileBuffer, fileName, file.type)
 
-    // TODO: Save payment confirmation to database
-    // const paymentConfirmation = await prisma.paymentConfirmation.create({
-    //   data: {
-    //     userId: token.sub,
-    //     transactionId,
-    //     packageName,
-    //     packageDuration,
-    //     amount: amount,
-    //     screenshotUrl: "placeholder_url", // Use uploadResult.url here
-    //     status: 'pending'
-    //   }
-    // })
+    // Create payment confirmation record
+    const paymentConfirmation = await prisma.paymentConfirmation.create({
+      data: {
+        userId: session.user.id,
+        packageId,
+        amount: parseFloat(amount),
+        paymentMethod,
+        status: 'PENDING',
+        imageUrl: fileUrl,
+      },
+      include: {
+        user: true,
+        package: true,
+      },
+    })
+
+    // Send confirmation email
+    await sendEmail({
+      to: session.user.email!,
+      template: 'paymentConfirmation',
+      data: {
+        name: session.user.name!,
+        amount: parseFloat(amount),
+        package: paymentConfirmation.package.name,
+      },
+    })
 
     return NextResponse.json(
-      {
-        success: true,
-        message: 'Payment confirmation submitted successfully.',
+      { 
+        message: 'Payment confirmation submitted successfully',
+        paymentConfirmation,
       },
-      { status: 200 }
+      { status: 201 }
     )
   } catch (error) {
-    if (error instanceof z.ZodError) {
+    console.error('Payment confirmation error:', error)
+    
+    if (error.message === 'Rate limit exceeded') {
       return NextResponse.json(
-        { success: false, errors: error.flatten().fieldErrors },
-        { status: 400 }
+        { error: 'Too many requests. Please try again later.' },
+        { status: 429 }
       )
-    } else {
-      console.error('Failed to submit payment confirmation:', error)
-      return NextResponse.json({ success: false, error: 'Internal server error.' }, { status: 500 })
     }
+
+    return NextResponse.json(
+      { error: 'An error occurred while processing your request' },
+      { status: 500 }
+    )
+  }
+}
+
+export async function GET(req: Request) {
+  try {
+    const session = await getServerSession(authOptions)
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      )
+    }
+
+    const { searchParams } = new URL(req.url)
+    const status = searchParams.get('status')
+    const page = parseInt(searchParams.get('page') || '1')
+    const limit = parseInt(searchParams.get('limit') || '10')
+
+    const where = {
+      userId: session.user.id,
+      ...(status && { status }),
+    }
+
+    const [confirmations, total] = await Promise.all([
+      prisma.paymentConfirmation.findMany({
+        where,
+        include: {
+          package: true,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      prisma.paymentConfirmation.count({ where }),
+    ])
+
+    return NextResponse.json({
+      confirmations,
+      pagination: {
+        total,
+        pages: Math.ceil(total / limit),
+        page,
+        limit,
+      },
+    })
+  } catch (error) {
+    console.error('Error fetching payment confirmations:', error)
+    return NextResponse.json(
+      { error: 'Failed to fetch payment confirmations' },
+      { status: 500 }
+    )
   }
 }

@@ -1,63 +1,85 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import crypto from 'crypto'
-import { z } from 'zod'
+import { sendEmail } from '@/lib/email'
+import { generateToken } from '@/lib/auth'
 import rateLimit from '@/lib/rate-limit'
 
-const limiter = rateLimit({
-  uniqueTokenPerInterval: 500,
-  interval: 60 * 1000, // 60 seconds
-})
-
-const forgotPasswordSchema = z.object({
-  email: z.string().email("Invalid email address").trim().toLowerCase(),
-})
-
-export async function POST(request: Request) {
+export async function POST(req: Request) {
   try {
-    // Apply rate limiting
-    const ip = request.headers.get('x-forwarded-for') || request.connection?.remoteAddress || '127.0.0.1'
-    const res = NextResponse.next()
-    const isRateLimited = await limiter.check(res, 5, ip) // Allow 5 requests per IP per minute for password reset requests
+    // Rate limiting
+    const ip = req.headers.get('x-forwarded-for') || 'anonymous'
+    const { check } = rateLimit({ interval: 60000, uniqueTokenPerInterval: 5 })
+    const { isRateLimited } = check(5, ip)
 
-    if (!isRateLimited) {
-      return NextResponse.json({ message: 'Too many requests, please try again later.' }, { status: 429 })
+    if (isRateLimited) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again later.' },
+        { status: 429 }
+      )
     }
 
-    const { email } = forgotPasswordSchema.parse(await request.json())
+    const { email } = await req.json()
 
-    const user = await prisma.user.findUnique({ where: { email } })
+    if (!email) {
+      return NextResponse.json(
+        { error: 'Email is required' },
+        { status: 400 }
+      )
+    }
+
+    // Find user
+    const user = await prisma.user.findUnique({
+      where: { email },
+    })
 
     if (!user) {
-      // For security reasons, don't reveal if the email doesn't exist
-      return NextResponse.json({ message: 'If an account with that email exists, we\'ve sent a password reset link.' }, { status: 200 })
+      // Return success even if user doesn't exist to prevent email enumeration
+      return NextResponse.json(
+        { message: 'If an account exists, you will receive a password reset email' },
+        { status: 200 }
+      )
     }
 
-    // Generate a reset token (e.g., a secure random string)
-    const resetToken = crypto.randomBytes(32).toString('hex')
-    const passwordResetToken = await prisma.passwordResetToken.create({
+    // Generate reset token
+    const resetToken = generateToken()
+    const resetTokenExpiry = new Date(Date.now() + 3600000) // 1 hour
+
+    // Save reset token
+    await prisma.user.update({
+      where: { email },
       data: {
-        userId: user.id,
-        token: resetToken,
-        expiresAt: new Date(Date.now() + 3600000), // Token expires in 1 hour
+        resetToken,
+        resetTokenExpiry,
       },
     })
 
-    // TODO: Send email with reset link
-    const resetLink = `${request.headers.get('origin')}/auth/reset-password?token=${resetToken}`
-    console.log(`Password reset link for ${email}: ${resetLink}`)
-    // In a real application, you'd use an email service (e.g., Nodemailer, SendGrid) here.
+    // Generate reset link
+    const resetLink = `${process.env.NEXT_PUBLIC_APP_URL}/reset-password?token=${resetToken}`
 
-    const response = NextResponse.json({ message: 'If an account with that email exists, we\'ve sent a password reset link.' }, { status: 200 })
-    response.headers.set('X-Content-Type-Options', 'nosniff')
-    response.headers.set('X-Frame-Options', 'DENY')
-    return response
+    // Send reset email
+    await sendEmail({
+      to: email,
+      template: 'passwordReset',
+      data: { resetLink },
+    })
+
+    return NextResponse.json(
+      { message: 'If an account exists, you will receive a password reset email' },
+      { status: 200 }
+    )
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ errors: error.flatten().fieldErrors }, { status: 400 })
-    } else {
-      console.error('Error sending password reset email:', error)
-      return NextResponse.json({ error: 'Failed to send password reset email.' }, { status: 500 })
+    console.error('Password reset error:', error)
+    
+    if (error.message === 'Rate limit exceeded') {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again later.' },
+        { status: 429 }
+      )
     }
+
+    return NextResponse.json(
+      { error: 'An error occurred while processing your request' },
+      { status: 500 }
+    )
   }
 } 

@@ -48,7 +48,7 @@ export function PackageDetailsDialog({ isOpen, onClose, package: pkg }: PackageD
   }
 
   const enabledDurations = Object.entries(pkg.durations)
-    .filter(([_key, duration]) => duration.enabled)
+    .filter(([, duration]) => duration.enabled)
     .map(([key, duration]) => ({ key, ...duration }))
 
   return (

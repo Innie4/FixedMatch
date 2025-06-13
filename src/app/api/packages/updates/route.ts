@@ -19,7 +19,7 @@ export async function GET() {
 
         // Set up SSE connection
         const encoder = new TextEncoder()
-        const sendMessage = (data: any) => {
+        const sendMessage = (data: object) => {
           controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`))
         }
 
@@ -36,9 +36,10 @@ export async function GET() {
             data: data.payload,
           })
         })
-
-        // Handle client disconnect
-        headersList.get('connection') === 'close' && subscription.unsubscribe()
+      },
+      cancel() {
+        // Unsubscribe from Prisma when the client disconnects
+        prisma.$disconnect()
       },
     }),
     {

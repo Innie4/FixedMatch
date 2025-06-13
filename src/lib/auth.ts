@@ -1,14 +1,15 @@
-import NextAuth from 'next-auth'
-import GoogleProvider from 'next-auth/providers/google'
-import FacebookProvider from 'next-auth/providers/facebook'
-import CredentialsProvider from 'next-auth/providers/credentials'
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
+import type { NextAuthOptions } from 'next-auth'
+import CredentialsProvider from 'next-auth/providers/credentials'
+import GoogleProvider from 'next-auth/providers/google'
+import FacebookProvider from 'next-auth/providers/facebook'
+import { randomBytes } from 'crypto'
 
 const prisma = new PrismaClient()
 
-const handler = NextAuth({
+export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     CredentialsProvider({
@@ -94,6 +95,8 @@ const handler = NextAuth({
     error: '/auth/login',
   },
   secret: process.env.NEXTAUTH_SECRET,
-})
+}
 
-export { handler as GET, handler as POST }
+export const generateToken = (length: number = 32): string => {
+  return randomBytes(length).toString('hex');
+}; 

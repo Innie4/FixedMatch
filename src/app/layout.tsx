@@ -14,6 +14,7 @@ import { trackPageView } from '@/lib/firebase-analytics'
 import { monitorFirestoreUsage } from '@/lib/firebase-monitoring'
 import ErrorBoundary from '@/components/error-boundary'
 import { Toaster } from '@/components/ui/toaster'
+import { SessionProvider } from 'next-auth/react'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -68,21 +69,23 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <ErrorBoundary>
-            <div className="relative min-h-screen flex flex-col">
-              {!isAdminPage && <SiteHeader />}
-              <main className="flex-1 pb-16 md:pb-0">{children}</main>
-              {!isAdminPage && <MobileNav />}
-            </div>
-          </ErrorBoundary>
-          <Toaster />
-        </ThemeProvider>
+        <SessionProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <ErrorBoundary>
+              <div className="relative min-h-screen flex flex-col">
+                {!isAdminPage && <SiteHeader />}
+                <main className="flex-1 pb-16 md:pb-0">{children}</main>
+                {!isAdminPage && <MobileNav />}
+              </div>
+            </ErrorBoundary>
+            <Toaster />
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   )

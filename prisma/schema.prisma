@@ -23,6 +23,15 @@ model User {
   // Add other user-related fields as needed
 }
 
+model PasswordResetToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
 model Package {
   id              Int             @id @default(autoincrement())
   name            String

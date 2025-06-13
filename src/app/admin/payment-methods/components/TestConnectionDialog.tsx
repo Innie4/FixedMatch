@@ -74,6 +74,7 @@ export function TestConnectionDialog({
         onTestComplete(method.id, 'failed')
       }
     } catch (error) {
+      console.error('Test connection error:', error)
       setTestResult({
         status: 'failed',
         message: 'Connection test failed due to network error.',

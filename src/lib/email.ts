@@ -1,13 +1,34 @@
-interface EmailOptions {
-  to: string
-  subject: string
-  html: string
+import sgMail from '@sendgrid/mail'
+import type { EmailTemplate } from '@/types'
+
+// Initialize SendGrid
+if (process.env.SENDGRID_API_KEY) {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 }
 
-export async function sendEmail({ to, subject, html }: EmailOptions) {
-  // TODO: Implement email sending using a service like SendGrid, Amazon SES, etc.
-  // For now, we'll just log the email
-  console.log('Sending email:', { to, subject, html })
+interface EmailOptions {
+  to: string
+  template: EmailTemplate
+  data: Record<string, any>
+}
+
+export async function sendEmail({ to, template, data }: EmailOptions): Promise<void> {
+  try {
+    const { subject, html, text } = emailTemplates[template](data)
+    
+    const msg = {
+      to,
+      from: process.env.EMAIL_FROM || 'noreply@predicts.com',
+      subject,
+      text,
+      html,
+    }
+
+    await sgMail.send(msg)
+  } catch (error) {
+    console.error('Failed to send email:', error)
+    throw new Error('Failed to send email')
+  }
 }
 
 const emailStyles = {
@@ -31,6 +52,79 @@ const baseTemplate = (content: string) => `
 `
 
 export const emailTemplates = {
+  welcome: (data: { name: string }) => ({
+    subject: 'Welcome to Predicts!',
+    text: `Welcome ${data.name}! We're excited to have you on board.`,
+    html: `
+      <div>
+        <h1>Welcome to Predicts!</h1>
+        <p>Hi ${data.name},</p>
+        <p>We're excited to have you join our community of football prediction enthusiasts.</p>
+        <p>Get started by exploring our predictions and packages.</p>
+      </div>
+    `,
+  }),
+
+  passwordReset: (data: { resetLink: string }) => ({
+    subject: 'Reset Your Password',
+    text: `Click here to reset your password: ${data.resetLink}`,
+    html: `
+      <div>
+        <h1>Reset Your Password</h1>
+        <p>Click the button below to reset your password:</p>
+        <a href="${data.resetLink}" style="
+          background-color: #1a56db;
+          color: white;
+          padding: 12px 24px;
+          text-decoration: none;
+          border-radius: 4px;
+          display: inline-block;
+        ">Reset Password</a>
+        <p>If you didn't request this, please ignore this email.</p>
+      </div>
+    `,
+  }),
+
+  paymentConfirmation: (data: { name: string, amount: number, package: string }) => ({
+    subject: 'Payment Confirmation',
+    text: `Payment of $${data.amount} for ${data.package} has been received.`,
+    html: `
+      <div>
+        <h1>Payment Confirmation</h1>
+        <p>Hi ${data.name},</p>
+        <p>We've received your payment of $${data.amount} for ${data.package}.</p>
+        <p>Your VIP access will be activated once the payment is verified.</p>
+      </div>
+    `,
+  }),
+
+  vipActivated: (data: { name: string, package: string, expiryDate: string }) => ({
+    subject: 'VIP Access Activated',
+    text: `Your VIP access for ${data.package} has been activated until ${data.expiryDate}.`,
+    html: `
+      <div>
+        <h1>VIP Access Activated</h1>
+        <p>Hi ${data.name},</p>
+        <p>Your VIP access for ${data.package} has been activated.</p>
+        <p>Your subscription is valid until ${data.expiryDate}.</p>
+        <p>Enjoy exclusive predictions and features!</p>
+      </div>
+    `,
+  }),
+
+  predictionUpdate: (data: { name: string, prediction: string, status: string }) => ({
+    subject: 'Prediction Update',
+    text: `Your prediction "${data.prediction}" has been ${data.status}.`,
+    html: `
+      <div>
+        <h1>Prediction Update</h1>
+        <p>Hi ${data.name},</p>
+        <p>Your prediction "${data.prediction}" has been ${data.status}.</p>
+        <p>Check your dashboard for more details.</p>
+      </div>
+    `,
+  }),
+
   paymentSubmitted: (username: string) => ({
     subject: 'Payment Confirmation Received',
     html: baseTemplate(`

@@ -1,3 +1,5 @@
+"use client"
+
 import { useState, useEffect } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Input } from '@/components/ui/input'
@@ -198,16 +200,17 @@ export default function PredictionsPage() {
                       'Both Teams to Score',
                       'Over/Under',
                       'Correct Score',
-                      'Handicap',
+                      'Double Chance',
+                      'Asian Handicap',
                     ].map((type) => (
                       <div key={type} className="flex items-center space-x-2">
                         <Checkbox
-                          id={`type-${type.replace(/\s/g, '')}`}
+                          id={`prediction-type-${type.replace(/\s/g, '')}`}
                           checked={selectedPredictionTypes.includes(type)}
                           onCheckedChange={() => handlePredictionTypeToggle(type)}
                         />
                         <Label
-                          htmlFor={`type-${type.replace(/\s/g, '')}`}
+                          htmlFor={`prediction-type-${type.replace(/\s/g, '')}`}
                           className="text-sm font-normal"
                         >
                           {type}
@@ -221,16 +224,22 @@ export default function PredictionsPage() {
                   <h3 className="font-semibold mb-3 text-gray-900 dark:text-white">
                     Confidence Level
                   </h3>
-                  <div className="grid grid-cols-1 gap-2">
-                    {['High (90%+)', 'Medium (70-90%)', 'Low (<70%)'].map((level) => (
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      '80%+',
+                      '70-79%',
+                      '60-69%',
+                      '50-59%',
+                      'Below 50%',
+                    ].map((level) => (
                       <div key={level} className="flex items-center space-x-2">
                         <Checkbox
-                          id={`confidence-${level.replace(/\s|\W/g, '')}`}
+                          id={`confidence-${level.replace(/[^a-zA-Z0-9]/g, '')}`}
                           checked={selectedConfidenceLevels.includes(level)}
                           onCheckedChange={() => handleConfidenceLevelToggle(level)}
                         />
                         <Label
-                          htmlFor={`confidence-${level.replace(/\s|\W/g, '')}`}
+                          htmlFor={`confidence-${level.replace(/[^a-zA-Z0-9]/g, '')}`}
                           className="text-sm font-normal"
                         >
                           {level}
@@ -239,127 +248,68 @@ export default function PredictionsPage() {
                     ))}
                   </div>
                 </div>
-
-                <div className="pt-4 space-y-3">
-                  <SheetClose asChild>
-                    <Button
-                      className="w-full bg-[#1a56db] hover:bg-[#1e40af]"
-                      onClick={applyFilters}
-                    >
-                      Apply Filters
-                    </Button>
-                  </SheetClose>
-                  <SheetClose asChild>
-                    <Button variant="outline" className="w-full" onClick={resetFilters}>
-                      Reset Filters
-                    </Button>
-                  </SheetClose>
-                </div>
+              </div>
+              <div className="flex justify-end gap-2">
+                <SheetClose asChild>
+                  <Button variant="outline" onClick={resetFilters}>
+                    Reset
+                  </Button>
+                </SheetClose>
+                <Button onClick={applyFilters}>Apply Filters</Button>
               </div>
             </SheetContent>
           </Sheet>
+
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-1"
+            onClick={handleRefresh}
+          >
+            <RefreshCw className="h-4 w-4" />
+            <span>Refresh</span>
+          </Button>
         </div>
 
-        <div className="flex w-full md:w-auto gap-2">
-          <div className="relative w-full md:w-64">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
-            <Input
-              type="search"
-              placeholder="Search teams or leagues..."
-              className="pl-8"
-              value={searchTerm}
-              onChange={handleSearchChange}
-            />
-          </div>
-          <Button
-            onClick={handleRefresh}
-            disabled={loading}
-            variant="outline"
-            size="icon"
-            className="flex-shrink-0"
-          >
-            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-          </Button>
+        <div className="relative flex-1 max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+          <Input
+            type="text"
+            placeholder="Search by team or league..."
+            className="w-full pl-9 pr-3 py-2 border rounded-lg"
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
         </div>
       </div>
 
-      <Tabs
-        defaultValue="all"
-        value={activeTab}
-        onValueChange={(value) => setActiveTab(value as typeof activeTab)}
-        className="space-y-4"
-      >
-        <TabsList>
+      <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-6 mb-6">
           <TabsTrigger value="all">All</TabsTrigger>
           <TabsTrigger value="today">Today</TabsTrigger>
           <TabsTrigger value="tomorrow">Tomorrow</TabsTrigger>
           <TabsTrigger value="weekend">Weekend</TabsTrigger>
           <TabsTrigger value="top">Top Picks</TabsTrigger>
-          <TabsTrigger value="vip">VIP Only</TabsTrigger>
+          <TabsTrigger value="vip">VIP</TabsTrigger>
         </TabsList>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div className="col-span-full md:col-span-1 lg:col-span-2">
-            <PredictionList predictions={filteredPredictions} loading={loading} error={error} />
-          </div>
-
-          <div className="hidden md:block">
-            <div className="sticky top-20 space-y-4">
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-                <h3 className="font-medium text-gray-900 dark:text-white mb-3">Quick Filters</h3>
-
-                <div className="space-y-3">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full justify-start text-xs"
-                    onClick={() => {
-                      setSelectedLeagues(
-                        selectedLeagues.includes('Premier League') ? [] : ['Premier League']
-                      )
-                      applyFilters()
-                    }}
-                  >
-                    <img
-                      src="/leagues/premier-league.svg"
-                      alt="Premier League"
-                      className="w-4 h-4 mr-2 rounded-full"
-                    />
-                    Premier League
-                  </Button>
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-                <h3 className="font-medium text-gray-900 dark:text-white mb-3">Top Leagues</h3>
-                <ul className="space-y-2">
-                  {[
-                    'Premier League',
-                    'La Liga',
-                    'Bundesliga',
-                    'Serie A',
-                    'Ligue 1',
-                    'Champions League',
-                  ].map((league, i) => (
-                    <li key={i}>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start text-gray-700 dark:text-gray-300"
-                      >
-                        <img
-                          src={`/leagues/${league.toLowerCase().replace(/ /g, '-')}.svg`}
-                          alt={league}
-                          className="w-5 h-5 mr-2 rounded-full"
-                        />
-                        {league}
-                      </Button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
+        <TabsContent value="all">
+          <PredictionList predictions={filteredPredictions} loading={loading} error={error} />
+        </TabsContent>
+        <TabsContent value="today">
+          <PredictionList predictions={filteredPredictions} loading={loading} error={error} />
+        </TabsContent>
+        <TabsContent value="tomorrow">
+          <PredictionList predictions={filteredPredictions} loading={loading} error={error} />
+        </TabsContent>
+        <TabsContent value="weekend">
+          <PredictionList predictions={filteredPredictions} loading={loading} error={error} />
+        </TabsContent>
+        <TabsContent value="top">
+          <PredictionList predictions={filteredPredictions} loading={loading} error={error} />
+        </TabsContent>
+        <TabsContent value="vip">
+          <PredictionList predictions={filteredPredictions} loading={loading} error={error} />
+        </TabsContent>
       </Tabs>
     </div>
   )

@@ -28,15 +28,15 @@ export async function POST(request: Request) {
     const validatedData = checkoutSchema.parse(body)
 
     // Get package details
-    const package = await prisma.package.findUnique({
+    const pkg = await prisma.package.findUnique({
       where: { id: validatedData.packageId }
     })
 
-    if (!package) {
+    if (!pkg) {
       return NextResponse.json({ error: 'Package not found' }, { status: 404 })
     }
 
-    const duration = package.durations[validatedData.duration]
+    const duration = pkg.durations[validatedData.duration]
     if (!duration.enabled) {
       return NextResponse.json(
         { error: 'Selected duration is not available' },
@@ -52,8 +52,8 @@ export async function POST(request: Request) {
           price_data: {
             currency: 'usd',
             product_data: {
-              name: package.name,
-              description: `${package.description} - ${validatedData.duration} subscription`
+              name: pkg.name,
+              description: `${pkg.description} - ${validatedData.duration} subscription`
             },
             unit_amount: Math.round(duration.price * 100) // Convert to cents
           },
@@ -66,7 +66,7 @@ export async function POST(request: Request) {
       customer_email: session.user.email,
       metadata: {
         userId: session.user.id.toString(),
-        packageId: package.id.toString(),
+        packageId: pkg.id.toString(),
         duration: validatedData.duration
       }
     })

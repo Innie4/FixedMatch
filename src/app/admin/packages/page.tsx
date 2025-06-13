@@ -4,8 +4,6 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import {
   Package,
   Search,
-  Filter,
-  ChevronDown,
   MoreHorizontal,
   Trash2,
   Edit,
@@ -111,6 +109,9 @@ const handleApiError = (error: unknown): never => {
 // Add type for the query response
 type PackagesResponse = SubscriptionPackage[]
 
+// Add type for package update data
+type PackageUpdateData = Omit<SubscriptionPackage, 'id' | 'subscribers' | 'revenue' | 'createdAt' | 'updatedAt'>;
+
 // Update API functions with error handling
 async function fetchPackages(): Promise<PackagesResponse> {
   try {
@@ -158,7 +159,7 @@ export default function PackageManagementPage() {
   const [sortDirection, setSortDirection] = useState('asc')
   const [selectedRows, setSelectedRows] = useState<number[]>([])
   const [currentPage, setCurrentPage] = useState(1)
-  const [itemsPerPage, setItemsPerPage] = useState(10)
+  const itemsPerPage = 10 // Fixed value, no setter needed
 
   // Dialog states
   const [isAddPackageOpen, setIsAddPackageOpen] = useState(false)
@@ -213,7 +214,7 @@ export default function PackageManagementPage() {
   })
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: any }) => updatePackage(id, data),
+    mutationFn: ({ id, data }: { id: number; data: PackageUpdateData }) => updatePackage(id, data),
     onMutate: async ({ id, data }) => {
       await queryClient.cancelQueries({ queryKey: ['packages'] })
       const previousPackages = queryClient.getQueryData<PackagesResponse>(['packages'])
@@ -287,7 +288,7 @@ export default function PackageManagementPage() {
 
   // Memoize filtered and sorted packages
   const filteredAndSortedPackages = useMemo(() => {
-    const filtered = (packagesData as SubscriptionPackage[]).filter((pkg: SubscriptionPackage) => {
+    const filtered = packagesData?.filter((pkg: SubscriptionPackage) => {
       const matchesSearch =
         pkg.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         pkg.description.toLowerCase().includes(searchTerm.toLowerCase())
