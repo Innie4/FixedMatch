@@ -3,7 +3,7 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
-import type { Page } from '../page'
+import { Page } from '../page'
 
 interface SEODetailsSheetProps {
   isOpen: boolean
@@ -20,7 +20,7 @@ export default function SEODetailsSheet({
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent className="w-[400px] sm:w-[540px]">
         <SheetHeader>
-          <SheetTitle>SEO Details for {page?.name}</SheetTitle>
+          <SheetTitle>SEO Details for {page?.title}</SheetTitle>
           <SheetDescription>
             Manage the SEO metadata for this page.
           </SheetDescription>

@@ -43,7 +43,7 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import SEODetailsSheet from './components/SEODetailsSheet'
 
-interface Page {
+export interface Page {
   id: number
   url: string
   title: string
