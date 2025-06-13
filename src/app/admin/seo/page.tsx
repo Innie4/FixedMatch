@@ -120,7 +120,7 @@ export default function SEOManagementPage() {
           </Breadcrumb>
           <h1 className="text-2xl font-bold tracking-tight">SEO Management</h1>
           <p className="text-muted-foreground">
-            Monitor and optimize your site's search engine performance.
+            Monitor and optimize your site&apos;s search engine performance.
           </p>
         </div>
 

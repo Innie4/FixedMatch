@@ -134,8 +134,6 @@ export default function ReviewManagementPage() {
   const [selectedRows, setSelectedRows] = useState<number[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
-  const [sortColumn, setSortColumn] = useState('date')
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
   const [searchTerm, setSearchTerm] = useState('')
   const [filterRating, setFilterRating] = useState('all')
   const [activeTab, setActiveTab] = useState('pending')
@@ -329,18 +327,8 @@ export default function ReviewManagementPage() {
 
   // Sort reviews
   const sortedReviews = [...filteredReviews].sort((a, b) => {
-    if (sortColumn === 'date') {
-      // Convert string dates to timestamps for comparison
-      const dateA = new Date(a.date).getTime()
-      const dateB = new Date(b.date).getTime()
-      return sortDirection === 'asc' ? dateA - dateB : dateB - dateA
-    } else if (sortColumn === 'rating') {
-      return sortDirection === 'asc' ? a.rating - b.rating : b.rating - a.rating
-    } else if (sortColumn === 'engagement') {
-      return sortDirection === 'asc'
-        ? a.engagement.likes - b.engagement.likes
-        : b.engagement.likes - a.engagement.likes
-    }
+    if (a.date < b.date) return -1
+    if (a.date > b.date) return 1
     return 0
   })
 
@@ -1429,7 +1417,7 @@ export default function ReviewManagementPage() {
           <DialogHeader>
             <DialogTitle>Reply to Review</DialogTitle>
             <DialogDescription>
-              Write a response to {selectedReview?.username}'s review.
+              Write a response to {selectedReview?.username}&apos;s review.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
