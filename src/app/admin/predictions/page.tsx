@@ -1,12 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
 import Image from 'next/image'
 import {
-  FileText,
   Search,
-  Filter,
   ChevronDown,
   ChevronUp,
   ArrowUpDown,
@@ -23,13 +20,10 @@ import {
   Edit,
   Upload,
   FileUp,
-  BarChart3,
   Star,
   ListFilter,
   CalendarDays,
   Grid3X3,
-  ToggleLeft,
-  ToggleRight,
   LayoutGrid, // Add this import
 } from 'lucide-react'
 import {
@@ -73,7 +67,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog'
 import {
   Sheet,
@@ -81,25 +74,10 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
   SheetFooter,
-  SheetClose,
 } from '@/components/ui/sheet'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Switch } from '@/components/ui/switch'
-import { Separator } from '@/components/ui/separator'
-import { Textarea } from '@/components/ui/textarea'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -136,7 +114,7 @@ export default function PredictionManagementPage() {
   const [selectedPrediction, setSelectedPrediction] = useState<Prediction | null>(null)
   const [selectedRows, setSelectedRows] = useState<number[]>([])
   const [currentPage, setCurrentPage] = useState(1)
-  const [itemsPerPage, setItemsPerPage] = useState(10)
+  const [itemsPerPage] = useState(10)
   const [sortColumn, setSortColumn] = useState('date')
   const [sortDirection, setSortDirection] = useState('desc')
   const [searchTerm, setSearchTerm] = useState('')

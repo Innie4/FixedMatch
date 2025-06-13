@@ -1,14 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
 import Image from 'next/image'
 import {
   Star,
   Search,
   Filter,
   ChevronDown,
-  ChevronUp,
   MoreHorizontal,
   Trash2,
   CheckCircle2,
@@ -19,13 +17,9 @@ import {
   Download,
   Eye,
   EyeOff,
-  Clock,
-  Calendar,
-  ArrowUpDown,
   ThumbsUp,
   AlertTriangle,
   Save,
-  FileText,
   Bookmark,
   BookmarkCheck,
   Plus,
@@ -33,21 +27,12 @@ import {
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
   CardFooter,
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import {
   DropdownMenu,
@@ -71,33 +56,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-  SheetFooter,
-  SheetClose,
-} from '@/components/ui/sheet'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Switch } from '@/components/ui/switch'
-import { Separator } from '@/components/ui/separator'
-import { Textarea } from '@/components/ui/textarea'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -115,8 +75,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Textarea } from '@/components/ui/textarea'
 
 // Define interfaces for your data types
 interface ReviewEngagement {
@@ -176,9 +137,7 @@ export default function ReviewManagementPage() {
   const [sortColumn, setSortColumn] = useState('date')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
   const [searchTerm, setSearchTerm] = useState('')
-  const [filterStatus, setFilterStatus] = useState('all')
   const [filterRating, setFilterRating] = useState('all')
-  const [filterDateRange, setFilterDateRange] = useState('all')
   const [activeTab, setActiveTab] = useState('pending')
   const [isEditReviewOpen, setIsEditReviewOpen] = useState(false)
   const [isTemplateResponseOpen, setIsTemplateResponseOpen] = useState(false)
@@ -354,7 +313,7 @@ export default function ReviewManagementPage() {
       review.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       review.comment.toLowerCase().includes(searchTerm.toLowerCase())
 
-    const matchesStatus = filterStatus === 'all' || review.status === filterStatus
+    const matchesStatus = activeTab === 'all' || review.status === activeTab
 
     const matchesRating = filterRating === 'all' || review.rating === parseInt(filterRating)
 
@@ -396,25 +355,6 @@ export default function ReviewManagementPage() {
       setSelectedRows(selectedRows.filter((id) => id !== reviewId))
     } else {
       setSelectedRows([...selectedRows, reviewId])
-    }
-  }
-
-  // Handle select all
-  const handleSelectAll = () => {
-    if (selectedRows.length === paginatedReviews.length) {
-      setSelectedRows([])
-    } else {
-      setSelectedRows(paginatedReviews.map((review) => review.id))
-    }
-  }
-
-  // Handle sort
-  const handleSort = (column: string) => {
-    if (sortColumn === column) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
-    } else {
-      setSortColumn(column)
-      setSortDirection('asc')
     }
   }
 

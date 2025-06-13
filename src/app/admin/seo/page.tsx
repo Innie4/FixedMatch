@@ -6,27 +6,15 @@ import {
   Filter,
   ChevronDown,
   MoreHorizontal,
-  Edit,
   ArrowUpDown,
   BarChart3,
   FileText,
-  LineChart,
   TrendingUp,
   TrendingDown,
-  CheckCircle2,
-  Plus,
 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import {
   DropdownMenu,
@@ -52,6 +40,8 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import SEODetailsSheet from './components/SEODetailsSheet'
 
 interface Page {
   id: number
@@ -83,11 +73,7 @@ interface Keyword {
 
 export default function SEOManagementPage() {
   const [searchTerm, setSearchTerm] = useState('')
-  const [filterStatus, setFilterStatus] = useState('all')
-  const [sortColumn, setSortColumn] = useState('position')
-  const [sortDirection, setSortDirection] = useState('asc')
   const [selectedRows, setSelectedRows] = useState<number[]>([])
-  const [activeTab, setActiveTab] = useState('keyword-performance')
   const [selectedPage, setSelectedPage] = useState<Page | null>(null)
   const [timeRange, setTimeRange] = useState('30d')
 
@@ -178,7 +164,7 @@ export default function SEOManagementPage() {
         {/* Add other metric cards as needed */}
       </div>
 
-      <Tabs defaultValue="keyword-performance" className="space-y-4" onValueChange={setActiveTab}>
+      <Tabs defaultValue="keyword-performance" className="space-y-4">
         <TabsList>
           <TabsTrigger value="keyword-performance">
             <BarChart3 className="h-4 w-4 mr-2" />
@@ -202,57 +188,110 @@ export default function SEOManagementPage() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-[200px]">
-                  <DropdownMenuLabel>Filter by Opportunity</DropdownMenuLabel>
+                  <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => setFilterStatus('all')}>
-                    All Keywords
+                    All Statuses
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setFilterStatus('high')}>
-                    High Opportunity
+                  <DropdownMenuItem onClick={() => setFilterStatus('tracking')}>
+                    Tracking
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setFilterStatus('medium')}>
-                    Medium Opportunity
+                  <DropdownMenuItem onClick={() => setFilterStatus('improving')}>
+                    Improving
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setFilterStatus('low')}>
-                    Low Opportunity
+                  <DropdownMenuItem onClick={() => setFilterStatus('declining')}>
+                    Declining
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setFilterStatus('stagnant')}>
+                    Stagnant
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    Sort
+                    <ChevronDown className="ml-2 h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-[200px]">
+                  <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => handleSort('keyword')}>
+                    Keyword
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleSort('position')}>
+                    Position
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleSort('searchVolume')}>
+                    Search Volume
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleSort('difficulty')}>
+                    Difficulty
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleSort('lastUpdated')}>
+                    Last Updated
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
+            <Button size="sm" onClick={() => console.log('Add New Keyword')}>Add New Keyword</Button>
           </div>
 
+          {/* Keyword Performance Table */}
           <Card>
             <CardHeader>
-              <CardTitle>Keyword Rankings</CardTitle>
-              <CardDescription>Track your position for target keywords over time</CardDescription>
+              <CardTitle>Keyword Ranking</CardTitle>
+              <CardDescription>Overall performance of your tracked keywords.</CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[40px]">
+                    <TableHead>
                       <Checkbox
-                        checked={selectedRows.length === keywords.length}
+                        checked={selectedRows.length === keywords.length && keywords.length > 0}
                         onCheckedChange={() => handleSelectAll(keywords)}
+                        disabled={keywords.length === 0}
+                        aria-label="Select all"
                       />
                     </TableHead>
-                    <TableHead>Keyword</TableHead>
-                    <TableHead>
-                      <div
-                        className="flex items-center space-x-1"
-                        onClick={() => {
-                          setSortColumn('position')
-                          setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
-                        }}
-                      >
-                        <span>Position</span>
-                        <ArrowUpDown className="h-4 w-4" />
-                      </div>
+                    <TableHead
+                      className="cursor-pointer hover:text-primary"
+                      onClick={() => handleSort('keyword')}
+                    >
+                      Keyword <ArrowUpDown className="ml-1 h-4 w-4 inline-block" />
                     </TableHead>
-                    <TableHead>Change</TableHead>
-                    <TableHead>Volume</TableHead>
+                    <TableHead
+                      className="cursor-pointer hover:text-primary"
+                      onClick={() => handleSort('position')}
+                    >
+                      Position <ArrowUpDown className="ml-1 h-4 w-4 inline-block" />
+                    </TableHead>
+                    <TableHead>
+                      Change
+                    </TableHead>
+                    <TableHead
+                      className="cursor-pointer hover:text-primary"
+                      onClick={() => handleSort('searchVolume')}
+                    >
+                      Search Volume <ArrowUpDown className="ml-1 h-4 w-4 inline-block" />
+                    </TableHead>
+                    <TableHead
+                      className="cursor-pointer hover:text-primary"
+                      onClick={() => handleSort('difficulty')}
+                    >
+                      Difficulty <ArrowUpDown className="ml-1 h-4 w-4 inline-block" />
+                    </TableHead>
                     <TableHead>Opportunity</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead
+                      className="cursor-pointer hover:text-primary"
+                      onClick={() => handleSort('lastUpdated')}
+                    >
+                      Last Updated <ArrowUpDown className="ml-1 h-4 w-4 inline-block" />
+                    </TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -262,55 +301,67 @@ export default function SEOManagementPage() {
                         <Checkbox
                           checked={selectedRows.includes(keyword.id)}
                           onCheckedChange={() => handleRowSelect(keyword.id)}
+                          aria-label="Select row"
                         />
                       </TableCell>
                       <TableCell className="font-medium">{keyword.keyword}</TableCell>
                       <TableCell>{keyword.position}</TableCell>
                       <TableCell>
-                        <div className="flex items-center">
-                          {keyword.change > 0 ? (
-                            <>
-                              <TrendingUp className="mr-1 h-4 w-4 text-green-500" />
-                              <span className="text-green-500">+{keyword.change}</span>
-                            </>
-                          ) : keyword.change < 0 ? (
-                            <>
-                              <TrendingDown className="mr-1 h-4 w-4 text-red-500" />
-                              <span className="text-red-500">{keyword.change}</span>
-                            </>
-                          ) : (
-                            <span>0</span>
-                          )}
-                        </div>
+                        {keyword.change > 0 ? (
+                          <span className="flex items-center text-green-500">
+                            <TrendingUp className="h-4 w-4 mr-1" />
+                            {keyword.change}
+                          </span>
+                        ) : keyword.change < 0 ? (
+                          <span className="flex items-center text-red-500">
+                            <TrendingDown className="h-4 w-4 mr-1" />
+                            {Math.abs(keyword.change)}
+                          </span>
+                        ) : (
+                          <span className="text-muted-foreground">0</span>
+                        )}
                       </TableCell>
-                      <TableCell>{keyword.searchVolume.toLocaleString()}</TableCell>
+                      <TableCell>{keyword.searchVolume}</TableCell>
+                      <TableCell>{keyword.difficulty}</TableCell>
                       <TableCell>
-                        <Badge
-                          variant={
-                            keyword.opportunity === 'high'
-                              ? 'default'
-                              : keyword.opportunity === 'medium'
-                                ? 'secondary'
-                                : 'outline'
-                          }
-                        >
+                        <Badge variant="outline" className="capitalize">
                           {keyword.opportunity}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell>{keyword.lastUpdated}</TableCell>
+                      <TableCell>
+                        <Badge
+                          className={
+                            keyword.status === 'tracking'
+                              ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                              : keyword.status === 'improving'
+                                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                                : keyword.status === 'declining'
+                                  ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                                  : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+                          }
+                        >
+                          {keyword.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
+                            <Button
+                              variant="ghost"
+                              className="h-8 w-8 p-0"
+                              aria-label="More actions"
+                            >
+                              <span className="sr-only">Open menu</span>
                               <MoreHorizontal className="h-4 w-4" />
-                              <span className="sr-only">Actions</span>
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem>View Details</DropdownMenuItem>
-                            <DropdownMenuItem>Edit Tracking</DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-red-600">
-                              Remove Tracking
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuItem onClick={() => console.log('Edit Keyword')}>Edit</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => console.log('View Details')}>View Details</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => console.log('Remove Keyword')}>
+                              Remove
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -321,6 +372,174 @@ export default function SEOManagementPage() {
               </Table>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="meta-information" className="space-y-4">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="flex flex-1 items-center space-x-2">
+              <div className="relative flex-1 max-w-sm">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder="Search meta information..."
+                  className="pl-8 w-full md:w-[200px] lg:w-[300px]"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <Filter className="mr-2 h-4 w-4" />
+                    Filter
+                    <ChevronDown className="ml-2 h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-[200px]">
+                  <DropdownMenuLabel>Filter by SEO Score</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => setFilterStatus('all')}>
+                    All Scores
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setFilterStatus('excellent')}>Excellent (80-100)</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setFilterStatus('good')}>Good (60-79)</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setFilterStatus('average')}>Average (40-59)</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setFilterStatus('poor')}>Poor (0-39)</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            <Button size="sm" onClick={() => console.log('Add New Page')}>Add New Page</Button>
+          </div>
+
+          {/* Meta Information Table */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Page Meta Information</CardTitle>
+              <CardDescription>Optimize titles, descriptions, and headers for search engines.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>
+                      <Checkbox
+                        checked={selectedRows.length === pages.length && pages.length > 0}
+                        onCheckedChange={() => handleSelectAll(pages)}
+                        disabled={pages.length === 0}
+                        aria-label="Select all"
+                      />
+                    </TableHead>
+                    <TableHead
+                      className="cursor-pointer hover:text-primary"
+                      onClick={() => handleSort('url')}
+                    >
+                      URL <ArrowUpDown className="ml-1 h-4 w-4 inline-block" />
+                    </TableHead>
+                    <TableHead
+                      className="cursor-pointer hover:text-primary"
+                      onClick={() => handleSort('title')}
+                    >
+                      Title <ArrowUpDown className="ml-1 h-4 w-4 inline-block" />
+                    </TableHead>
+                    <TableHead
+                      className="cursor-pointer hover:text-primary"
+                      onClick={() => handleSort('metaDescription')}
+                    >
+                      Meta Description <ArrowUpDown className="ml-1 h-4 w-4 inline-block" />
+                    </TableHead>
+                    <TableHead
+                      className="cursor-pointer hover:text-primary"
+                      onClick={() => handleSort('h1')}
+                    >
+                      H1 <ArrowUpDown className="ml-1 h-4 w-4 inline-block" />
+                    </TableHead>
+                    <TableHead
+                      className="cursor-pointer hover:text-primary"
+                      onClick={() => handleSort('wordCount')}
+                    >
+                      Word Count <ArrowUpDown className="ml-1 h-4 w-4 inline-block" />
+                    </TableHead>
+                    <TableHead
+                      className="cursor-pointer hover:text-primary"
+                      onClick={() => handleSort('seoScore')}
+                    >
+                      SEO Score <ArrowUpDown className="ml-1 h-4 w-4 inline-block" />
+                    </TableHead>
+                    <TableHead
+                      className="cursor-pointer hover:text-primary"
+                      onClick={() => handleSort('lastUpdated')}
+                    >
+                      Last Updated <ArrowUpDown className="ml-1 h-4 w-4 inline-block" />
+                    </TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {pages.map((page) => (
+                    <TableRow key={page.id} onClick={() => handlePageSelect(page)} className="cursor-pointer">
+                      <TableCell>
+                        <Checkbox
+                          checked={selectedRows.includes(page.id)}
+                          onCheckedChange={() => handleRowSelect(page.id)}
+                          aria-label="Select row"
+                        />
+                      </TableCell>
+                      <TableCell className="font-medium">{page.url}</TableCell>
+                      <TableCell>{page.title}</TableCell>
+                      <TableCell className="max-w-[200px] truncate">{page.metaDescription}</TableCell>
+                      <TableCell>{page.h1}</TableCell>
+                      <TableCell>{page.wordCount}</TableCell>
+                      <TableCell>
+                        <Badge
+                          className={
+                            page.seoScore >= 80
+                              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                              : page.seoScore >= 60
+                                ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                                : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                          }
+                        >
+                          {page.seoScore}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{page.lastUpdated}</TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              className="h-8 w-8 p-0"
+                              aria-label="More actions"
+                            >
+                              <span className="sr-only">Open menu</span>
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuItem onClick={() => console.log('Edit Page')}>Edit</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => console.log('View Issues')}>View Issues</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => console.log('Optimize Page')}>Optimize</DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => console.log('Delete Page')}>Delete</DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+
+          {/* SEO Details Sheet (for selected page) */}
+          {selectedPage && (
+            <SEODetailsSheet
+              isOpen={!!selectedPage}
+              onClose={() => setSelectedPage(null)}
+              page={selectedPage}
+            />
+          )}
         </TabsContent>
       </Tabs>
     </div>

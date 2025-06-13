@@ -1,34 +1,9 @@
-'use client'
-
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import {
-  BarChart3,
-  Users,
-  FileText,
-  Star,
-  Settings,
-  Globe,
-  UserCog,
-} from 'lucide-react'
-import { Package } from 'lucide-react'
-import { CreditCard } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { AdminHeader } from '@/components/admin/layout/admin-header'
-import { adminNavItems } from '@/config/admin-nav'
+import { redirect } from 'next/navigation'
 import AdminSidebar from '@/components/admin/AdminSidebar'
 import AdminMobileNav from '@/components/admin/AdminMobileNav'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { redirect } from 'next/navigation'
-
-// Define the NavItem type
-interface NavItem {
-  title: string
-  href: string
-  icon: React.ReactNode
-}
+import { adminNavItems } from '@/config/admin-nav'
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await getServerSession(authOptions)

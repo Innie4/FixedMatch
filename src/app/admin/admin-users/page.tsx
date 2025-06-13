@@ -8,11 +8,12 @@ import {
   Trash2,
   Edit,
   Eye,
-  ArrowUpDown,
   KeyRound,
   UserPlus,
+  ArrowUpDown,
+  Search,
 } from 'lucide-react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -32,14 +33,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   Breadcrumb,
@@ -48,25 +41,6 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-  SheetFooter,
-  SheetClose,
-} from '@/components/ui/sheet'
 
 // Define Admin User type
 type AdminUser = {
@@ -99,16 +73,10 @@ type Role = {
 
 export default function AdminUserManagementPage() {
   // State for admin users
-  const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null)
   const [selectedRows, setSelectedRows] = useState<number[]>([])
-  const [currentPage, setCurrentPage] = useState(1)
-  const [itemsPerPage, setItemsPerPage] = useState(10)
   const [sortColumn, setSortColumn] = useState<keyof AdminUser>('username')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
   const [searchTerm, setSearchTerm] = useState('')
-  const [filterStatus, setFilterStatus] = useState('all')
-  const [filterRole, setFilterRole] = useState('all')
-  const [isUserDetailsOpen, setIsUserDetailsOpen] = useState(false)
 
   // Mock admin users data
   const adminUsers: AdminUser[] = [
@@ -201,82 +169,55 @@ export default function AdminUserManagementPage() {
       permissions: ['create_predictions', 'edit_predictions', 'publish_content', 'manage_vip'],
       usersCount: 1,
       createdBy: 'admin',
-      createdAt: '2022-03-01',
+      createdAt: '2022-03-15',
       isSystem: false,
     },
     {
       id: 3,
       name: 'Editor',
-      description: 'Manages predictions and basic content.',
-      permissions: ['create_predictions', 'edit_predictions', 'publish_content'],
+      description: 'Manages blog posts and editorial content.',
+      permissions: ['create_posts', 'edit_posts', 'publish_posts'],
       usersCount: 1,
       createdBy: 'admin',
-      createdAt: '2022-05-01',
+      createdAt: '2022-05-20',
       isSystem: false,
     },
     {
       id: 4,
       name: 'Analyst',
-      description: 'Views analytics and reports.',
-      permissions: ['view_analytics', 'view_reports'],
+      description: 'Views reports and analytics data.',
+      permissions: ['view_reports', 'view_analytics'],
       usersCount: 1,
       createdBy: 'admin',
-      createdAt: '2022-07-01',
+      createdAt: '2022-07-10',
       isSystem: false,
     },
     {
       id: 5,
       name: 'Developer',
       description: 'Provides technical support and development.',
-      permissions: ['manage_users', 'view_logs', 'technical_support'],
+      permissions: ['access_logs', 'manage_code', 'debug_issues'],
       usersCount: 1,
-      createdBy: 'System',
+      createdBy: 'admin',
       createdAt: '2022-02-01',
       isSystem: false,
     },
   ]
 
-  // Filter and sort users
-  const filteredUsers = adminUsers
-    .filter((user) => {
-      const matchesSearch =
-        searchTerm === '' ||
-        user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.name.toLowerCase().includes(searchTerm.toLowerCase())
-      const matchesStatus = filterStatus === 'all' || user.status === filterStatus
-      const matchesRole = filterRole === 'all' || user.role === filterRole
-      return matchesSearch && matchesStatus && matchesRole
-    })
-    .sort((a, b) => {
-      const aValue = a[sortColumn]
-      const bValue = b[sortColumn]
-
-      if (aValue < bValue) {
-        return sortDirection === 'asc' ? -1 : 1
-      }
-      if (aValue > bValue) {
-        return sortDirection === 'asc' ? 1 : -1
-      }
-      return 0
-    })
-
-  const paginatedUsers = filteredUsers.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+  // Filtered and paginated data
+  const filteredUsers = adminUsers.filter(
+    (user) =>
+      user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
-  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage)
+  const paginatedUsers = filteredUsers.slice(
+    0,
+    10,
+  )
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page)
-  }
-
-  const handleItemsPerPageChange = (value: string) => {
-    setItemsPerPage(Number(value))
-    setCurrentPage(1) // Reset to first page when items per page changes
-  }
-
+  // Handlers
   const handleSort = (column: keyof AdminUser) => {
     if (sortColumn === column) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
@@ -288,7 +229,7 @@ export default function AdminUserManagementPage() {
 
   const handleRowSelect = (id: number) => {
     setSelectedRows((prevSelected) =>
-      prevSelected.includes(id) ? prevSelected.filter((rowId) => rowId !== id) : [...prevSelected, id]
+      prevSelected.includes(id) ? prevSelected.filter((rowId) => rowId !== id) : [...prevSelected, id],
     )
   }
 
@@ -300,336 +241,264 @@ export default function AdminUserManagementPage() {
     }
   }
 
-  const handleViewUserDetails = (user: AdminUser) => {
-    setSelectedUser(user)
-    setIsUserDetailsOpen(true)
-  }
-
   const handleAddUser = () => {
-    setSelectedUser(null) // Clear any selected user for adding a new one
-    // Open add user dialog
+    // Logic for adding a new user
+    console.log('Add new user')
   }
 
   const handleEditUser = (user: AdminUser) => {
-    setSelectedUser(user) // Set user for editing
-    // Open edit user dialog
+    // Logic for editing a user
+    console.log('Edit user:', user)
   }
 
   const handleDeleteUser = (user: AdminUser) => {
-    setSelectedUser(user) // Set user for deletion
-    // Open delete confirmation dialog
+    // Logic for deleting a user
+    console.log('Delete user:', user)
   }
 
-  const handleRoleDetails = (roleData: Role) => {
-    // console.log('View Role Details:', roleData);
+  const handle2FASetup = () => {
+    // Logic for 2FA setup
+    console.log('Setup 2FA for user')
   }
 
-  const handleAddRole = () => {
-    // Open add role dialog
-  }
-
-  const handleEditRole = (roleData: Role) => {
-    // Open edit role dialog
-  }
-
-  const handle2FASetup = (user: AdminUser) => {
-    // console.log('Setup 2FA for:', user);
-  }
-
-  const handleTransferResponsibilities = (user: AdminUser) => {
-    // console.log('Transfer responsibilities for:', user);
+  const handleTransferResponsibilities = () => {
+    // Logic for transferring responsibilities
+    console.log('Transfer responsibilities for user')
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <Breadcrumb className="mb-4">
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/admin">Dashboard</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/admin/users">Admin Users</BreadcrumbLink>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
-
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <UserCog className="h-6 w-6" /> Admin User Management
-          </CardTitle>
-          <CardDescription>Manage your internal administrative users and their roles.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4">
+    <div className="flex min-h-screen w-full flex-col bg-muted/40">
+      <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
+        <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent">
+          <Breadcrumb className="hidden md:flex">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <a href="#">Dashboard</a>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <a href="#">Users</a>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <a href="#">Admin Users</a>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+          <div className="relative ml-auto flex-1 md:grow-0">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
+              type="search"
               placeholder="Search users..."
+              className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="max-w-sm"
             />
-            <div className="flex gap-2">
-              <Select value={filterStatus} onValueChange={setFilterStatus}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Filter by Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
-                  <SelectItem value="suspended">Suspended</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={filterRole} onValueChange={setFilterRole}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Filter by Role" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Roles</SelectItem>
-                  {roles.map((role) => (
-                    <SelectItem key={role.id} value={role.name}>
-                      {role.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Button onClick={handleAddUser} className="flex items-center gap-2">
-                <UserPlus className="h-4 w-4" /> Add User
-              </Button>
-            </div>
           </div>
-
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[50px] text-center">
-                  <Checkbox
-                    checked={selectedRows.length === paginatedUsers.length}
-                    onCheckedChange={handleSelectAll}
-                  />
-                </TableHead>
-                <TableHead onClick={() => handleSort('username')} className="cursor-pointer">
-                  Username {sortColumn === 'username' && (sortDirection === 'asc' ? '▲' : '▼')}
-                </TableHead>
-                <TableHead onClick={() => handleSort('email')} className="cursor-pointer">
-                  Email {sortColumn === 'email' && (sortDirection === 'asc' ? '▲' : '▼')}
-                </TableHead>
-                <TableHead onClick={() => handleSort('role')} className="cursor-pointer">
-                  Role {sortColumn === 'role' && (sortDirection === 'asc' ? '▲' : '▼')}
-                </TableHead>
-                <TableHead onClick={() => handleSort('status')} className="cursor-pointer">
-                  Status {sortColumn === 'status' && (sortDirection === 'asc' ? '▲' : '▼')}
-                </TableHead>
-                <TableHead onClick={() => handleSort('lastLogin')} className="cursor-pointer hidden md:table-cell">
-                  Last Login {sortColumn === 'lastLogin' && (sortDirection === 'asc' ? '▲' : '▼')}
-                </TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {paginatedUsers.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={8} className="text-center py-4">
-                    No users found.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                paginatedUsers.map((user) => (
-                  <TableRow key={user.id}>
-                    <TableCell className="text-center">
-                      <Checkbox
-                        checked={selectedRows.includes(user.id)}
-                        onCheckedChange={() => handleRowSelect(user.id)}
-                      />
-                    </TableCell>
-                    <TableCell>{user.username}</TableCell>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell>{user.role}</TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={
-                          user.status === 'active'
-                            ? 'default'
-                            : user.status === 'suspended'
-                              ? 'destructive'
-                              : 'secondary'
-                        }
-                      >
-                        {user.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell">
-                      {user.lastLogin}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem onClick={() => handleViewUserDetails(user)}>
-                            <Eye className="mr-2 h-4 w-4" /> View Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleEditUser(user)}>
-                            <Edit className="mr-2 h-4 w-4" /> Edit User
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handle2FASetup(user)}>
-                            <KeyRound className="mr-2 h-4 w-4" /> Setup 2FA
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            className="text-red-600 focus:text-red-600"
-                            onClick={() => handleDeleteUser(user)}
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" /> Delete User
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-
-          {/* Pagination */}
-          <div className="flex justify-between items-center mt-4">
-            <div>
-              Page {currentPage} of {totalPages}
-            </div>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-              >
-                Previous
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-              >
-                Next
-              </Button>
-            </div>
-            <Select
-              value={String(itemsPerPage)}
-              onValueChange={handleItemsPerPageChange}
-            >
-              <SelectTrigger className="w-[100px]">
-                <SelectValue placeholder="10 per page" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="10">10</SelectItem>
-                <SelectItem value="20">20</SelectItem>
-                <SelectItem value="50">50</SelectItem>
-              </SelectContent>
-            </Select>
+          <Button variant="outline" size="sm" className="h-8 gap-1" onClick={handleAddUser}>
+            <UserPlus className="h-3.5 w-3.5" />
+            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+              Add Admin User
+            </span>
+          </Button>
+        </header>
+        <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
+          <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
+            <Card x-chunk="dashboard-05-chunk-3">
+              <CardHeader className="px-7">
+                <CardTitle>Admin Users</CardTitle>
+                <CardDescription>Manage your administrative users.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>
+                        <Checkbox
+                          checked={selectedRows.length === paginatedUsers.length}
+                          onCheckedChange={handleSelectAll}
+                        />
+                      </TableHead>
+                      <TableHead onClick={() => handleSort('username')}>
+                        Username
+                        {sortColumn === 'username' && (
+                          <ArrowUpDown
+                            className={`ml-2 h-4 w-4 ${sortDirection === 'desc' ? 'rotate-180' : ''}`}
+                          />
+                        )}
+                      </TableHead>
+                      <TableHead onClick={() => handleSort('email')}>
+                        Email
+                        {sortColumn === 'email' && (
+                          <ArrowUpDown
+                            className={`ml-2 h-4 w-4 ${sortDirection === 'desc' ? 'rotate-180' : ''}`}
+                          />
+                        )}
+                      </TableHead>
+                      <TableHead onClick={() => handleSort('role')}>
+                        Role
+                        {sortColumn === 'role' && (
+                          <ArrowUpDown
+                            className={`ml-2 h-4 w-4 ${sortDirection === 'desc' ? 'rotate-180' : ''}`}
+                          />
+                        )}
+                      </TableHead>
+                      <TableHead onClick={() => handleSort('status')}>
+                        Status
+                        {sortColumn === 'status' && (
+                          <ArrowUpDown
+                            className={`ml-2 h-4 w-4 ${sortDirection === 'desc' ? 'rotate-180' : ''}`}
+                          />
+                        )}
+                      </TableHead>
+                      <TableHead className="hidden md:table-cell"
+                        onClick={() => handleSort('lastLogin')}>
+                        Last Login
+                        {sortColumn === 'lastLogin' && (
+                          <ArrowUpDown
+                            className={`ml-2 h-4 w-4 ${sortDirection === 'desc' ? 'rotate-180' : ''}`}
+                          />
+                        )}
+                      </TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {paginatedUsers.map((user) => (
+                      <TableRow key={user.id}>
+                        <TableCell>
+                          <Checkbox
+                            checked={selectedRows.includes(user.id)}
+                            onCheckedChange={() => handleRowSelect(user.id)}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Image
+                              src={user.avatar || '/placeholder.svg'}
+                              alt={user.username}
+                              width={32}
+                              height={32}
+                              className="rounded-full"
+                            />
+                            {user.username}
+                          </div>
+                        </TableCell>
+                        <TableCell>{user.email}</TableCell>
+                        <TableCell>{user.role}</TableCell>
+                        <TableCell>
+                          <Badge variant={user.status === 'active' ? 'default' : 'outline'}>
+                            {user.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          {user.lastLogin}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button size="icon" variant="ghost">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                              <DropdownMenuItem onClick={() => console.log('View user details:', user)}>
+                                <Eye className="mr-2 h-4 w-4" /> View Details
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleEditUser(user)}>
+                                <Edit className="mr-2 h-4 w-4" /> Edit User
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={handle2FASetup}>
+                                <KeyRound className="mr-2 h-4 w-4" /> 2FA Setup
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={handleTransferResponsibilities}>
+                                <UserCog className="mr-2 h-4 w-4" /> Transfer Responsibilities
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem className="text-red-600" onClick={() => handleDeleteUser(user)}>
+                                <Trash2 className="mr-2 h-4 w-4" /> Delete User
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
           </div>
-        </CardContent>
-      </Card>
-
-      {/* User Details Dialog (Placeholder) */}
-      <Dialog open={isUserDetailsOpen} onOpenChange={setIsUserDetailsOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>User Details</DialogTitle>
-            <DialogDescription>
-              View the full profile and details of {selectedUser?.name || 'this user'}.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            {selectedUser ? (
-              <div className="space-y-2">
-                <p><strong>Username:</strong> {selectedUser.username}</p>
-                <p><strong>Email:</strong> {selectedUser.email}</p>
-                <p><strong>Role:</strong> {selectedUser.role}</p>
-                <p><strong>Status:</strong> {selectedUser.status}</p>
-                <p><strong>Last Login:</strong> {selectedUser.lastLogin}</p>
-                <p><strong>Created At:</strong> {selectedUser.createdAt}</p>
-                {selectedUser.notes && <p><strong>Notes:</strong> {selectedUser.notes}</p>}
-                {selectedUser.contactPhone && <p><strong>Phone:</strong> {selectedUser.contactPhone}</p>}
-              </div>
-            ) : (
-              <p>No user selected.</p>
-            )}
+          <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-1">
+            <Card x-chunk="dashboard-05-chunk-4">
+              <CardHeader className="px-7 pb-3">
+                <CardTitle>Roles</CardTitle>
+                <CardDescription>Manage user roles and permissions.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Role Name</TableHead>
+                      <TableHead>Users</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {roles.map((role) => (
+                      <TableRow key={role.id}>
+                        <TableCell className="font-medium">
+                          {role.name}
+                          {role.isSystem && (
+                            <Badge variant="outline" className="ml-2 text-xs">
+                              System
+                            </Badge>
+                          )}
+                        </TableCell>
+                        <TableCell>{role.usersCount}</TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button size="icon" variant="ghost">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                              <DropdownMenuItem onClick={() => console.log('View role details:', role)}>
+                                <Eye className="mr-2 h-4 w-4" /> View Details
+                              </DropdownMenuItem>
+                              {!role.isSystem && (
+                                <DropdownMenuItem onClick={() => console.log('Edit role:', role)}>
+                                  <Edit className="mr-2 h-4 w-4" /> Edit Role
+                                </DropdownMenuItem>
+                              )}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+              <CardFooter className="justify-center border-t p-4">
+                <Button variant="outline" size="sm" className="h-8 gap-1" onClick={() => console.log('Add new role')}>
+                  <UserPlus className="h-3.5 w-3.5" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    Add New Role
+                  </span>
+                </Button>
+              </CardFooter>
+            </Card>
           </div>
-          <DialogFooter>
-            <Button onClick={() => setIsUserDetailsOpen(false)}>Close</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Add User Dialog (Placeholder) */}
-      <Dialog>
-        <DialogTrigger asChild>
-          {/* This trigger will be connected to the handleAddUser function */}
-          {/* <Button variant="outline">Add User</Button> */}
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add New User</DialogTitle>
-            <DialogDescription>
-              Fill in the details to add a new admin user.
-            </DialogDescription>
-          </DialogHeader>
-          {/* Add your form for adding a user here */}
-          <DialogFooter>
-            <Button type="submit">Save</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Edit User Sheet (Placeholder) */}
-      <Sheet>
-        <SheetTrigger asChild>
-          {/* This trigger will be connected to the handleEditUser function */}
-          {/* <Button variant="outline">Edit User</Button> */}
-        </SheetTrigger>
-        <SheetContent>
-          <SheetHeader>
-            <SheetTitle>Edit User</SheetTitle>
-            <SheetDescription>
-              Make changes to {selectedUser?.name || 'the selected user'} here.
-            </SheetDescription>
-          </SheetHeader>
-          {/* Add your form for editing a user here */}
-          <SheetFooter>
-            <SheetClose asChild>
-              <Button type="submit">Save changes</Button>
-            </SheetClose>
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>
-
-      {/* Delete User Confirmation Dialog (Placeholder) */}
-      <Dialog>
-        <DialogTrigger asChild>
-          {/* This trigger will be connected to the handleDeleteUser function */}
-          {/* <Button variant="destructive">Delete User</Button> */}
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Are you sure?</DialogTitle>
-            <DialogDescription>
-              This action cannot be undone. This will permanently delete the
-              <strong> {selectedUser?.name || 'selected user'}</strong> account.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline">Cancel</Button>
-            <Button variant="destructive">Delete</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        </main>
+      </div>
     </div>
   )
 }

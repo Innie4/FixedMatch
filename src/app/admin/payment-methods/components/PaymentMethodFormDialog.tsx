@@ -226,7 +226,7 @@ export function PaymentMethodFormDialog({
       // In real implementation, make actual API call to test connection
       setErrors({ testConnection: '' })
       alert('Connection test successful!')
-    } catch (error) {
+    } catch {
       setErrors({ testConnection: 'Connection test failed. Please check your credentials.' })
     } finally {
       setIsTestingConnection(false)
