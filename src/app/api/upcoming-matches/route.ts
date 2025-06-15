@@ -1,28 +1,30 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
 import rateLimit from '@/lib/rate-limit'
 import { z } from 'zod'
 
+// Initialize the rate limiter (30 requests per minute per IP)
 const limiter = rateLimit({
   uniqueTokenPerInterval: 500,
   interval: 60 * 1000,
 })
 
-// Zod schema for query parameters
-const upcomingMatchesQueryParamsSchema = z.object({
-  league: z
-    .string()
-    .optional()
-    .transform((s) => s?.trim().toLowerCase() || undefined), // Filter by league
+// Zod schema for validating the query parameter
+const fixturesByDateSchema = z.object({
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, {
+    message: 'Date must be in format YYYY-MM-DD',
+  }),
 })
 
 export async function GET(request: Request) {
   try {
-    // Apply rate limiting
+    // Apply rate limiting based on IP
     const ip =
-      request.headers.get('x-forwarded-for') || request.connection?.remoteAddress || '127.0.0.1'
+      request.headers.get('x-forwarded-for') ||
+      (request as any).connection?.remoteAddress ||
+      '127.0.0.1'
+
     const res = NextResponse.next()
-    const isRateLimited = await limiter.check(res, 30, ip) // Allow 30 requests per IP per minute
+    const isRateLimited = await limiter.check(res, 30, ip)
 
     if (!isRateLimited) {
       return NextResponse.json(
@@ -31,47 +33,54 @@ export async function GET(request: Request) {
       )
     }
 
+    // Parse and validate the query parameter
     const { searchParams } = new URL(request.url)
-
-    // Parse and sanitize query parameters using Zod
-    const queryParams = upcomingMatchesQueryParamsSchema.parse({
-      league: searchParams.get('league'),
+    const queryParams = fixturesByDateSchema.parse({
+      date: searchParams.get('date'),
     })
 
-    let whereClause: any = {
-      matchTime: {
-        gte: new Date(), // Only fetch matches in the future
-      },
-    }
+    // Build the external API URL
+    const apiUrl = `https://v3.football.api-sports.io/fixtures?date=${encodeURIComponent(
+      queryParams.date
+    )}`
 
-    // Apply league filter if present
-    if (queryParams.league) {
-      whereClause.league = { equals: queryParams.league }
-    }
-
-    const upcomingMatches = await prisma.match.findMany({
-      where: whereClause,
-      orderBy: {
-        matchTime: 'asc',
+    // Fetch data from external API
+    const apiRes = await fetch(apiUrl, {
+      headers: {
+        'x-rapidapi-key': '85640505820b3d576f53117144276ffb',
+        'x-rapidapi-host': 'v3.football.api-sports.io',
       },
     })
 
-    if (!upcomingMatches || upcomingMatches.length === 0) {
-      return NextResponse.json({ message: 'No upcoming matches found.' }, { status: 404 })
+    if (!apiRes.ok) {
+      return NextResponse.json(
+        { error: `External API returned status ${apiRes.status}` },
+        { status: apiRes.status }
+      )
     }
 
-    // TODO: Sanitize output data if necessary (e.g., ensure no sensitive internal data is exposed)
-    // For now, assuming Match model does not contain sensitive data
+    const data = await apiRes.json()
 
-    const response = NextResponse.json(upcomingMatches, { status: 200 })
+    // If the API returned no fixtures for that date
+    if (!data || data.results === 0 || !data.response || data.response.length === 0) {
+      return NextResponse.json(
+        { message: `No fixtures found for date ${queryParams.date}` },
+        { status: 404 }
+      )
+    }
+
+    // Return the fixtures data
+    const response = NextResponse.json(data, { status: 200 })
     response.headers.set('X-Content-Type-Options', 'nosniff')
     response.headers.set('X-Frame-Options', 'DENY')
     return response
   } catch (error: any) {
-    console.error('Failed to fetch upcoming matches:', error)
+    console.error('Failed to fetch fixtures by date:', error)
+
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.errors }, { status: 400 })
     }
+
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
