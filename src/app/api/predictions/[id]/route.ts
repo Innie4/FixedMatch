@@ -39,7 +39,7 @@ export async function GET(
     // Return exactly the JSON object for the found fixture
     return NextResponse.json(data, { status: 200 })
   } catch (error) {
-    console.error('Failed to fetch match prediction fixture:', error)
+    console.error('Failed to fetch prediction fixture:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
