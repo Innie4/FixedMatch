@@ -10,7 +10,7 @@ export async function GET(
     if (!matchId) {
       return NextResponse.json({ error: 'Match ID is required.' }, { status: 400 })
     }
-   6JxM1FTVfM2hEBpq1noBubfoZCFsvEzAZEpidCYZUzOFdpXXpPaOwFEZZKfL
+    const alt_key = '6JxM1FTVfM2hEBpq1noBubfoZCFsvEzAZEpidCYZUzOFdpXXpPaOwFEZZKfL'
     const url = `https://v3.football.api-sports.io/prediction?fixtures=${encodeURIComponent(matchId)}`
     const res = await fetch(url, {
       headers: {
