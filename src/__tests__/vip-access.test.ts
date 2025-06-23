@@ -108,7 +108,7 @@ describe('VIP Access', () => {
   describe('activateVIPAccess', () => {
     it('should activate VIP access for user', async () => {
       const packageId = '1';
-      const expiryDate = new Date(Date.now() + 86400000);
+      const expiryDate = new Date(Date.now() + 86400000).getTime();
 
       (prisma.vipSubscription.create as any).mockResolvedValue({
         id: '1',

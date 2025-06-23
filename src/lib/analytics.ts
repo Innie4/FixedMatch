@@ -1,5 +1,4 @@
 import posthog from 'posthog-js'
-import { SubscriptionPackage } from '@/types/package'
 
 // Initialize PostHog
 if (typeof window !== 'undefined') {
@@ -9,6 +8,24 @@ if (typeof window !== 'undefined') {
       if (process.env.NODE_ENV === 'development') posthog.debug()
     },
   })
+}
+
+interface SubscriptionPackage {
+  id: number;
+  name: string;
+  description: string;
+  durations: {
+    twoWeeks: { price: number; enabled: boolean };
+    oneMonth: { price: number; enabled: boolean };
+    threeMonths: { price: number; enabled: boolean };
+    sixMonths: { price: number; enabled: boolean };
+  };
+  countries: string[];
+  status: 'active' | 'inactive';
+  subscribers: number;
+  revenue: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 // Package Analytics

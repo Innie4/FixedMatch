@@ -139,6 +139,7 @@ export default function ReviewManagementPage() {
   const [activeTab, setActiveTab] = useState('pending')
   const [isEditReviewOpen, setIsEditReviewOpen] = useState(false)
   const [isTemplateResponseOpen, setIsTemplateResponseOpen] = useState(false)
+  const [filterDateRange, setFilterDateRange] = useState('all')
 
   // Mock reviews data
   const reviews: Review[] = [

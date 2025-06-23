@@ -6,7 +6,7 @@ import Stripe from 'stripe'
 import { z } from 'zod'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2023-10-16'
+  apiVersion: '2024-06-20'
 })
 
 const checkoutSchema = z.object({
@@ -46,7 +46,6 @@ export async function POST(request: Request) {
 
     // Create Stripe checkout session
     const checkoutSession = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
       line_items: [
         {
           price_data: {
@@ -63,7 +62,7 @@ export async function POST(request: Request) {
       mode: 'payment',
       success_url: validatedData.successUrl,
       cancel_url: validatedData.cancelUrl,
-      customer_email: session.user.email,
+      customer_email: session.user.email || undefined,
       metadata: {
         userId: session.user.id.toString(),
         packageId: pkg.id.toString(),

@@ -17,7 +17,7 @@ export default function VIPPage() {
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">VIP Predictions</h1>
 
-      <SubscriptionStatus />
+      <SubscriptionStatus status="active" expiryDate={new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)} />
 
       {/* Filters */}
       <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">

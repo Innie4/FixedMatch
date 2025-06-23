@@ -31,6 +31,7 @@ export interface User {
   status: string;
   createdAt: string;
   lastLogin: string;
+  isEmailVerified?: boolean;
 }
 
 export interface Review {
@@ -78,7 +79,8 @@ export interface VIPContent {
 export interface WebSocketMessage {
   type: string;
   payload: unknown;
-  timestamp: number;
+  timestamp?: number | string;
+  adminAction?: boolean;
 }
 
 export interface ApiResponse<T> {

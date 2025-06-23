@@ -10,10 +10,8 @@ const limiter = rateLimit({
 export async function GET(request: Request) {
   try {
     // Apply rate limiting
-    const ip =
-      request.headers.get('x-forwarded-for') || request.connection?.remoteAddress || '127.0.0.1'
-    const res = NextResponse.next()
-    const isRateLimited = await limiter.check(res, 10, ip) // Allow 10 requests per IP per minute
+    const ip = request.headers.get('x-forwarded-for') || '127.0.0.1'
+    const isRateLimited = await limiter.check(10, ip) // Only 2 arguments
 
     if (!isRateLimited) {
       return NextResponse.json(

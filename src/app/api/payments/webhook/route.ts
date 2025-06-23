@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 import Stripe from 'stripe'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2023-10-16'
+  apiVersion: '2024-06-20'
 })
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!
@@ -12,7 +12,7 @@ const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!
 export async function POST(request: Request) {
   try {
     const body = await request.text()
-    const signature = headers().get('stripe-signature')
+    const signature = (await headers()).get('stripe-signature')
 
     if (!signature) {
       return NextResponse.json(

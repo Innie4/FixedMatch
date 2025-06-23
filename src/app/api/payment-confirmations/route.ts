@@ -31,7 +31,7 @@ export async function POST(req: Request) {
     }
 
     // Rate limiting
-    const identifier = req.ip || 'anonymous'
+    const identifier = req.headers.get('x-forwarded-for') || 'anonymous'
     const { check } = rateLimit({ interval: 60000, uniqueTokenPerInterval: 5 })
     const { isRateLimited } = check(5, identifier)
 
@@ -108,15 +108,18 @@ export async function POST(req: Request) {
       { status: 201 }
     )
   } catch (error) {
-    console.error('Payment confirmation error:', error)
-    
-    if (error.message === 'Rate limit exceeded') {
-      return NextResponse.json(
-        { error: 'Too many requests. Please try again later.' },
-        { status: 429 }
-      )
+    if (error instanceof Error) {
+      console.error('Payment confirmation error:', error.message);
+      if (error.message === 'Rate limit exceeded') {
+        return NextResponse.json(
+          { error: 'Too many requests. Please try again later.' },
+          { status: 429 }
+        )
+      }
+    } else {
+      console.error('Payment confirmation error:', String(error));
     }
-
+    
     return NextResponse.json(
       { error: 'An error occurred while processing your request' },
       { status: 500 }

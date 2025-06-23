@@ -121,15 +121,17 @@ export class VIPSubscriptionService {
   ) {
     const renewalUrl = `${process.env.NEXT_PUBLIC_APP_URL}/vip/renew?package=${subscription.packageId}`
 
-    const { subject, html } = emailTemplates.subscriptionExpiring(
-      subscription.user.name,
-      subscription.package.name,
-      daysRemaining,
-      subscription.endDate.toLocaleDateString(),
-      renewalUrl
-    )
-
-    await sendEmail({ to: subscription.user.email, subject, html })
+    await sendEmail({
+      to: subscription.user.email,
+      template: "subscriptionExpiring" as any,
+      data: {
+        name: subscription.user.name,
+        package: subscription.package.name,
+        daysRemaining,
+        expiryDate: subscription.endDate.toLocaleDateString(),
+        renewalUrl,
+      },
+    })
   }
 
   private static async sendAccessRevokedNotification(
@@ -137,8 +139,13 @@ export class VIPSubscriptionService {
   ) {
     const renewalUrl = `${process.env.NEXT_PUBLIC_APP_URL}/vip/renew`
 
-    const { subject, html } = emailTemplates.subscriptionExpired(subscription.user.name, renewalUrl)
-
-    await sendEmail({ to: subscription.user.email, subject, html })
+    await sendEmail({
+      to: subscription.user.email,
+      template: "subscriptionExpired" as any,
+      data: {
+        name: subscription.user.name,
+        renewalUrl,
+      },
+    })
   }
 }

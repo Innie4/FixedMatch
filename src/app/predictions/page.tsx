@@ -283,7 +283,7 @@ export default function PredictionsPage() {
         </div>
       </div>
 
-      <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
+      <Tabs defaultValue="all" className="w-full" onValueChange={(value: string) => setActiveTab(value as any)}>
         <TabsList className="grid w-full grid-cols-2 md:grid-cols-6 mb-6">
           <TabsTrigger value="all">All</TabsTrigger>
           <TabsTrigger value="today">Today</TabsTrigger>

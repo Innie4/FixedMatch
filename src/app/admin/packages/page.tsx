@@ -207,7 +207,7 @@ export default function PackageManagementPage() {
       WebSocketService.send({
         type: 'PACKAGE_ADDED',
         payload: data,
-        timestamp: new Date().toISOString(),
+        timestamp: Number(new Date().toISOString()),
         adminAction: true
       })
     }
@@ -242,7 +242,7 @@ export default function PackageManagementPage() {
       WebSocketService.send({
         type: 'PACKAGE_UPDATED',
         payload: data,
-        timestamp: new Date().toISOString(),
+        timestamp: Number(new Date().toISOString()),
         adminAction: true
       })
     }
@@ -277,7 +277,7 @@ export default function PackageManagementPage() {
       WebSocketService.send({
         type: 'PACKAGE_DELETED',
         payload: { id: id },
-        timestamp: new Date().toISOString(),
+        timestamp: Number(new Date().toISOString()),
         adminAction: true
       })
     }

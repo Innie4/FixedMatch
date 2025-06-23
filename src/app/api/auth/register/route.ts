@@ -22,7 +22,7 @@ export async function POST(request: Request) {
   try {
     // Apply rate limiting
     const ip =
-      request.headers.get('x-forwarded-for') || request.connection?.remoteAddress || '127.0.0.1'
+      request.headers.get('x-forwarded-for') || '127.0.0.1'
     const { isRateLimited } = check(10, ip) // 10 requests per IP per interval (60s)
 
     if (isRateLimited) {

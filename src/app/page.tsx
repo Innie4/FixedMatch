@@ -30,6 +30,8 @@ export default function Home() {
 
   const { data: realtimePackages } = useRealTimeUpdates<Package[]>('PACKAGES_UPDATED')
 
+  const [wsMessage, setWsMessage] = useState<string | null>(null);
+
   useEffect(() => {
     const fetchPredictions = async () => {
       try {
@@ -80,8 +82,33 @@ export default function Home() {
     }
   }, [realtimePackages])
 
+  useEffect(() => {
+    const ws = new window.WebSocket('ws://localhost:3000/api/ws');
+    ws.onopen = () => {
+      ws.send('Hello from client!');
+    };
+    ws.onmessage = (event) => {
+      setWsMessage(event.data);
+      console.log('WebSocket message:', event.data);
+    };
+    ws.onerror = (err) => {
+      console.error('WebSocket error:', err);
+    };
+    ws.onclose = () => {
+      console.log('WebSocket connection closed');
+    };
+    return () => {
+      ws.close();
+    };
+  }, []);
+
   return (
     <main className="min-h-screen">
+      {/* WebSocket Demo */}
+      <div className="fixed top-2 right-2 bg-white/80 dark:bg-gray-900/80 p-2 rounded shadow text-xs z-50">
+        <strong>WebSocket:</strong> {wsMessage || 'Connecting...'}
+      </div>
+
       {/* Add UpdateNotification components */}
       <UpdateNotification 
         type="PREDICTIONS_UPDATED" 
