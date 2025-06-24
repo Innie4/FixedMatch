@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils"
 interface NavItem {
   title: string
   href: string
-  icon: JSX.Element
+  icon: React.ReactNode
 }
 
 interface AdminMobileNavProps {

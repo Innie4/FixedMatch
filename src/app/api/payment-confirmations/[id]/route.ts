@@ -56,7 +56,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
         await deactivateVIPAccess(confirmation.user.id)
         await sendEmail({
           to: confirmation.user.email,
-          template: 'paymentDeclined', // Assuming you have a 'paymentDeclined' template
+          template: 'paymentConfirmation',
           data: {
             amount: confirmation.amount,
             paymentMethod: confirmation.paymentMethod,

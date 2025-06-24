@@ -22,10 +22,11 @@ const toastVariants = cva(
 )
 
 export interface ToastProps
-  extends React.HTMLAttributes<HTMLDivElement>,
+  extends React.HTMLAttributes<HTMLLIElement>,
     VariantProps<typeof toastVariants> {
   open?: boolean
   onOpenChange?: (open: boolean) => void
+  description?: React.ReactNode
 }
 
 export interface ToastActionElement {

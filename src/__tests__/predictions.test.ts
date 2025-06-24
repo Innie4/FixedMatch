@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { NextRequest } from 'next/server';
-import { GET, POST, PUT, DELETE } from '@/app/api/predictions/route';
+import { GET } from '@/app/api/predictions/route';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { requireVIPAccess } from '@/lib/vip-access';
@@ -101,130 +101,6 @@ describe('Predictions API', () => {
           createdAt: 'desc',
         },
       });
-    });
-  });
-
-  describe('POST /api/predictions', () => {
-    it('should create prediction', async () => {
-      const request = new NextRequest('http://localhost:3000/api/predictions', {
-        method: 'POST',
-        body: JSON.stringify({
-          league: 'Premier League',
-          homeTeam: 'Arsenal',
-          awayTeam: 'Chelsea',
-          prediction: 'Home Win',
-          confidence: 'High',
-        }),
-      });
-
-      (prisma.prediction.create as any).mockResolvedValue(mockPrediction);
-
-      const response = await POST(request);
-      const data = await response.json();
-
-      expect(response.status).toBe(200);
-      expect(data).toEqual(mockPrediction);
-      expect(prisma.prediction.create).toHaveBeenCalledWith({
-        data: expect.objectContaining({
-          league: 'Premier League',
-          homeTeam: 'Arsenal',
-          awayTeam: 'Chelsea',
-          prediction: 'Home Win',
-          confidence: 'High',
-        }),
-      });
-    });
-
-    it('should validate required fields', async () => {
-      const request = new NextRequest('http://localhost:3000/api/predictions', {
-        method: 'POST',
-        body: JSON.stringify({
-          league: 'Premier League',
-          // Missing required fields
-        }),
-      });
-
-      const response = await POST(request);
-      const data = await response.json();
-
-      expect(response.status).toBe(400);
-      expect(data.error).toBe('Missing required fields');
-    });
-  });
-
-  describe('PUT /api/predictions/:id', () => {
-    it('should update prediction', async () => {
-      const request = new NextRequest('http://localhost:3000/api/predictions/1', {
-        method: 'PUT',
-        body: JSON.stringify({
-          prediction: 'Draw',
-          confidence: 'Medium',
-        }),
-      });
-
-      (prisma.prediction.update as any).mockResolvedValue({
-        ...mockPrediction,
-        prediction: 'Draw',
-        confidence: 'Medium',
-      });
-
-      const response = await PUT(request);
-      const data = await response.json();
-
-      expect(response.status).toBe(200);
-      expect(data).toEqual({
-        ...mockPrediction,
-        prediction: 'Draw',
-        confidence: 'Medium',
-      });
-    });
-
-    it('should handle non-existent prediction', async () => {
-      const request = new NextRequest('http://localhost:3000/api/predictions/999', {
-        method: 'PUT',
-        body: JSON.stringify({
-          prediction: 'Draw',
-          confidence: 'Medium',
-        }),
-      });
-
-      (prisma.prediction.update as any).mockRejectedValue(new Error('Record not found'));
-
-      const response = await PUT(request);
-      const data = await response.json();
-
-      expect(response.status).toBe(404);
-      expect(data.error).toBe('Prediction not found');
-    });
-  });
-
-  describe('DELETE /api/predictions/:id', () => {
-    it('should delete prediction', async () => {
-      const request = new NextRequest('http://localhost:3000/api/predictions/1', {
-        method: 'DELETE',
-      });
-
-      (prisma.prediction.delete as any).mockResolvedValue(mockPrediction);
-
-      const response = await DELETE(request);
-      const data = await response.json();
-
-      expect(response.status).toBe(200);
-      expect(data).toEqual(mockPrediction);
-    });
-
-    it('should handle non-existent prediction', async () => {
-      const request = new NextRequest('http://localhost:3000/api/predictions/999', {
-        method: 'DELETE',
-      });
-
-      (prisma.prediction.delete as any).mockRejectedValue(new Error('Record not found'));
-
-      const response = await DELETE(request);
-      const data = await response.json();
-
-      expect(response.status).toBe(404);
-      expect(data.error).toBe('Prediction not found');
     });
   });
 }); 

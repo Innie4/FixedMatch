@@ -2,7 +2,7 @@ import {
   WinningTicket,
   Announcement,
   SubscriptionPackage,
-  VipPredictionPerformance,
+  VipPerformanceData,
 } from '../types'
 
 // Mock winning tickets data
@@ -64,7 +64,7 @@ export const winningTickets: WinningTicket[] = [
 ]
 
 // Mock VIP prediction performance data
-export const vipPredictionPerformance: VipPredictionPerformance = {
+export const vipPredictionPerformance: VipPerformanceData = {
   overall: {
     total: 124,
     won: 89,
@@ -88,7 +88,7 @@ export const announcements: Announcement[] = [
       "We've added new features to our VIP subscription including early access to predictions and enhanced statistics.",
     publishDate: '2023-11-15',
     expiryDate: '2023-12-15', // Fixed: changed 'expi' to 'expiryDate'
-    status: 'active',
+    status: 'published',
     targetAudience: 'vip',
     author: 'admin',
     createdAt: '2023-11-14T10:30:00Z',

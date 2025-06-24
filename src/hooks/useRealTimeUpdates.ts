@@ -18,7 +18,13 @@ export function useRealTimeUpdates<T>(eventType: string): RealTimeUpdateHook<T> 
       if (message.type === eventType || message.type === 'GLOBAL_UPDATE') {
         try {
           setData(message.payload as T)
-          setLastUpdate(message.timestamp)
+          setLastUpdate(
+            typeof message.timestamp === 'string'
+              ? message.timestamp
+              : typeof message.timestamp === 'number'
+                ? String(message.timestamp)
+                : null
+          )
           setError(null)
         } catch (err) {
           setError(err instanceof Error ? err : new Error('Failed to process update'))

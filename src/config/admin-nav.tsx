@@ -1,9 +1,10 @@
+import React from "react";
 import { BarChart3, Users, Package, FileText, Star, Globe, Settings, UserCog, CreditCard } from 'lucide-react';
 
 interface NavItem {
   title: string;
   href: string;
-  icon: JSX.Element;
+  icon: React.ReactNode;
 }
 
 export const adminNavItems: NavItem[] = [

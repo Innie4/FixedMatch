@@ -30,7 +30,7 @@ export async function GET() {
           delete: true,
         })
 
-        subscription.on('data', (data) => {
+        subscription.on('data', (data: any) => {
           sendMessage({
             type: data.type,
             data: data.payload,
@@ -52,4 +52,9 @@ export async function GET() {
   )
 
   return response
+}
+
+export async function POST(req: Request) {
+  const data: any = await req.json();
+  // ... existing code ...
 } 

@@ -9,7 +9,7 @@ vi.mock('@aws-sdk/client-s3', () => ({
 }));
 
 describe('S3 Upload', () => {
-  const mockFile = new Blob(['test'], { type: 'image/jpeg' });
+  const mockFileBuffer = new ArrayBuffer(8);
   const mockS3Client = {
     send: vi.fn(),
   };
@@ -31,7 +31,7 @@ describe('S3 Upload', () => {
     const mockUrl = 'https://test-bucket.s3.amazonaws.com/test.jpg';
     (mockS3Client.send as any).mockResolvedValue({});
 
-    const result = await uploadToS3(mockFile, 'test.jpg');
+    const result = await uploadToS3(mockFileBuffer, 'test.jpg', 'image/jpeg');
 
     expect(result).toBe(mockUrl);
     expect(S3Client).toHaveBeenCalledWith({
@@ -44,7 +44,7 @@ describe('S3 Upload', () => {
     expect(PutObjectCommand).toHaveBeenCalledWith({
       Bucket: 'test-bucket',
       Key: 'test.jpg',
-      Body: mockFile,
+      Body: mockFileBuffer,
       ContentType: 'image/jpeg',
     });
   });
@@ -52,7 +52,7 @@ describe('S3 Upload', () => {
   it('should handle upload error', async () => {
     (mockS3Client.send as any).mockRejectedValue(new Error('Upload failed'));
 
-    await expect(uploadToS3(mockFile, 'test.jpg')).rejects.toThrow('Upload failed');
+    await expect(uploadToS3(mockFileBuffer, 'test.jpg', 'image/jpeg')).rejects.toThrow('Upload failed');
   });
 
   it('should validate required environment variables', async () => {
@@ -61,25 +61,25 @@ describe('S3 Upload', () => {
     delete process.env.AWS_SECRET_ACCESS_KEY;
     delete process.env.AWS_S3_BUCKET;
 
-    await expect(uploadToS3(mockFile, 'test.jpg')).rejects.toThrow('Missing required environment variables');
+    await expect(uploadToS3(mockFileBuffer, 'test.jpg', 'image/jpeg')).rejects.toThrow('Missing required environment variables');
   });
 
   it('should handle invalid file', async () => {
-    await expect(uploadToS3(null as any, 'test.jpg')).rejects.toThrow('Invalid file');
-    await expect(uploadToS3(undefined as any, 'test.jpg')).rejects.toThrow('Invalid file');
+    await expect(uploadToS3(null as any, 'test.jpg', 'image/jpeg')).rejects.toThrow('Invalid file');
+    await expect(uploadToS3(undefined as any, 'test.jpg', 'image/jpeg')).rejects.toThrow('Invalid file');
   });
 
   it('should handle invalid filename', async () => {
-    await expect(uploadToS3(mockFile, '')).rejects.toThrow('Invalid filename');
-    await expect(uploadToS3(mockFile, null as any)).rejects.toThrow('Invalid filename');
+    await expect(uploadToS3(mockFileBuffer, '', 'image/jpeg')).rejects.toThrow('Invalid filename');
+    await expect(uploadToS3(mockFileBuffer, null as any, 'image/jpeg')).rejects.toThrow('Invalid filename');
   });
 
   it('should generate unique filenames', async () => {
     const mockUrl = 'https://test-bucket.s3.amazonaws.com/test.jpg';
     (mockS3Client.send as any).mockResolvedValue({});
 
-    const result1 = await uploadToS3(mockFile, 'test.jpg');
-    const result2 = await uploadToS3(mockFile, 'test.jpg');
+    const result1 = await uploadToS3(mockFileBuffer, 'test.jpg', 'image/jpeg');
+    const result2 = await uploadToS3(mockFileBuffer, 'test.jpg', 'image/jpeg');
 
     expect(result1).not.toBe(result2);
     expect(result1).toMatch(/^https:\/\/test-bucket\.s3\.amazonaws\.com\/test-\d+\.jpg$/);
@@ -90,14 +90,14 @@ describe('S3 Upload', () => {
     const mockUrl = 'https://test-bucket.s3.amazonaws.com/test.png';
     (mockS3Client.send as any).mockResolvedValue({});
 
-    const pngFile = new Blob(['test'], { type: 'image/png' });
-    const result = await uploadToS3(pngFile, 'test.png');
+    const pngFileBuffer = new ArrayBuffer(8);
+    const result = await uploadToS3(pngFileBuffer, 'test.png', 'image/png');
 
     expect(result).toBe(mockUrl);
     expect(PutObjectCommand).toHaveBeenCalledWith({
       Bucket: 'test-bucket',
       Key: 'test.png',
-      Body: pngFile,
+      Body: pngFileBuffer,
       ContentType: 'image/png',
     });
   });

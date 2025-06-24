@@ -4,7 +4,7 @@ import { POST as forgotPassword } from '@/app/api/auth/forgot-password/route';
 import { POST as resetPassword } from '@/app/api/auth/reset-password/route';
 import { prisma } from '@/lib/prisma';
 import { sendEmail } from '@/lib/email';
-import { rateLimit } from '@/lib/rate-limit';
+import rateLimit from '@/lib/rate-limit';
 
 // Mock dependencies
 vi.mock('@/lib/prisma', () => ({

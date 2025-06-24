@@ -68,15 +68,18 @@ export async function POST(req: Request) {
       { status: 200 }
     )
   } catch (error) {
-    console.error('Password reset error:', error)
-    
-    if (error.message === 'Rate limit exceeded') {
-      return NextResponse.json(
-        { error: 'Too many requests. Please try again later.' },
-        { status: 429 }
-      )
+    if (error instanceof Error) {
+      console.error('Forgot password error:', error.message);
+      if (error.message === 'Rate limit exceeded') {
+        return NextResponse.json(
+          { error: 'Too many requests. Please try again later.' },
+          { status: 429 }
+        )
+      }
+    } else {
+      console.error('Forgot password error:', String(error));
     }
-
+    
     return NextResponse.json(
       { error: 'An error occurred while processing your request' },
       { status: 500 }

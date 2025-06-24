@@ -68,8 +68,8 @@ const handler = NextAuth({
           token.subscriptionStatus = dbUser.subscriptions[0].status
           token.subscriptionExpiry = dbUser.subscriptions[0].endDate
         } else {
-          token.subscriptionStatus = 'none'
-          token.subscriptionExpiry = null
+          token.subscriptionStatus = undefined
+          token.subscriptionExpiry = undefined
         }
       }
       // Re-fetch subscription status if session is updated (e.g., after a new subscription)
@@ -83,7 +83,7 @@ const handler = NextAuth({
       session.user.id = token.id as string
       session.user.name = token.name
       session.user.email = token.email
-      session.user.subscriptionStatus = token.subscriptionStatus as string | undefined
+      session.user.subscriptionStatus = token.subscriptionStatus as 'active' | 'expired' | 'grace_period' | undefined
       session.user.subscriptionExpiry = token.subscriptionExpiry as Date | undefined
       return session
     },

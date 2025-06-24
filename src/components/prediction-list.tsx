@@ -8,14 +8,14 @@ import { Loader2 } from 'lucide-react'
 interface Prediction {
   id: number
   homeTeam: string
-  homeTeamLogo?: string
+  homeTeamLogo: string
   awayTeam: string
-  awayTeamLogo?: string
+  awayTeamLogo: string
   league: string
-  leagueLogo?: string
+  leagueLogo: string
   matchTime: string
   prediction: string
-  confidence?: number
+  confidence: number
   status: string
   result?: string
   analysis?: string

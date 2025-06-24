@@ -23,8 +23,11 @@ export async function GET(request: Request) {
       (request as any).connection?.remoteAddress ||
       '127.0.0.1'
 
+
     const res = NextResponse.next()
-    const isRateLimited = await limiter.check(res, 30, ip)
+   // const isRateLimited = await limiter.check(res, 30, ip)
+
+    const isRateLimited = await limiter.check(30, ip)
 
     if (!isRateLimited) {
       return NextResponse.json(

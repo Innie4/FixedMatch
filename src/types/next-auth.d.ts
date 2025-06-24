@@ -5,6 +5,8 @@ declare module 'next-auth' {
     role?: string
     subscriptionStatus?: 'active' | 'grace_period' | 'expired'
     subscriptionExpiry?: Date
+    isEmailVerified?: boolean
+    isAdmin?: boolean
   }
 
   interface Session {
@@ -12,6 +14,8 @@ declare module 'next-auth' {
       role?: string
       subscriptionStatus?: 'active' | 'grace_period' | 'expired'
       subscriptionExpiry?: Date
+      isEmailVerified?: boolean
+      isAdmin?: boolean
     }
   }
 }

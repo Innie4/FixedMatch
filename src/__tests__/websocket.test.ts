@@ -11,7 +11,17 @@ describe('WebSocket Hook', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    global.WebSocket = vi.fn(() => mockWebSocket as any);
+    class MockWebSocket {
+      static CONNECTING = 0;
+      static OPEN = 1;
+      static CLOSING = 2;
+      static CLOSED = 3;
+      addEventListener = vi.fn();
+      removeEventListener = vi.fn();
+      close = vi.fn();
+      // Add other required properties/methods as needed
+    }
+    global.WebSocket = MockWebSocket as any;
   });
 
   afterEach(() => {

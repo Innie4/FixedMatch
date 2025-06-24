@@ -66,17 +66,29 @@ export const authOptions: NextAuthOptions = {
           },
         })
         if (dbUser?.subscriptions && dbUser.subscriptions.length > 0) {
-          token.subscriptionStatus = dbUser.subscriptions[0].status
-          token.subscriptionExpiry = dbUser.subscriptions[0].endDate
+          const allowedStatuses = ["active", "expired", "grace_period"] as const;
+          type AllowedStatus = typeof allowedStatuses[number];
+          const rawStatus = dbUser.subscriptions[0].status;
+          const status: AllowedStatus | undefined = allowedStatuses.includes(rawStatus as AllowedStatus)
+            ? (rawStatus as AllowedStatus)
+            : undefined;
+          token.subscriptionStatus = status;
+          token.subscriptionExpiry = dbUser.subscriptions[0].endDate ?? undefined;
         } else {
-          token.subscriptionStatus = 'none'
-          token.subscriptionExpiry = null
+          token.subscriptionStatus = undefined;
+          token.subscriptionExpiry = undefined;
         }
       }
       // Re-fetch subscription status if session is updated (e.g., after a new subscription)
       if (trigger === 'update' && session?.subscriptionStatus) {
-        token.subscriptionStatus = session.subscriptionStatus
-        token.subscriptionExpiry = session.subscriptionExpiry
+        const allowedStatuses = ["active", "expired", "grace_period"] as const;
+        type AllowedStatus = typeof allowedStatuses[number];
+        const rawStatus = session.subscriptionStatus;
+        const status: AllowedStatus | undefined = allowedStatuses.includes(rawStatus as AllowedStatus)
+          ? (rawStatus as AllowedStatus)
+          : undefined;
+        token.subscriptionStatus = status;
+        token.subscriptionExpiry = session.subscriptionExpiry ?? undefined;
       }
       return token
     },
@@ -84,7 +96,7 @@ export const authOptions: NextAuthOptions = {
       session.user.id = token.id as string
       session.user.name = token.name
       session.user.email = token.email
-      session.user.subscriptionStatus = token.subscriptionStatus as string | undefined
+      session.user.subscriptionStatus = token.subscriptionStatus as ("active" | "expired" | "grace_period") | undefined;
       session.user.subscriptionExpiry = token.subscriptionExpiry as Date | undefined
       return session
     },

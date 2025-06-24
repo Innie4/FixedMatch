@@ -8,22 +8,21 @@ if (process.env.SENDGRID_API_KEY) {
 
 interface EmailOptions {
   to: string
-  template: EmailTemplate
-  data: Record<string, any>
+  template: keyof typeof emailTemplates
+  data: any // Relaxed type to allow different template data shapes
 }
 
 export async function sendEmail({ to, template, data }: EmailOptions): Promise<void> {
   try {
-    const { subject, html, text } = emailTemplates[template](data)
-    
+    const templateResult = emailTemplates[template](data);
+    const { subject, html, text } = templateResult;
     const msg = {
       to,
       from: process.env.EMAIL_FROM || 'noreply@predicts.com',
       subject,
-      text,
       html,
-    }
-
+      ...(text ? { text } : {}),
+    };
     await sgMail.send(msg)
   } catch (error) {
     console.error('Failed to send email:', error)
@@ -100,7 +99,7 @@ export const emailTemplates = {
 
   vipActivated: (data: { name: string, package: string, expiryDate: string }) => ({
     subject: 'VIP Access Activated',
-    text: `Your VIP access for ${data.package} has been activated until ${data.expiryDate}.`,
+    text: `Hi ${data.name}, your VIP access for ${data.package} has been activated and is valid until ${data.expiryDate}. Enjoy exclusive predictions and features!`,
     html: `
       <div>
         <h1>VIP Access Activated</h1>
@@ -114,7 +113,7 @@ export const emailTemplates = {
 
   predictionUpdate: (data: { name: string, prediction: string, status: string }) => ({
     subject: 'Prediction Update',
-    text: `Your prediction "${data.prediction}" has been ${data.status}.`,
+    text: `Hi ${data.name}, your prediction "${data.prediction}" has been ${data.status}. Check your dashboard for more details.`,
     html: `
       <div>
         <h1>Prediction Update</h1>
@@ -125,81 +124,80 @@ export const emailTemplates = {
     `,
   }),
 
-  paymentSubmitted: (username: string) => ({
+  paymentSubmitted: (data: { name: string }) => ({
     subject: 'Payment Confirmation Received',
+    text: `Dear ${data.name}, we have received your payment confirmation. Our team will review it shortly. You will receive another email once the review is complete.`,
     html: baseTemplate(`
       <div style="${emailStyles.header}">
         <h1>Payment Confirmation Received</h1>
       </div>
       <div style="${emailStyles.content}">
-        <p>Dear ${username},</p>
+        <p>Dear ${data.name},</p>
         <p>We have received your payment confirmation. Our team will review it shortly.</p>
         <p>You will receive another email once the review is complete.</p>
       </div>
     `),
   }),
 
-  paymentApproved: (username: string, packageName: string, expirationDate: string) => ({
+  paymentApproved: (data: { name: string, package: string, expiryDate: string }) => ({
     subject: 'Payment Approved - VIP Access Granted',
+    text: `Dear ${data.name}, your payment has been approved and VIP access granted for package ${data.package} until ${data.expiryDate}.`,
     html: baseTemplate(`
       <div style="${emailStyles.header}">
         <h1>Payment Approved!</h1>
       </div>
       <div style="${emailStyles.content}">
-        <p>Dear ${username},</p>
+        <p>Dear ${data.name},</p>
         <p>Your payment has been approved and VIP access has been granted.</p>
-        <p><strong>Package:</strong> ${packageName}</p>
-        <p><strong>Expires:</strong> ${expirationDate}</p>
+        <p><strong>Package:</strong> ${data.package}</p>
+        <p><strong>Expires:</strong> ${data.expiryDate}</p>
       </div>
     `),
   }),
 
-  paymentDeclined: (username: string, reason: string) => ({
+  paymentDeclined: (data: { name: string, reason: string }) => ({
     subject: 'Payment Confirmation Declined',
+    text: `Dear ${data.name}, your payment confirmation has been declined for the following reason: ${data.reason}. Please submit a new payment confirmation with the correct information.`,
     html: baseTemplate(`
       <div style="${emailStyles.header}">
         <h1>Payment Declined</h1>
       </div>
       <div style="${emailStyles.content}">
-        <p>Dear ${username},</p>
+        <p>Dear ${data.name},</p>
         <p>Your payment confirmation has been declined for the following reason:</p>
-        <p style="color: #e53e3e;">${reason}</p>
+        <p style="color: #e53e3e;">${data.reason}</p>
         <p>Please submit a new payment confirmation with the correct information.</p>
       </div>
     `),
   }),
 
-  subscriptionExpiring: (
-    username: string,
-    packageName: string,
-    daysRemaining: number,
-    expiryDate: string,
-    renewalUrl: string
-  ) => ({
-    subject: `Your VIP Access Expires in ${daysRemaining} ${daysRemaining === 1 ? 'Day' : 'Days'}`,
+  subscriptionExpiring: (data: { name: string, package: string, daysRemaining: number, expiryDate: string, renewalUrl: string }) => ({
+    subject: `Your VIP Access Expires in ${data.daysRemaining} ${data.daysRemaining === 1 ? 'Day' : 'Days'}`,
+    text: `Dear ${data.name}, your VIP access for ${data.package} will expire in ${data.daysRemaining} ${data.daysRemaining === 1 ? 'day' : 'days'}. Expiry Date: ${data.expiryDate}. Renew at: ${data.renewalUrl}`,
     html: baseTemplate(`
       <div style="${emailStyles.header}">
         <h1>VIP Access Expiring Soon</h1>
       </div>
       <div style="${emailStyles.content}">
-        <p>Dear ${username},</p>
-        <p>Your VIP access for <strong>${packageName}</strong> will expire in ${daysRemaining} ${daysRemaining === 1 ? 'day' : 'days'}.</p>
-        <p><strong>Expiry Date:</strong> ${expiryDate}</p>
-        <a href="${renewalUrl}" style="${emailStyles.button}">Renew Your Subscription</a>
+        <p>Dear ${data.name},</p>
+        <p>Your VIP access for <strong>${data.package}</strong> will expire in ${data.daysRemaining} ${data.daysRemaining === 1 ? 'day' : 'days'}.</p>
+        <p><strong>Expiry Date:</strong> ${data.expiryDate}</p>
+        <a href="${data.renewalUrl}" style="${emailStyles.button}">Renew Your Subscription</a>
       </div>
     `),
   }),
 
-  subscriptionExpired: (username: string, renewalUrl: string) => ({
+  subscriptionExpired: (data: { name: string, renewalUrl: string }) => ({
     subject: 'Your VIP Access Has Expired',
+    text: `Dear ${data.name}, your VIP access has expired. To continue enjoying our premium features, please renew your subscription: ${data.renewalUrl}`,
     html: baseTemplate(`
       <div style="${emailStyles.header}">
         <h1>VIP Access Expired</h1>
       </div>
       <div style="${emailStyles.content}">
-        <p>Dear ${username},</p>
+        <p>Dear ${data.name},</p>
         <p>Your VIP access has expired. To continue enjoying our premium features, please renew your subscription.</p>
-        <a href="${renewalUrl}" style="${emailStyles.button}">Renew Now</a>
+        <a href="${data.renewalUrl}" style="${emailStyles.button}">Renew Now</a>
       </div>
     `),
   }),
