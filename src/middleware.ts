@@ -1,96 +1,65 @@
+import { withAuth } from 'next-auth/middleware'
 import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
-import { getToken } from 'next-auth/jwt'
 
-export async function middleware(request: NextRequest) {
-  // Handle WebSocket upgrade requests
-  if (request.headers.get('upgrade') === 'websocket') {
+export default withAuth(
+  function middleware(req) {
+    const token = req.nextauth.token
+    const path = req.nextUrl.pathname
+
+    // Public routes that don't require authentication
+    const publicRoutes = ['/auth/login', '/auth/register', '/auth/forgot-password', '/auth/reset-password']
+    if (publicRoutes.includes(path)) {
+      if (token) {
+        // If user is already logged in, redirect to dashboard
+        return NextResponse.redirect(new URL('/dashboard', req.url))
+      }
+      return NextResponse.next()
+    }
+
+    // Admin routes
+    if (path.startsWith('/admin')) {
+      if (token?.role !== 'admin') {
+        // If user is not an admin, redirect to dashboard
+        return NextResponse.redirect(new URL('/dashboard', req.url))
+      }
+      return NextResponse.next()
+    }
+
+    // VIP routes
+    if (path.startsWith('/vip')) {
+      const hasActiveSubscription = token?.subscriptionStatus === 'active'
+      if (!hasActiveSubscription) {
+        // If user doesn't have an active subscription, redirect to pricing
+        return NextResponse.redirect(new URL('/pricing', req.url))
+      }
+      return NextResponse.next()
+    }
+
+    // Email verification check for protected routes
+    if (!token?.isEmailVerified && !path.startsWith('/auth/verify-email')) {
+      return NextResponse.redirect(new URL('/auth/verify-email', req.url))
+    }
+
     return NextResponse.next()
+  },
+  {
+    callbacks: {
+      authorized: ({ token }) => !!token,
+    },
   }
+)
 
-  const token = await getToken({ req: request })
-
-  const response = NextResponse.next()
-
-  // Security Headers
-  // Content Security Policy (CSP)
-  const csp = `
-    default-src 'self';
-    img-src 'self' data: res.cloudinary.com;
-    script-src 'self' 'unsafe-eval' https://accounts.google.com;
-    style-src 'self' 'unsafe-inline';
-    font-src 'self';
-    connect-src 'self';
-  `
-    .replace(/\n/g, ' ')
-    .trim()
-
-  if (process.env.NODE_ENV === 'production') {
-    // Stricter CSP for production
-    // Remove 'unsafe-eval' in production for script-src if possible
-    // You might need to adjust script-src further based on your Next.js setup and third-party scripts
-    response.headers.set(
-      'Content-Security-Policy',
-      `
-      default-src 'self';
-      img-src 'self' data: res.cloudinary.com;
-      script-src 'self' https://accounts.google.com;
-      style-src 'self' 'unsafe-inline';
-      font-src 'self';
-      connect-src 'self';
-    `
-        .replace(/\n/g, ' ')
-        .trim()
-    )
-    response.headers.set('X-Content-Type-Options', 'nosniff')
-    response.headers.set('X-Frame-Options', 'DENY')
-    response.headers.set(
-      'Strict-Transport-Security',
-      'max-age=31536000; includeSubDomains; preload'
-    )
-  } else {
-    // More permissive CSP for development
-    response.headers.set('Content-Security-Policy', csp)
-  }
-
-  // Check if trying to access VIP content
-  if (request.nextUrl.pathname.startsWith('/vip/')) {
-    if (!token) {
-      // Not logged in - redirect to login
-      return NextResponse.redirect(new URL('/auth/login', request.url))
-    }
-
-    // Check if user has active VIP subscription
-    if (
-      !token.subscriptionStatus ||
-      token.subscriptionStatus === 'expired' ||
-      (token.subscriptionExpiry && new Date(token.subscriptionExpiry) < new Date())
-    ) {
-      // No active subscription - redirect to upgrade page
-      return NextResponse.redirect(new URL('/vip/upgrade', request.url))
-    }
-
-    // Add subscription info to headers for use in pages
-    if (token.subscriptionStatus) {
-      response.headers.set('x-subscription-status', token.subscriptionStatus)
-    }
-    if (token.subscriptionExpiry) {
-      response.headers.set(
-        'x-subscription-expiry',
-        new Date(token.subscriptionExpiry).toISOString()
-      )
-    }
-    return response
-  }
-
-  return response // Ensure the response with headers is returned for non-VIP paths
-}
-
+// Specify which routes should be protected by the middleware
 export const config = {
   matcher: [
-    // Add WebSocket endpoint to matcher
-    '/api/ws',
-    '/vip/:path*',
-    '/api/vip/:path*',
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico|public).*)',
   ],
 }

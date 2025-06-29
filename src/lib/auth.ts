@@ -20,32 +20,71 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          return null
+          throw new Error('Email and password are required')
         }
 
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
+          include: {
+            subscriptions: {
+              where: { status: 'active' },
+              orderBy: { endDate: 'desc' },
+              take: 1,
+            },
+          },
         })
 
-        if (!user || !(await bcrypt.compare(credentials.password, user.passwordHash))) {
-          return null
+        if (!user) {
+          throw new Error('No user found with this email')
+        }
+
+        if (!user.isEmailVerified) {
+          throw new Error('Please verify your email before logging in')
+        }
+
+        if (!user.passwordHash || !(await bcrypt.compare(credentials.password, user.passwordHash))) {
+          throw new Error('Invalid password')
         }
 
         return {
           id: user.id.toString(),
           name: user.name,
           email: user.email,
-          image: null, // Add a user image field if available
+          image: user.image,
+          role: user.role as 'admin' | 'customer',
+          subscriptionStatus: user.subscriptions[0]?.status as 'active' | 'expired' | 'grace_period' | undefined,
+          subscriptionExpiry: user.subscriptions[0]?.endDate ?? undefined,
+          isEmailVerified: user.isEmailVerified,
         }
       },
     }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      profile(profile) {
+        return {
+          id: profile.sub,
+          name: profile.name,
+          email: profile.email,
+          image: profile.picture,
+          role: 'customer',
+          isEmailVerified: true, // Google accounts are pre-verified
+        }
+      },
     }),
     FacebookProvider({
       clientId: process.env.FACEBOOK_CLIENT_ID as string,
       clientSecret: process.env.FACEBOOK_CLIENT_SECRET as string,
+      profile(profile) {
+        return {
+          id: profile.id,
+          name: profile.name,
+          email: profile.email,
+          image: profile.picture?.data?.url,
+          role: 'customer',
+          isEmailVerified: true, // Facebook accounts are pre-verified
+        }
+      },
     }),
   ],
   session: {
@@ -53,51 +92,55 @@ export const authOptions: NextAuthOptions = {
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   callbacks: {
+    async signIn({ user, account }) {
+      // For OAuth providers, create or update user in database
+      if (account?.provider === 'google' || account?.provider === 'facebook') {
+        const existingUser = await prisma.user.findUnique({
+          where: { email: user.email! },
+        })
+
+        if (!existingUser) {
+          await prisma.user.create({
+            data: {
+              email: user.email!,
+              name: user.name,
+              image: user.image,
+              role: 'customer',
+              isEmailVerified: true,
+            },
+          })
+        }
+      }
+
+      return true
+    },
     async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id
-        token.name = user.name
-        token.email = user.email
-        // Fetch subscription status and expiry from database and add to token
-        const dbUser = await prisma.user.findUnique({
-          where: { id: parseInt(user.id) },
-          include: {
-            subscriptions: { where: { status: 'active' }, orderBy: { endDate: 'desc' }, take: 1 },
-          },
-        })
-        if (dbUser?.subscriptions && dbUser.subscriptions.length > 0) {
-          const allowedStatuses = ["active", "expired", "grace_period"] as const;
-          type AllowedStatus = typeof allowedStatuses[number];
-          const rawStatus = dbUser.subscriptions[0].status;
-          const status: AllowedStatus | undefined = allowedStatuses.includes(rawStatus as AllowedStatus)
-            ? (rawStatus as AllowedStatus)
-            : undefined;
-          token.subscriptionStatus = status;
-          token.subscriptionExpiry = dbUser.subscriptions[0].endDate ?? undefined;
-        } else {
-          token.subscriptionStatus = undefined;
-          token.subscriptionExpiry = undefined;
-        }
+        token.role = user.role
+        token.isEmailVerified = user.isEmailVerified
+        token.subscriptionStatus = user.subscriptionStatus
+        token.subscriptionExpiry = user.subscriptionExpiry
       }
-      // Re-fetch subscription status if session is updated (e.g., after a new subscription)
-      if (trigger === 'update' && session?.subscriptionStatus) {
-        const allowedStatuses = ["active", "expired", "grace_period"] as const;
-        type AllowedStatus = typeof allowedStatuses[number];
-        const rawStatus = session.subscriptionStatus;
-        const status: AllowedStatus | undefined = allowedStatuses.includes(rawStatus as AllowedStatus)
-          ? (rawStatus as AllowedStatus)
-          : undefined;
-        token.subscriptionStatus = status;
-        token.subscriptionExpiry = session.subscriptionExpiry ?? undefined;
+
+      // Update token if session is updated
+      if (trigger === 'update' && session) {
+        token.name = session.user.name
+        token.email = session.user.email
+        token.image = session.user.image
+        token.subscriptionStatus = session.user.subscriptionStatus
+        token.subscriptionExpiry = session.user.subscriptionExpiry
       }
+
       return token
     },
     async session({ session, token }) {
-      session.user.id = token.id as string
-      session.user.name = token.name
-      session.user.email = token.email
-      session.user.subscriptionStatus = token.subscriptionStatus as ("active" | "expired" | "grace_period") | undefined;
-      session.user.subscriptionExpiry = token.subscriptionExpiry as Date | undefined
+      session.user.id = token.id
+      session.user.role = token.role
+      session.user.isEmailVerified = token.isEmailVerified
+      session.user.subscriptionStatus = token.subscriptionStatus
+      session.user.subscriptionExpiry = token.subscriptionExpiry
+
       return session
     },
   },
@@ -105,10 +148,32 @@ export const authOptions: NextAuthOptions = {
     signIn: '/auth/login',
     signOut: '/auth/login',
     error: '/auth/login',
+    verifyRequest: '/auth/verify-email',
+  },
+  events: {
+    async signIn({ user }) {
+      // Log user sign in
+      await prisma.activityLog.create({
+        data: {
+          userId: parseInt(user.id),
+          action: 'SIGN_IN',
+          details: 'User signed in successfully',
+        },
+      })
+    },
   },
   secret: process.env.NEXTAUTH_SECRET,
 }
 
 export const generateToken = (length: number = 32): string => {
-  return randomBytes(length).toString('hex');
-}; 
+  return randomBytes(length).toString('hex')
+}
+
+// Helper function to check if user has admin role
+export const isAdmin = (session: any) => session?.user?.role === 'admin'
+
+// Helper function to check if user is authenticated
+export const isAuthenticated = (session: any) => !!session?.user
+
+// Helper function to check if user has verified email
+export const isEmailVerified = (session: any) => session?.user?.isEmailVerified === true

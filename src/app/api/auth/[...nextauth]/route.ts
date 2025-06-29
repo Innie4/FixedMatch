@@ -5,6 +5,7 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
+import { User } from 'next-auth'
 
 const prisma = new PrismaClient()
 
@@ -17,14 +18,23 @@ const handler = NextAuth({
         email: { label: 'Email', type: 'text' },
         password: { label: 'Password', type: 'password' },
       },
-      async authorize(credentials) {
+      async authorize(credentials): Promise<User | null> {
         if (!credentials?.email || !credentials?.password) {
           return null
         }
 
+        type UserWithRole = {
+          id: number
+          name: string | null
+          email: string
+          passwordHash: string
+          role: 'admin' | 'customer'
+          isEmailVerified: boolean
+        }
+
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-        })
+          where: { email: credentials.email }
+        }) as UserWithRole | null
 
         if (!user || !(await bcrypt.compare(credentials.password, user.passwordHash))) {
           return null
@@ -34,7 +44,9 @@ const handler = NextAuth({
           id: user.id.toString(),
           name: user.name,
           email: user.email,
-          image: null, // Add a user image field if available
+          image: null,
+          role: user.role,
+          isEmailVerified: user.isEmailVerified
         }
       },
     }),
@@ -57,6 +69,8 @@ const handler = NextAuth({
         token.id = user.id
         token.name = user.name
         token.email = user.email
+        token.role = user.role
+        token.isEmailVerified = user.isEmailVerified
         // Fetch subscription status and expiry from database and add to token
         const dbUser = await prisma.user.findUnique({
           where: { id: parseInt(user.id) },
@@ -65,7 +79,7 @@ const handler = NextAuth({
           },
         })
         if (dbUser?.subscriptions && dbUser.subscriptions.length > 0) {
-          token.subscriptionStatus = dbUser.subscriptions[0].status
+          token.subscriptionStatus = dbUser.subscriptions[0].status as 'active' | 'expired' | 'grace_period'
           token.subscriptionExpiry = dbUser.subscriptions[0].endDate
         } else {
           token.subscriptionStatus = undefined
@@ -74,15 +88,18 @@ const handler = NextAuth({
       }
       // Re-fetch subscription status if session is updated (e.g., after a new subscription)
       if (trigger === 'update' && session?.subscriptionStatus) {
-        token.subscriptionStatus = session.subscriptionStatus
+        token.subscriptionStatus = session.subscriptionStatus as 'active' | 'expired' | 'grace_period'
         token.subscriptionExpiry = session.subscriptionExpiry
       }
       return token
     },
     async session({ session, token }) {
+      if (!session.user) session.user = {} as any
       session.user.id = token.id as string
       session.user.name = token.name
       session.user.email = token.email
+      session.user.role = token.role as 'admin' | 'customer'
+      session.user.isEmailVerified = token.isEmailVerified as boolean
       session.user.subscriptionStatus = token.subscriptionStatus as 'active' | 'expired' | 'grace_period' | undefined
       session.user.subscriptionExpiry = token.subscriptionExpiry as Date | undefined
       return session
