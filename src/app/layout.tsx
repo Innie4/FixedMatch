@@ -3,7 +3,7 @@
 import type React from 'react'
 import { Inter } from 'next/font/google'
 import { usePathname } from 'next/navigation'
-import '@/styles/globals.css'
+import './globals.css'
 import { ThemeProvider } from '@/providers/ThemeProvider'
 import { SiteHeader } from '@/components/site-header'
 import { MobileNav } from '@/components/main-nav'
@@ -12,11 +12,6 @@ import { Toaster } from '@/components/ui/toaster'
 import { AuthProvider } from '@/providers/AuthProvider'
 
 const inter = Inter({ subsets: ['latin'] })
-
-export const metadata = {
-  title: 'Predicts',
-  description: 'Your trusted source for soccer predictions',
-}
 
 export default function RootLayout({
   children,
