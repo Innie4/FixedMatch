@@ -8,6 +8,8 @@ const nextConfig = {
 
   // Image optimization settings
   images: {
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     domains: ['placeholder.com', 'res.cloudinary.com'],
     remotePatterns: [
       {

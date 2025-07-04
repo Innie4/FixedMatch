@@ -32,17 +32,49 @@ export default function Home() {
 
   const [wsMessage, setWsMessage] = useState<string | null>(null);
 
+  // Debug logging
+  console.log('🔍 Home Component State:', {
+    predictions: {
+      value: predictions,
+      type: typeof predictions,
+      isArray: Array.isArray(predictions),
+      length: Array.isArray(predictions) ? predictions.length : 'N/A'
+    },
+    packages: {
+      value: packages,
+      type: typeof packages,
+      isArray: Array.isArray(packages),
+      length: Array.isArray(packages) ? packages.length : 'N/A'
+    },
+    loadingPredictions,
+    errorPredictions,
+    loadingPackages,
+    errorPackages
+  })
+
   useEffect(() => {
     const fetchPredictions = async () => {
       try {
+        console.log('🚀 Fetching predictions...')
         setLoadingPredictions(true)
         const response = await fetch('/api/predictions')
+        console.log('📡 Predictions response status:', response.status)
+
         if (!response.ok) {
-          throw new Error('Failed to fetch predictions')
+          throw new Error(`Failed to fetch predictions: ${response.status}`)
         }
+
         const data = await response.json()
+        console.log('📊 Predictions data received:', {
+          type: typeof data,
+          isArray: Array.isArray(data),
+          length: Array.isArray(data) ? data.length : 'N/A',
+          data: data
+        })
+
         setPredictions(data)
       } catch (err: unknown) {
+        console.error('❌ Error fetching predictions:', err)
         setErrorPredictions(err instanceof Error ? err.message : 'An error occurred')
       } finally {
         setLoadingPredictions(false)
@@ -53,6 +85,7 @@ export default function Home() {
 
   useEffect(() => {
     if (realtimePredictions) {
+      console.log('🔄 Updating predictions from realtime:', realtimePredictions)
       setPredictions(realtimePredictions)
     }
   }, [realtimePredictions])
@@ -60,14 +93,26 @@ export default function Home() {
   useEffect(() => {
     const fetchPackages = async () => {
       try {
+        console.log('🚀 Fetching packages...')
         setLoadingPackages(true)
         const response = await fetch('/api/packages')
+        console.log('📡 Packages response status:', response.status)
+
         if (!response.ok) {
-          throw new Error('Failed to fetch packages')
+          throw new Error(`Failed to fetch packages: ${response.status}`)
         }
+
         const data = await response.json()
+        console.log('📦 Packages data received:', {
+          type: typeof data,
+          isArray: Array.isArray(data),
+          length: Array.isArray(data) ? data.length : 'N/A',
+          data: data
+        })
+
         setPackages(data)
       } catch (err: unknown) {
+        console.error('❌ Error fetching packages:', err)
         setErrorPackages(err instanceof Error ? err.message : 'An error occurred')
       } finally {
         setLoadingPackages(false)
@@ -78,6 +123,7 @@ export default function Home() {
 
   useEffect(() => {
     if (realtimePackages) {
+      console.log('🔄 Updating packages from realtime:', realtimePackages)
       setPackages(realtimePackages)
     }
   }, [realtimePackages])
@@ -110,20 +156,20 @@ export default function Home() {
       </div>
 
       {/* Add UpdateNotification components */}
-      <UpdateNotification 
-        type="PREDICTIONS_UPDATED" 
-        message="New predictions available" 
+      <UpdateNotification
+        type="PREDICTIONS_UPDATED"
+        message="New predictions available"
       />
-      <UpdateNotification 
-        type="PACKAGES_UPDATED" 
-        message="Package updates available" 
+      <UpdateNotification
+        type="PACKAGES_UPDATED"
+        message="Package updates available"
       />
 
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-[#1a56db] to-[#1e293b] text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10">
-          {/* Replace this with a real background image URL from your CDN/storage */}
-          <div className="absolute inset-0 bg-[url('/path/to/your/actual-background-image.jpg')] bg-cover bg-center"></div>
+          {/* Background gradient instead of non-existent image */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-purple-600"></div>
         </div>
         <div className="container mx-auto px-4 py-16 md:py-24 relative z-10">
           <div className="max-w-4xl mx-auto text-center mb-8">
@@ -157,59 +203,68 @@ export default function Home() {
             {errorPredictions && <p className="text-red-500">Error: {errorPredictions}</p>}
             {!loadingPredictions &&
               !errorPredictions &&
-              predictions.slice(0, 3).map((prediction: Prediction) => (
-                <div
-                  key={prediction.id}
-                  className="bg-white/10 backdrop-blur-sm rounded-lg p-4 hover:bg-white/15 transition-all"
-                >
-                  <div className="flex justify-between items-center mb-3">
-                    <div className="flex items-center gap-2">
-                      <Image
-                        src={prediction.leagueLogo || '/placeholder.svg'}
-                        alt={prediction.league}
-                        width={24}
-                        height={24}
-                        className="rounded-full"
-                      />
-                      <span className="text-sm font-medium">{prediction.league}</span>
+              (Array.isArray(predictions) ? predictions : []).slice(0, 3).map((prediction: Prediction) => {
+                console.log('🏆 Rendering VIP prediction in hero:', {
+                  id: prediction.id,
+                  homeTeam: prediction.homeTeam,
+                  awayTeam: prediction.awayTeam,
+                  prediction: prediction.prediction,
+                  confidence: prediction.confidence
+                })
+                return (
+                  <div
+                    key={prediction.id}
+                    className="bg-white/10 backdrop-blur-sm rounded-lg p-4 hover:bg-white/15 transition-all"
+                  >
+                    <div className="flex justify-between items-center mb-3">
+                      <div className="flex items-center gap-2">
+                        <Image
+                          src={prediction.leagueLogo || '/placeholder.svg'}
+                          alt={prediction.league}
+                          width={24}
+                          height={24}
+                          className="rounded-full"
+                        />
+                        <span className="text-sm font-medium">{prediction.league}</span>
+                      </div>
+                      <span className="text-xs opacity-80">
+                        {new Date(prediction.matchTime).toLocaleString()}
+                      </span>
                     </div>
-                    <span className="text-xs opacity-80">
-                      {new Date(prediction.matchTime).toLocaleString()}
-                    </span>
+                    <div className="flex justify-between items-center mb-4">
+                      <div className="flex items-center gap-2">
+                        <Image
+                          src={prediction.homeTeamLogo || '/placeholder.svg'}
+                          alt={prediction.homeTeam}
+                          width={32}
+                          height={32}
+                        />
+                        <span className="font-semibold">{prediction.homeTeam}</span>
+                      </div>
+                      <span className="text-sm">vs</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold">{prediction.awayTeam}</span>
+                        <Image
+                          src={prediction.awayTeamLogo || '/placeholder.svg'}
+                          alt={prediction.awayTeam}
+                          width={32}
+                          height={32}
+                        />
+                      </div>
+                    </div>
+                    <div className="bg-white/10 rounded p-2 text-center">
+                      <p className="font-medium">{prediction.prediction}</p>
+                      <div className="w-full bg-gray-300/30 rounded-full h-2 mt-2">
+                        <div
+                          className="bg-[#10b981] h-2 rounded-full"
+                          style={{ width: `${prediction.confidence}%` }}
+                        ></div>
+                      </div>
+                      <p className="text-xs mt-1">{prediction.confidence}% confidence</p>
+                    </div>
                   </div>
-                  <div className="flex justify-between items-center mb-4">
-                    <div className="flex items-center gap-2">
-                      <Image
-                        src={prediction.homeTeamLogo || '/placeholder.svg'}
-                        alt={prediction.homeTeam}
-                        width={32}
-                        height={32}
-                      />
-                      <span className="font-semibold">{prediction.homeTeam}</span>
-                    </div>
-                    <span className="text-sm">vs</span>
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold">{prediction.awayTeam}</span>
-                      <Image
-                        src={prediction.awayTeamLogo || '/placeholder.svg'}
-                        alt={prediction.awayTeam}
-                        width={32}
-                        height={32}
-                      />
-                    </div>
-                  </div>
-                  <div className="bg-white/10 rounded p-2 text-center">
-                    <p className="font-medium">{prediction.prediction}</p>
-                    <div className="w-full bg-gray-300/30 rounded-full h-2 mt-2">
-                      <div
-                        className="bg-[#10b981] h-2 rounded-full"
-                        style={{ width: `${prediction.confidence}%` }}
-                      ></div>
-                    </div>
-                    <p className="text-xs mt-1">{prediction.confidence}% confidence</p>
-                  </div>
-                </div>
-              ))}
+                )
+              })}
           </div>
         </div>
       </section>
@@ -248,9 +303,16 @@ export default function Home() {
             )}
             {!loadingPredictions &&
               !errorPredictions &&
-              predictions.map((prediction: Prediction) => (
-                <PredictionCard key={prediction.id} prediction={prediction} />
-              ))}
+              (Array.isArray(predictions) ? predictions : []).map((prediction: Prediction) => {
+                console.log('⚽ Rendering prediction:', {
+                  id: prediction.id,
+                  homeTeam: prediction.homeTeam,
+                  awayTeam: prediction.awayTeam,
+                  prediction: prediction.prediction,
+                  confidence: prediction.confidence
+                })
+                return <PredictionCard key={prediction.id} prediction={prediction} />
+              })}
           </div>
 
           <div className="mt-8 text-center">
@@ -292,54 +354,64 @@ export default function Home() {
             )}
             {!loadingPackages &&
               !errorPackages &&
-              packages.map((pkg: Package) => (
-                <Card
-                  key={pkg.id}
-                  className={`${pkg.color} ${pkg.popular ? 'border-2 border-[#1a56db]' : ''} text-white dark:text-gray-900`}
-                >
-                  <CardHeader className="text-center pb-0">
-                    {pkg.popular && (
-                      <Badge className="bg-yellow-400 text-yellow-900 px-3 py-1 text-xs font-semibold rounded-full mb-2 mx-auto">
-                        Most Popular
-                      </Badge>
-                    )}
-                    <CardTitle
-                      className={`text-3xl font-bold ${pkg.popular ? 'text-white' : 'text-gray-900 dark:text-white'}`}
-                    >
-                      {pkg.name}
-                    </CardTitle>
-                    <p
-                      className={`mt-2 ${pkg.popular ? 'text-gray-200' : 'text-gray-600 dark:text-gray-400'}`}
-                    >
-                      <span className="text-4xl font-bold">${pkg.price}</span> / {pkg.duration}
-                    </p>
-                  </CardHeader>
-                  <CardContent className="py-6 px-4">
-                    <ul className="space-y-3">
-                      {pkg.features.map((feature: string, index: number) => (
-                        <li key={index} className="flex items-center justify-center gap-2">
-                          <Check
-                            className={`h-5 w-5 ${pkg.popular ? 'text-green-300' : 'text-green-500'}`}
-                          />
-                          <span
-                            className={`${pkg.popular ? 'text-gray-200' : 'text-gray-700 dark:text-gray-300'}`}
-                          >
-                            {feature}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                  <CardFooter className="p-4">
-                    <Button
-                      asChild
-                      className={`w-full ${pkg.popular ? 'bg-white text-[#1a56db] hover:bg-gray-100' : 'bg-[#1a56db] text-white hover:bg-[#1e40af]'}`}
-                    >
-                      <Link href="/vip/subscribe">Get Started</Link>
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
+              (Array.isArray(packages) ? packages : []).map((pkg: Package) => {
+                console.log('📦 Rendering package:', {
+                  id: pkg.id,
+                  name: pkg.name,
+                  features: pkg.features,
+                  featuresType: typeof pkg.features,
+                  featuresIsArray: Array.isArray(pkg.features)
+                })
+
+                return (
+                  <Card
+                    key={pkg.id}
+                    className={`${pkg.color} ${pkg.popular ? 'border-2 border-[#1a56db]' : ''} text-white dark:text-gray-900`}
+                  >
+                    <CardHeader className="text-center pb-0">
+                      {pkg.popular && (
+                        <Badge className="bg-yellow-400 text-yellow-900 px-3 py-1 text-xs font-semibold rounded-full mb-2 mx-auto">
+                          Most Popular
+                        </Badge>
+                      )}
+                      <CardTitle
+                        className={`text-3xl font-bold ${pkg.popular ? 'text-white' : 'text-gray-900 dark:text-white'}`}
+                      >
+                        {pkg.name}
+                      </CardTitle>
+                      <p
+                        className={`mt-2 ${pkg.popular ? 'text-gray-200' : 'text-gray-600 dark:text-gray-400'}`}
+                      >
+                        <span className="text-4xl font-bold">${pkg.price}</span> / {pkg.duration}
+                      </p>
+                    </CardHeader>
+                    <CardContent className="py-6 px-4">
+                      <ul className="space-y-3">
+                        {(Array.isArray(pkg.features) ? pkg.features : []).map((feature: string, index: number) => (
+                          <li key={index} className="flex items-center justify-center gap-2">
+                            <Check
+                              className={`h-5 w-5 ${pkg.popular ? 'text-green-300' : 'text-green-500'}`}
+                            />
+                            <span
+                              className={`${pkg.popular ? 'text-gray-200' : 'text-gray-700 dark:text-gray-300'}`}
+                            >
+                              {feature}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                    <CardFooter className="p-4">
+                      <Button
+                        asChild
+                        className={`w-full ${pkg.popular ? 'bg-white text-[#1a56db] hover:bg-gray-100' : 'bg-[#1a56db] text-white hover:bg-[#1e40af]'}`}
+                      >
+                        <Link href="/vip/subscribe">Get Started</Link>
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                )
+              })}
           </div>
         </div>
       </section>

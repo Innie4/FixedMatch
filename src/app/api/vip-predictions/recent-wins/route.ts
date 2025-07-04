@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import rateLimit from '@/lib/rate-limit'
 
-const limiter = rateLimit({
+const { check } = rateLimit({
   uniqueTokenPerInterval: 500,
   interval: 60 * 1000,
 })
@@ -11,9 +11,9 @@ export async function GET(request: Request) {
   try {
     // Apply rate limiting
     const ip = request.headers.get('x-forwarded-for') || '127.0.0.1'
-    const isRateLimited = await limiter.check(10, ip) // Only 2 arguments
+    const { isRateLimited } = check(10, ip)
 
-    if (!isRateLimited) {
+    if (isRateLimited) {
       return NextResponse.json(
         { message: 'Too many requests, please try again later.' },
         { status: 429 }
@@ -26,16 +26,16 @@ export async function GET(request: Request) {
         isArchived: false,
       },
       orderBy: {
-        matchTime: 'desc',
+        updatedAt: 'desc',
       },
-      take: 5,
+      take: 10,
       include: {
         category: true,
       },
     })
 
     if (!recentWins || recentWins.length === 0) {
-      return NextResponse.json({ message: 'No recent VIP wins found.' }, { status: 404 })
+      return NextResponse.json({ message: 'No recent wins found.' }, { status: 404 })
     }
 
     const response = NextResponse.json(recentWins, { status: 200 })

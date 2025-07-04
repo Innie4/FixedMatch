@@ -4,50 +4,43 @@ import { z } from 'zod'
 
 // Zod schema for prediction filters and query parameters
 const predictionQueryParamsSchema = z.object({
-  filter: z.enum(['all', 'today', 'tomorrow', 'weekend', 'top', 'vip']).optional(),
+  filter: z.enum(['all', 'today', 'tomorrow', 'weekend', 'top', 'vip']).optional().default('all'),
   leagues: z
     .string()
+    .nullable()
     .optional()
-    .transform(
-      (s) =>
-        s
-          ?.split(',')
-          .map((item) => item.trim().toLowerCase())
-          .join(',') || undefined
-    ), // Comma-separated league names
+    .transform((s) => s || undefined), // Handle null values
   predictionTypes: z
     .string()
+    .nullable()
     .optional()
-    .transform(
-      (s) =>
-        s
-          ?.split(',')
-          .map((item) => item.trim().toLowerCase())
-          .join(',') || undefined
-    ), // Comma-separated prediction types
+    .transform((s) => s || undefined), // Handle null values
   confidenceLevels: z
     .string()
+    .nullable()
     .optional()
-    .transform(
-      (s) =>
-        s
-          ?.split(',')
-          .map((item) => item.trim().toLowerCase())
-          .join(',') || undefined
-    ), // Comma-separated confidence levels
+    .transform((s) => s || undefined), // Handle null values
 })
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
 
-    // Parse and sanitize query parameters using Zod
-    const queryParams = predictionQueryParamsSchema.parse({
+    console.log('🔍 Predictions API called with params:', {
       filter: searchParams.get('filter'),
       leagues: searchParams.get('leagues'),
       predictionTypes: searchParams.get('predictionTypes'),
       confidenceLevels: searchParams.get('confidenceLevels'),
     })
+
+    const queryParams = predictionQueryParamsSchema.parse({
+      filter: searchParams.get('filter') ?? undefined,
+      leagues: searchParams.get('leagues') ?? undefined,
+      predictionTypes: searchParams.get('predictionTypes') ?? undefined,
+      confidenceLevels: searchParams.get('confidenceLevels') ?? undefined,
+    })
+
+    console.log('✅ Parsed query params:', queryParams)
 
     let whereClause: any = {}
 
@@ -70,7 +63,9 @@ export async function GET(request: Request) {
         whereClause.confidence = { gte: 80 } // Assuming confidence is a number field
         break
       case 'vip':
-        whereClause.vipOnly = true // Assuming vipOnly is a boolean field
+        // Since there's no vipOnly field in Prediction model, 
+        // return high-confidence predictions as VIP content
+        whereClause.confidence = { gte: 85 }
         break
       case 'all':
       default:
@@ -111,6 +106,8 @@ export async function GET(request: Request) {
       }
     }
 
+    console.log('🔍 Where clause for query:', whereClause)
+
     const predictions = await prisma.prediction.findMany({
       where: whereClause,
       orderBy: {
@@ -119,14 +116,21 @@ export async function GET(request: Request) {
       take: 6, // Or adjust based on how many you want to show on the homepage
     })
 
+    console.log(`📊 Found ${predictions.length} predictions`)
+
     if (!predictions || predictions.length === 0) {
       return NextResponse.json({ message: 'No predictions found.' }, { status: 404 })
     }
 
-    // TODO: Sanitize output data if necessary (e.g., remove sensitive fields before sending to client)
-    // For now, assuming Prediction model does not contain sensitive data
+    // Always include logo fields with sensible defaults
+    const predictionsWithLogos = predictions.map((p) => ({
+      ...p,
+      leagueLogo: '/placeholder.svg',
+      homeTeamLogo: '/placeholder.svg',
+      awayTeamLogo: '/placeholder.svg',
+    }))
 
-    const response = NextResponse.json(predictions, { status: 200 })
+    const response = NextResponse.json(predictionsWithLogos, { status: 200 })
     response.headers.set('X-Content-Type-Options', 'nosniff')
     response.headers.set('X-Frame-Options', 'DENY')
     return response

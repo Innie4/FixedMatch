@@ -17,8 +17,13 @@ const dateQuerySchema = z.object({
     }),
 })
 
-export async function GET(request: Request) {
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
+    const { id } = await params
+    const matchId = id
     // Get IP address for rate limiting
     const ip =
       request.headers.get('x-forwarded-for') ||

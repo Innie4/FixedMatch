@@ -204,3 +204,9 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
+
+model NewsletterSubscriber {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}

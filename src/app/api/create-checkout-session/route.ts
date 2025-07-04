@@ -9,16 +9,25 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
 
 const checkoutSessionSchema = z.object({
   packageId: z.number().int().positive('Package ID must be a positive integer.'),
+  duration: z.enum(['twoWeeks', 'oneMonth', 'threeMonths', 'sixMonths']),
 })
 
 export async function POST(req: Request) {
   try {
-    const { packageId } = checkoutSessionSchema.parse(await req.json())
+    const { packageId, duration } = checkoutSessionSchema.parse(await req.json())
 
     const pkg = await prisma.package.findUnique({ where: { id: packageId } })
 
     if (!pkg) {
       return NextResponse.json({ error: 'Package not found' }, { status: 404 })
+    }
+
+    // Get price from durations field
+    const durations = pkg.durations as any
+    const durationConfig = durations[duration]
+
+    if (!durationConfig || !durationConfig.enabled) {
+      return NextResponse.json({ error: 'Selected duration is not available' }, { status: 400 })
     }
 
     const session = await stripe.checkout.sessions.create({
@@ -29,9 +38,9 @@ export async function POST(req: Request) {
             currency: 'usd',
             product_data: {
               name: pkg.name,
-              description: pkg.description || 'VIP Subscription',
+              description: `${pkg.description || 'VIP Subscription'} - ${duration}`,
             },
-            unit_amount: Math.round(pkg.price * 100), // Stripe expects amount in cents
+            unit_amount: Math.round(durationConfig.price * 100), // Stripe expects amount in cents
           },
           quantity: 1,
         },
@@ -39,7 +48,7 @@ export async function POST(req: Request) {
       mode: 'payment',
       success_url: `${req.headers.get('origin')}/vip/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.get('origin')}/vip/subscribe?cancelled=true`,
-      metadata: { packageId: pkg.id, packageName: pkg.name },
+      metadata: { packageId: pkg.id, packageName: pkg.name, duration },
     })
 
     return NextResponse.json({ url: session.url }, { status: 200 })

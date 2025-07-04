@@ -23,12 +23,31 @@ export default function UserStats({ stats }: UserStatsProps) {
   const profitChartRef = useRef<HTMLCanvasElement>(null)
   const predictionTypesRef = useRef<HTMLCanvasElement>(null)
 
+  // Store chart instances
+  const successChartInstance = useRef<Chart | null>(null)
+  const profitChartInstance = useRef<Chart | null>(null)
+  const predictionTypesChartInstance = useRef<Chart | null>(null)
+
   useEffect(() => {
+    // Destroy existing charts before creating new ones
+    if (successChartInstance.current) {
+      successChartInstance.current.destroy()
+      successChartInstance.current = null
+    }
+    if (profitChartInstance.current) {
+      profitChartInstance.current.destroy()
+      profitChartInstance.current = null
+    }
+    if (predictionTypesChartInstance.current) {
+      predictionTypesChartInstance.current.destroy()
+      predictionTypesChartInstance.current = null
+    }
+
     // Success Rate Chart
     if (successChartRef.current) {
       const ctx = successChartRef.current.getContext('2d')
       if (ctx) {
-        new Chart(ctx, {
+        successChartInstance.current = new Chart(ctx, {
           type: 'doughnut',
           data: {
             labels: ['Won', 'Lost'],
@@ -74,7 +93,7 @@ export default function UserStats({ stats }: UserStatsProps) {
         // Sample profit data over time
         const profit = [0, 12, 28, 45, 32, 60, 78, 95, 110, 126.5]
 
-        new Chart(ctx, {
+        profitChartInstance.current = new Chart(ctx, {
           type: 'line',
           data: {
             labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
@@ -121,7 +140,7 @@ export default function UserStats({ stats }: UserStatsProps) {
       const ctx = predictionTypesRef.current.getContext('2d')
       if (ctx) {
         // Sample prediction types data
-        new Chart(ctx, {
+        predictionTypesChartInstance.current = new Chart(ctx, {
           type: 'bar',
           data: {
             labels: [
@@ -175,9 +194,18 @@ export default function UserStats({ stats }: UserStatsProps) {
 
     // Cleanup function
     return () => {
-      Chart.getChart(successChartRef.current as HTMLCanvasElement)?.destroy()
-      Chart.getChart(profitChartRef.current as HTMLCanvasElement)?.destroy()
-      Chart.getChart(predictionTypesRef.current as HTMLCanvasElement)?.destroy()
+      if (successChartInstance.current) {
+        successChartInstance.current.destroy()
+        successChartInstance.current = null
+      }
+      if (profitChartInstance.current) {
+        profitChartInstance.current.destroy()
+        profitChartInstance.current = null
+      }
+      if (predictionTypesChartInstance.current) {
+        predictionTypesChartInstance.current.destroy()
+        predictionTypesChartInstance.current = null
+      }
     }
   }, [stats])
 

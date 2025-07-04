@@ -142,6 +142,13 @@ export function AvatarSelector({ currentAvatar, onSelect, onClose, isOpen }: Ava
                   sizes="(max-width: 768px) 25vw, 20vw"
                   priority={index < 8} // Load first 8 images immediately
                   loading={index >= 8 ? 'lazy' : undefined}
+                  onError={(e) => {
+                    // Fallback to default avatar if the specific avatar doesn't exist
+                    const target = e.target as HTMLImageElement;
+                    if (target.src !== '/avatars/default.png') {
+                      target.src = '/avatars/default.png';
+                    }
+                  }}
                 />
               </button>
             ))}

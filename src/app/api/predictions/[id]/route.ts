@@ -3,10 +3,11 @@ import { NextResponse } from 'next/server'
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const matchId = params.id
+    const { id } = await params
+    const matchId = id
     if (!matchId) {
       return NextResponse.json({ error: 'Match ID is required.' }, { status: 400 })
     }

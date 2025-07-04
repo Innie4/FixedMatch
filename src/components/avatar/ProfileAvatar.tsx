@@ -63,15 +63,18 @@ export function ProfileAvatar({
           className="object-cover"
           sizes={`(max-width: 768px) ${size === 'lg' ? '96px' : size === 'md' ? '64px' : '40px'}, ${size === 'lg' ? '96px' : size === 'md' ? '64px' : '40px'}`}
           priority
-          onError={() => {
-            setError({
-              message: 'Failed to load avatar image',
-              code: 'LOAD_ERROR',
-            })
-            // Fallback to default avatar
-            const img = document.createElement('img')
-            img.src = '/avatars/default.png'
-            img.onload = () => setAvatar('/avatars/default.png')
+          onError={(e) => {
+            // Fallback to default avatar if the current avatar fails to load
+            const target = e.target as HTMLImageElement;
+            if (target.src !== '/avatars/default.png') {
+              target.src = '/avatars/default.png';
+              setAvatar('/avatars/default.png');
+            } else {
+              setError({
+                message: 'Failed to load avatar image',
+                code: 'LOAD_ERROR',
+              });
+            }
           }}
         />
       </button>
