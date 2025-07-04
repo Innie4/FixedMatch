@@ -7,11 +7,11 @@ export default withAuth(
     const path = req.nextUrl.pathname
 
     // Public routes that don't require authentication
-    const publicRoutes = ['/auth/login', '/auth/register', '/auth/forgot-password', '/auth/reset-password']
+    const publicRoutes = ['/auth/login', '/auth/signup', '/auth/register', '/auth/forgot-password', '/auth/reset-password', '/auth/verify-email']
     if (publicRoutes.includes(path)) {
-      if (token) {
-        // If user is already logged in, redirect to dashboard
-        return NextResponse.redirect(new URL('/dashboard', req.url))
+      if (token && path !== '/auth/verify-email') {
+        // If user is already logged in, redirect to dashboard (except for verify-email page)
+        return NextResponse.redirect(new URL('/user/dashboard', req.url))
       }
       return NextResponse.next()
     }
@@ -20,7 +20,7 @@ export default withAuth(
     if (path.startsWith('/admin')) {
       if (token?.role !== 'admin') {
         // If user is not an admin, redirect to dashboard
-        return NextResponse.redirect(new URL('/dashboard', req.url))
+        return NextResponse.redirect(new URL('/user/dashboard', req.url))
       }
       return NextResponse.next()
     }
@@ -30,7 +30,7 @@ export default withAuth(
       const hasActiveSubscription = token?.subscriptionStatus === 'active'
       if (!hasActiveSubscription) {
         // If user doesn't have an active subscription, redirect to pricing
-        return NextResponse.redirect(new URL('/pricing', req.url))
+        return NextResponse.redirect(new URL('/subscription', req.url))
       }
       return NextResponse.next()
     }
@@ -44,7 +44,15 @@ export default withAuth(
   },
   {
     callbacks: {
-      authorized: ({ token }) => !!token,
+      authorized: ({ token, req }) => {
+        // Allow access to public routes even without token
+        const publicRoutes = ['/auth/login', '/auth/signup', '/auth/register', '/auth/forgot-password', '/auth/reset-password', '/auth/verify-email']
+        if (publicRoutes.includes(req.nextUrl.pathname)) {
+          return true
+        }
+        // For all other routes, require authentication
+        return !!token
+      },
     },
   }
 )
