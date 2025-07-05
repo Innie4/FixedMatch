@@ -107,6 +107,7 @@ export const authOptions: NextAuthOptions = {
               image: user.image,
               role: 'customer',
               isEmailVerified: true,
+              passwordHash: generateToken(32), // Add random passwordHash for OAuth users
             },
           })
         }
