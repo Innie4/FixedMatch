@@ -49,15 +49,13 @@ export default function ForgotPasswordPage() {
     <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900 px-4 py-12">
       <div className="w-full max-w-md space-y-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
         <div className="text-center">
-          <Link href="/">
-            <Image
-              src="/FIXEDMatchD.png"
-              alt="Legit Soccer Tips Logo"
-              width={512}
-              height={512}
-              className="mx-auto mb-3"
-            />
-          </Link>
+          <Image
+            src="/main-logo.jpg"
+            alt="PredictSafe Logo"
+            width={128}
+            height={128}
+            className="mx-auto mb-3 rounded-full shadow"
+          />
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900 dark:text-white">
             Forgot your password?
           </h2>

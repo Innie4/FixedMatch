@@ -12,7 +12,7 @@ export default function Footer() {
                 FP
               </div>
               <span className="font-bold text-xl text-gray-900 dark:text-white">
-                Legit Soccer Tips
+                PredictSafe
               </span>
             </div>
             <p className="text-gray-600 dark:text-gray-400 mb-4">

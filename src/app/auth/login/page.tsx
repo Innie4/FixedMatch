@@ -85,15 +85,13 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
           <div className="text-center mb-8">
-            <Link href="/">
-              <Image
-                src="/FIXEDMatchD.png"
-                alt="Legit Soccer Tips Logo"
-                width={512}
-                height={512}
-                className="mx-auto mb-3"
-              />
-            </Link>
+            <Image
+              src="/main-logo.jpg"
+              alt="PredictSafe Logo"
+              width={128}
+              height={128}
+              className="mx-auto mb-3 rounded-full shadow"
+            />
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Welcome back</h1>
             <p className="text-gray-600 dark:text-gray-400 mt-1">Log in to access your account</p>
           </div>

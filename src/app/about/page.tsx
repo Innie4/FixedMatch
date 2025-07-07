@@ -51,7 +51,7 @@ export default function AboutPage() {
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-5xl mx-auto">
         <h1 className="text-4xl font-bold text-center mb-8 text-gray-900 dark:text-white">
-          About Legit Soccer Tips
+          About PredictSafe
         </h1>
 
         {/* Hero Section */}
@@ -62,7 +62,7 @@ export default function AboutPage() {
                 Your Trusted Football Prediction Platform
               </h2>
               <p className="text-gray-700 dark:text-gray-300 mb-4">
-                Founded in 2016, Legit Soccer Tips has grown to become one of the most reliable
+                Founded in 2016, PredictSafe has grown to become one of the most reliable
                 football prediction platforms worldwide. Our team of expert analysts and advanced
                 statistical models provide accurate predictions for matches across all major
                 leagues.

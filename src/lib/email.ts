@@ -1,10 +1,16 @@
-import sgMail from '@sendgrid/mail'
+import nodemailer from 'nodemailer'
 import type { EmailTemplate } from '@/types'
 
-// Initialize SendGrid
-if (process.env.SENDGRID_API_KEY) {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY)
-}
+// Initialize Nodemailer transporter for MailerSend SMTP
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: Number(process.env.SMTP_PORT) || 587,
+  secure: false, // true for 465, false for 587
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+})
 
 interface EmailOptions {
   to: string
@@ -16,14 +22,14 @@ export async function sendEmail({ to, template, data }: EmailOptions): Promise<v
   try {
     const templateResult = emailTemplates[template](data);
     const { subject, html, text } = templateResult;
-    const msg = {
-      to,
+    const mailOptions = {
       from: process.env.EMAIL_FROM || 'noreply@predicts.com',
+      to,
       subject,
       html,
       ...(text ? { text } : {}),
-    };
-    await sgMail.send(msg)
+    }
+    await transporter.sendMail(mailOptions)
   } catch (error) {
     console.error('Failed to send email:', error)
     throw new Error('Failed to send email')

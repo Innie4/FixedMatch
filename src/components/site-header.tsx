@@ -29,12 +29,12 @@ export function SiteHeader() {
                 <Link href="/" className="flex items-center gap-2">
                   <Image
                     src="/FIXEDMatchD.png"
-                    alt="Legit Soccer Tips Logo"
+                    alt="PredictSafe Logo"
                     width={32}
                     height={32}
                   />
                   <span className="font-bold text-xl text-gray-900 dark:text-white">
-                    Legit Soccer Tips
+                    PredictSafe
                   </span>
                 </Link>
                 <div className="flex flex-col gap-2">
@@ -105,13 +105,13 @@ export function SiteHeader() {
           <Link href="/" className="flex items-center gap-2">
             <Image
               src="/FIXEDMatchD.png"
-              alt="Legit Soccer Tips Logo"
+              alt="PredictSafe Logo"
               width={40}
               height={40}
               className="object-contain"
             />
             <span className="font-bold text-xl text-gray-900 dark:text-white hidden md:inline-block">
-              Legit Soccer Tips
+              PredictSafe
             </span>
           </Link>
         </div>

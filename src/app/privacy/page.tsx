@@ -24,7 +24,7 @@ export default function PrivacyPage() {
 
             <h2>1. Introduction</h2>
             <p>
-              At Legit Soccer Tips, we respect your privacy and are committed to protecting your
+              At PredictSafe, we respect your privacy and are committed to protecting your
               personal data. This Privacy Policy explains how we collect, use, disclose, and
               safeguard your information when you use our website and mobile application.
             </p>

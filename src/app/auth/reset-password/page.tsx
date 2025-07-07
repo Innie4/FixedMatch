@@ -114,7 +114,7 @@ export default function ResetPasswordPage() {
           <Link href="/">
             <Image
               src="/FIXEDMatchD.png"
-              alt="Legit Soccer Tips Logo"
+              alt="PredictSafe Logo"
               width={512}
               height={512}
               className="mx-auto mb-3"

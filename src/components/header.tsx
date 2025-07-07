@@ -54,7 +54,7 @@ export default function Header() {
               LS
             </div>
             <span className="font-bold text-xl text-gray-900 dark:text-white hidden sm:inline-block">
-              Legit Soccer Tips
+              PredictSafe
             </span>
           </Link>
 
